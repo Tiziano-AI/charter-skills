@@ -1,0 +1,7 @@
+interface:
+  display_name: Charter · Work Discovery
+  short_description: Discover the intended result and carry the work through
+  default_prompt: Use $charter-skills:charter-work-discovery to help me turn this
+    idea, problem, artifact or request into the result I need.
+policy:
+  allow_implicit_invocation: true

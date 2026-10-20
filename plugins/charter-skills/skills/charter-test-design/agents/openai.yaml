@@ -1,0 +1,9 @@
+interface:
+  display_name: Charter · Test Design
+  short_description: Add, fix or prune tests so they catch the real bug
+  default_prompt: 'Use $charter-skills:charter-test-design to add or fix the tests
+    for this change: take the expected result from the requirement rather than the
+    code, choose the boundary and mocks that keep the failing seam in view, establish
+    sensitivity to the relevant defect, and drop tests that protect nothing.'
+policy:
+  allow_implicit_invocation: true

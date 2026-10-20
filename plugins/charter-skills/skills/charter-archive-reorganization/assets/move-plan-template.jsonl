@@ -1,0 +1,3 @@
+{"op":"mkdir","target":"clients/acme/website-refresh/delivered","reason":"create lifecycle destination for the engagement"}
+{"op":"move","source":"intake/acme_homepage_delivered_2026-07-31.pdf","target":"clients/acme/website-refresh/delivered/2026-07-31_homepage.pdf","reason":"client, delivered state and delivery date appear in the source name; the engagement is named in the accompanying delivery note"}
+{"op":"move","source":"intake/1736627211126.pdf","target":"review-queues/needs-date-or-subject/1736627211126.pdf","reason":"source identifier is stable but semantic name and final placement are unresolved"}

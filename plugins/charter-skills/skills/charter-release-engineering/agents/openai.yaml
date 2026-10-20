@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Release Engineering
+  short_description: Release, deploy or install a change to its consumer
+  default_prompt: Use $charter-skills:charter-release-engineering to carry this exact
+    change to the intended installed or hosted consumer, resolve selection and compatibility,
+    and preserve recovery through the cutover.
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="1080" height="1920" viewBox="0 0 1080 1920" role="img" aria-labelledby="title description">
+  <title id="title">A page opens. A world follows. — vertical reading invitation</title>
+  <desc id="description">A new two-beat layout: Pepper and Carrot with an open book beside an invitation to read, followed by the complete wide forest journey. The tall format changes the panel sequence rather than cropping out a traveler or the destination. Artwork by David Revoy, Pepper and Carrot episode 26 page 1, CC BY 4.0. New copy and composition by Charter; not an original comic page or an endorsed campaign.</desc>
+  <metadata>Source: https://www.peppercarrot.com/en/webcomic-sources/ep26_Books-Are-Great.html | Artwork: David Revoy | License: https://creativecommons.org/licenses/by/4.0/ | Derivative changes: extraction and reordering of two panels, uniform scaling, new typography and background. No character cutout, repainting or generated art. Original JPEG remains unchanged beside this SVG. Full credits: README.md.</metadata>
+  <g id="paper" inkscape:groupmode="layer" inkscape:label="Paper">
+    <rect width="1080" height="1920" fill="#f4efdb"/>
+  </g>
+  <g id="art" inkscape:groupmode="layer" inkscape:label="Artwork — linked original, two panels">
+    <svg id="reader-panel" x="64" y="346" width="352" height="800" viewBox="104 1710 744 1690" preserveAspectRatio="xMidYMid meet" overflow="hidden">
+      <image x="0" y="0" width="2481" height="3503" xlink:href="pepper-carrot-e26-p01-original.jpg"/>
+    </svg>
+    <svg id="journey-panel" x="64" y="1200" width="952" height="644" viewBox="104 104 2276 1536" preserveAspectRatio="xMidYMid meet" overflow="hidden">
+      <image x="0" y="0" width="2481" height="3503" xlink:href="pepper-carrot-e26-p01-original.jpg"/>
+    </svg>
+  </g>
+  <g id="copy" inkscape:groupmode="layer" inkscape:label="New editorial copy — editable text" fill="#163b32">
+    <text x="64" y="92" font-family="Arial, sans-serif" font-size="20" font-weight="700" letter-spacing="3">READ · IMAGINE · EXPLORE</text>
+    <text x="58" y="195" font-family="Georgia, serif" font-size="90" letter-spacing="-3">A page opens.</text>
+    <text x="58" y="291" font-family="Georgia, serif" font-size="90" font-style="italic" letter-spacing="-3">A world follows.</text>
+    <text x="468" y="509" font-family="Georgia, serif" font-size="60" letter-spacing="-1.5">It starts with</text>
+    <text x="468" y="582" font-family="Georgia, serif" font-size="60" letter-spacing="-1.5">one more</text>
+    <text x="468" y="655" font-family="Georgia, serif" font-size="64" font-style="italic" letter-spacing="-1.5">page.</text>
+    <path d="M472 733H548" stroke="#769262" stroke-width="2"/>
+    <text x="472" y="802" font-family="Arial, sans-serif" font-size="30">Step into</text>
+    <text x="472" y="846" font-family="Arial, sans-serif" font-size="34" font-weight="700">Pepper&amp;Carrot.</text>
+    <text x="472" y="914" font-family="Arial, sans-serif" font-size="21">Episode 26</text>
+    <text x="472" y="945" font-family="Arial, sans-serif" font-size="21">Books Are Great</text>
+  </g>
+  <g id="credit" inkscape:groupmode="layer" inkscape:label="Attribution" fill="#365a4d" font-family="Arial, sans-serif" font-size="15">
+    <text x="64" y="1877">Art: David Revoy · Pepper&amp;Carrot · CC BY 4.0 · peppercarrot.com</text>
+    <text x="64" y="1899">Charter study: new panel sequence, layout + copy</text>
+  </g>
+</svg>

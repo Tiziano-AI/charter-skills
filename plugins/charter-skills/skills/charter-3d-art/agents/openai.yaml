@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · 3D Art
+  short_description: Shape convincing 3D models, scenes and rendered films
+  default_prompt: Use $charter-skills:charter-3d-art to create or improve this 3D
+    work, interactive or rendered, through coherent art direction, construction, materials,
+    light and motion in its target renderer.
+policy:
+  allow_implicit_invocation: true

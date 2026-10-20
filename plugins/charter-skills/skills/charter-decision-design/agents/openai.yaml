@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Decision Design
+  short_description: Integrate contributions and choose through consequential trade-offs
+  default_prompt: Use $charter-skills:charter-decision-design to integrate the contributions
+    already available, recommend a feasible choice and identify its decisive trade-off
+    and decision owner.
+policy:
+  allow_implicit_invocation: true

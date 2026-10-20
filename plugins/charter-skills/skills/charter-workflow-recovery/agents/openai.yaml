@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Workflow Recovery
+  short_description: Recover interrupted work without duplicating its effects
+  default_prompt: Use $charter-skills:charter-workflow-recovery to identify this interrupted
+    or ambiguous operation, reconcile its surviving effects and choose the first safe
+    continuation or compensation.
+policy:
+  allow_implicit_invocation: true

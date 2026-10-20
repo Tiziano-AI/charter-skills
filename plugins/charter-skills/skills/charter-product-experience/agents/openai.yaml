@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Product Experience
+  short_description: Design journeys, first success and reasons to return
+  default_prompt: Use $charter-skills:charter-product-experience to design or improve
+    this user's journey from need to retained result, shaping comprehension, trust,
+    control, recovery and reasons to return.
+policy:
+  allow_implicit_invocation: true

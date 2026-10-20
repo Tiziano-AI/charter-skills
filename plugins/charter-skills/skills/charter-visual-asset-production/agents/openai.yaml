@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Visual Asset Production
+  short_description: Create and finish coherent image or video assets for use
+  default_prompt: Use $charter-skills:charter-visual-asset-production to turn sources
+    or generated candidates into the visually strong, correctly derived asset or bundle
+    its intended placement needs.
+policy:
+  allow_implicit_invocation: true

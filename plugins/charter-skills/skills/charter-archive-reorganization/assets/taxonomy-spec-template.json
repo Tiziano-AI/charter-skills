@@ -1,0 +1,44 @@
+{
+  "root": "/absolute/path/to/archive",
+  "collection_kind": "client-delivery-archive",
+  "dominant_retrieval_questions": [
+    "Find the artifact delivered to a client for a named milestone",
+    "Find the editable source that produced a named delivery"
+  ],
+  "primary_axis": "client-then-engagement",
+  "top_level_entries": [
+    "intake",
+    "clients",
+    "shared-reference",
+    "review-queues",
+    "reorganization-records"
+  ],
+  "secondary_axes": [
+    "engagement",
+    "lifecycle",
+    "delivery-date"
+  ],
+  "naming_rules": {
+    "date_meaning": "delivery-date",
+    "date_format": "YYYY-MM-DD",
+    "separator": "_",
+    "preserve_native_characters": true,
+    "preserve_source_identifier_when_present": true,
+    "preserve_extension": true
+  },
+  "review_queues": {
+    "needs_placement": "review-queues/needs-placement",
+    "needs_date_or_subject": "review-queues/needs-date-or-subject",
+    "same_subject_different_bytes": "review-queues/same-subject-different-bytes",
+    "bundle_or_link_review": "review-queues/bundle-or-link-review"
+  },
+  "duplicate_policy": {
+    "identity": "sha256-full-content",
+    "removal_in_plan": false,
+    "preferred_canonical_prefixes": [
+      "clients/"
+    ]
+  },
+  "excluded_paths": [],
+  "application_managed_paths": []
+}

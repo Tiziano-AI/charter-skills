@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Status Interface Design
+  short_description: Design truthful status, progress and controls for UIs and CLIs
+  default_prompt: 'Use $charter-skills:charter-status-interface-design to design or
+    repair the UI or CLI status behind this decision: its derivation, freshness, progress,
+    accessibility and the controls it offers.'
+policy:
+  allow_implicit_invocation: true

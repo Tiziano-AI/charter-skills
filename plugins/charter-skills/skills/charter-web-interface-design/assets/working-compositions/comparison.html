@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Room shortlist — Fieldwork</title>
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="comparison.css">
+  <script src="comparison.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#workspace">Skip to the room comparison</a>
+  <header class="app-header"><a class="brand" href="comparison.html"><span class="brand-mark" aria-hidden="true">f.</span> Fieldwork</a><span class="workspace-name">The shared workspace / Planning</span><a href="editorial.html">Journal study ↗</a></header>
+  <main id="workspace">
+    <header class="page-heading"><div><p class="eyebrow">Spaces / Team workshop</p><h1>A room for everyone.</h1><p>Compare the practical details. Keep the places worth a second look.</p></div><div class="collection-stamp"><strong>08</strong><span>spaces<br>in this collection</span></div></header>
+    <noscript><p class="notice">This interactive local-data study needs JavaScript for filtering and selection. The full dataset is readable in comparison.js.</p></noscript>
+    <div class="workbench" id="workbench" hidden>
+      <aside class="requirements">
+        <form id="filters">
+          <div class="section-heading"><h2>Your requirements</h2><span aria-hidden="true">↘</span></div>
+          <p class="help">Set what the room needs to do. The fit column explains each gap.</p>
+          <label class="field-label" for="people">People</label><input id="people" name="people" type="number" min="1" max="100" value="12" required>
+          <label class="field-label" for="budget">Maximum price per session (£)</label><input id="budget" name="budget" type="number" min="0" max="10000" value="180" required>
+          <fieldset><legend>Must have</legend><label class="check"><input name="access" type="checkbox" checked> Step-free access</label><label class="check"><input name="projector" type="checkbox" checked> Projector</label></fieldset>
+          <label class="check filter-check"><input name="matches" type="checkbox"> Show confirmed matches only</label>
+          <p class="help">Unconfirmed is kept separate from No.</p>
+          <div class="filter-actions"><button class="action action--primary" type="submit">Apply requirements</button><button class="action" id="reset" type="button">Reset</button></div>
+        </form>
+        <div class="collection-note"><span class="eyebrow">Collection note</span><p>Compare first. Ask about access where it is unconfirmed before choosing a room.</p><p class="help">Fictional spaces and prices.<br>No availability or booking service.</p></div>
+      </aside>
+      <section class="results" aria-labelledby="result-heading">
+        <header class="results-header"><div><h2 id="result-heading">All spaces</h2><p id="result-count" role="status"></p></div><label class="sort">Sort by <select id="sort"><option value="fit">Best fit</option><option value="price">Lowest price</option><option value="seats">Most seats</option></select></label></header>
+        <p class="active-requirements" id="active-requirements"></p>
+        <p class="scroll-hint" id="scroll-hint">Scroll to compare requirements. Room names stay in view.</p>
+        <div class="table-region" role="region" aria-label="Room comparison" aria-describedby="scroll-hint" tabindex="0">
+          <table><caption class="sr-only">Rooms, capacity, access, equipment, session price and fit against applied requirements.</caption><thead><tr><th scope="col" class="pick-column"><span class="sr-only">Shortlist</span></th><th scope="col" class="room-column">Room / Location</th><th scope="col" class="numeric">Seats</th><th scope="col">Step-free</th><th scope="col">Projector</th><th scope="col" class="numeric">Price</th><th scope="col" class="fit-column">Fit</th></tr></thead><tbody id="room-rows"></tbody></table>
+        </div>
+        <div class="empty" id="empty" hidden><span class="empty-symbol" aria-hidden="true">∅</span><h3>No confirmed matches.</h3><p>Your requirements are kept. Show all spaces to inspect the trade-offs, or adjust a requirement.</p><button class="action" id="show-all" type="button">Show all spaces</button></div>
+        <div class="selection-bar"><div><strong id="selection-count">No spaces selected</strong><p id="selection-scope">Select a room to start your shortlist.</p></div><div class="selection-actions"><button class="action" id="compare" type="button" disabled>Compare selected</button><button class="action action--primary" id="save" type="button" disabled>Save shortlist locally</button></div></div>
+        <div class="save-feedback"><p id="save-status" role="status">Shortlist stays in this browser when saved.</p><div><button class="text-action" id="clear" type="button" disabled>Clear selection</button><button class="text-action" id="download" type="button" disabled>Download shortlist</button></div></div>
+        <p class="saved-note" id="saved-note" hidden></p>
+      </section>
+    </div>
+  </main>
+  <footer class="app-footer"><span>Local study / 8 fictional rooms / no external requests</span><a href="../../references/authored-compositions.md">Construction &amp; credits ↗</a></footer>
+  <dialog id="comparison-dialog" aria-labelledby="dialog-title"><header class="dialog-header"><div><p class="eyebrow">Your shortlist</p><h2 id="dialog-title">Compare selected spaces</h2></div><button class="action" id="close-dialog" type="button" autofocus>Close</button></header><p class="help" id="dialog-summary"></p><div class="table-region" role="region" aria-label="Selected rooms comparison" tabindex="0"><table id="selected-table"></table></div><p class="dialog-note">Selections outside the current filters are included. Close to change the shortlist.</p></dialog>
+</body>
+</html>

@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Context Engineering
+  short_description: Design retrieval and context that preserve answer evidence
+  default_prompt: Use $charter-skills:charter-context-engineering to design or repair
+    this product's retrieval and context assembly, tracing representative questions
+    from source evidence to the answer the user receives.
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,62 @@
+:root { --paper: #f8ede3; --ink: #742f38; --line: #b98582; --action-fill: #742f38; --focus: #1546e2; }
+body { background: var(--paper); color: var(--ink); }
+p, h1, h2, figure { margin: 0; }
+.mast, .opening, .essay-grid, .closing-grid, .colophon { width: min(1320px, calc(100% - 80px)); margin-inline: auto; }
+.mast { display: flex; align-items: center; gap: 32px; justify-content: space-between; padding: 24px 0; border-bottom: 1px solid var(--ink); font-size: .8rem; }
+.wordmark { display: flex; gap: 12px; align-items: center; font-weight: 800; font-size: 1.4rem; letter-spacing: -.05em; text-decoration: none; }
+.mark { font-size: 2rem; line-height: 1; }
+.mast-note { margin-right: auto; }
+.issue-line { display: flex; gap: 20px; justify-content: space-between; margin: 28px 0 16px; font-size: .69rem; letter-spacing: .06em; text-transform: uppercase; }
+/* Codrops effect3's two opposed lines become the page's diagonal: title,
+   channel drawing, then a left-hand reading rail. Scale is capped, not 12vw. */
+.split-title { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; font-family: Fraunces, Georgia, serif; font-weight: 480; font-size: clamp(5rem, 12vw, 10.5rem); line-height: .96; letter-spacing: -.065em; font-variation-settings: 'SOFT' 25, 'WONK' 1; padding-bottom: .12em; }
+.split-title > span:last-child { justify-self: end; padding-right: .035em; font-style: italic; }
+[data-line] { overflow-wrap: anywhere; max-width: 100%; }
+.word { display: inline-block; max-width: 100%; overflow-wrap: anywhere; }
+.word + .word { margin-left: .1em; }
+.char { display: inline-block; transform-origin: 50% 0%; }
+.opening-grid { display: grid; grid-template-columns: 1fr 2.5fr; gap: 64px; align-items: end; margin-top: 16px; }
+.section-number, .eyebrow { font-size: .69rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }
+.opening-note p { font-family: Fraunces, Georgia, serif; font-size: 1.25rem; line-height: 1.4; margin: 28px 0; max-width: 22ch; }
+.reading-link { font-size: .85rem; display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--ink); text-decoration: none; gap: 16px; }
+.rain-figure svg { display: block; width: 100%; height: auto; }
+figcaption { display: flex; justify-content: space-between; gap: 18px; font-size: .64rem; line-height: 1.5; margin-top: 10px; }
+.essay-grid { display: grid; grid-template-columns: 1fr 2.5fr; gap: 64px; padding-block: 96px; border-bottom: 1px solid var(--line); }
+.contents { align-self: start; display: grid; gap: 16px; font-size: .8rem; }
+.contents .eyebrow { margin-bottom: 12px; }
+.contents a { text-decoration-color: var(--line); }
+.prose { max-width: 65ch; }
+.prose h2 { font: 460 clamp(2rem, 3.5vw, 3.3rem)/1.12 Fraunces, Georgia, serif; letter-spacing: -.035em; margin-block: 14px 24px; }
+.prose p { font-size: 1rem; line-height: 1.85; margin-top: 20px; }
+.prose .lede { font: 400 clamp(1.25rem, 2vw, 1.6rem)/1.5 Fraunces, Georgia, serif; }
+.margin-note { border-left: 2px solid var(--ink); padding-left: 20px; max-width: 44ch; margin-top: 30px; font-size: .85rem; line-height: 1.7; }
+.hold-section { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; gap: 32px; background: #223e96; color: #f8e5db; margin: 0; padding: 64px max(40px, calc((100vw - 1320px) / 2)); }
+.hold-intro, .hold-outro { font-size: .8rem; line-height: 1.8; margin-top: 24px; }
+.hold-outro { align-self: end; text-align: right; }
+/* Codrops effect10's mixed faces and three-line rhythm are retained; the
+   final line is quiet and open, not a second equally loud headline. */
+.hold-title { display: grid; gap: .12em; text-align: center; font-size: clamp(3.2rem, 6.5vw, 6rem); line-height: 1.05; font-weight: 550; letter-spacing: -.05em; }
+.hold-title em { font-family: Fraunces, Georgia, serif; font-weight: 420; }
+.hold-title > span:last-child { font: 390 .7em/1.2 Fraunces, Georgia, serif; letter-spacing: -.03em; }
+.closing-grid { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 48px; padding-block: 80px; align-items: start; }
+.closing-grid .section-number { margin-top: 26px; }
+.closing-note { align-self: end; border-top: 1px solid var(--line); padding-top: 20px; }
+.closing-note p { font: 400 1.45rem/1.35 Fraunces, Georgia, serif; margin-top: 20px; }
+.prose .end-mark { font-size: 2rem; }
+.colophon { border-top: 1px solid var(--ink); display: flex; justify-content: space-between; gap: 32px; padding-block: 28px 40px; }
+.colophon p { font-size: .72rem; line-height: 1.7; margin-top: 10px; }
+.colophon-actions { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; font-size: .72rem; }
+[id] { scroll-margin-top: 24px; }
+@media (max-width: 850px) { .mast-note { display: none; } .opening-grid, .essay-grid { gap: 32px; grid-template-columns: 1fr 2fr; } .hold-section { grid-template-columns: 1fr 2fr; } .hold-outro { grid-column: 2; } .closing-grid { grid-template-columns: 1fr 2fr; gap: 32px; } .closing-note { grid-column: 2; } .colophon { display: grid; } }
+@media (max-width: 580px) {
+  .mast, .opening, .essay-grid, .closing-grid, .colophon { width: calc(100% - 36px); }
+  .mast { padding-block: 18px; gap: 14px; } .wordmark { font-size: 1.05rem; gap: 6px; } .mast > a:last-child { font-size: .7rem; }
+  .issue-line { flex-wrap: wrap; justify-content: flex-start; gap: 10px 26px; margin-top: 22px; } .issue-line span:last-child { flex-basis: 100%; }
+  .split-title { font-size: clamp(3.8rem, 17vw, 6.2rem); margin-top: 24px; }
+  .opening-grid, .essay-grid, .closing-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .opening-grid { margin-top: 22px; } .opening-note p { max-width: 32ch; margin: 16px 0; font-size: 1.13rem; }
+  .rain-figure { margin-top: 6px; } figcaption { display: grid; gap: 3px; }
+  .essay-grid { padding-block: 48px; } .contents { gap: 14px; border-bottom: 1px solid var(--line); padding-bottom: 28px; }
+  .hold-section { grid-template-columns: minmax(0, 1fr); padding: 36px 18px; gap: 28px; } .hold-intro { margin-top: 12px; } .hold-title { font-size: clamp(3rem, 13vw, 4.5rem); } .hold-outro { grid-column: auto; text-align: left; margin: 0; }
+  .closing-grid { padding-block: 40px; } .closing-note { grid-column: auto; } .closing-grid .section-number { margin: 0; }
+}

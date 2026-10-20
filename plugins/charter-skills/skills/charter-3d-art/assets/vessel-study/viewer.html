@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vessel study — form, surface, light</title>
+<link rel="icon" href="data:,">
+<style>
+  *{box-sizing:border-box}body{margin:0;background:#ede9e1;color:#252a28;font:16px/1.5 system-ui,sans-serif}
+  main{max-width:1280px;margin:auto;padding:36px}header{max-width:760px}h1{font-family:Georgia,serif;font-size:46px;font-weight:400;line-height:1.1;margin:8px 0 16px}h2{font-size:24px;font-weight:500}
+  .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#56635d}p{max-width:72ch}a{color:#1a6456}button,select{font:inherit;background:#faf8f3;border:1px solid #abb3aa;border-radius:4px;padding:8px 12px;color:inherit}button{cursor:pointer}button:hover{background:white}button:focus-visible,select:focus-visible{outline:3px solid #2c8374;outline-offset:2px}
+  .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin:22px 0 12px}.controls label{display:grid;gap:4px;font-size:13px}#stage{height:min(68vh,730px);min-height:360px;background:#cfccc5;position:relative;border-radius:4px;overflow:hidden}canvas{display:block;width:100%;height:100%}#status{font-size:13px;color:#52625a;min-height:24px}#error{color:#832d1f}
+  .views{display:flex;gap:8px;margin-top:12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.grid figure{margin:0}.grid img{width:100%;height:auto;display:block;border-radius:4px}.grid figcaption{padding:12px 0;font-size:14px}.grid b{display:block;font-size:16px;margin-bottom:4px}.note{border-left:3px solid #668b7b;padding-left:20px;margin:24px 0}footer{border-top:1px solid #c6ccc2;margin-top:40px;padding-top:18px;font-size:13px}@media(max-width:680px){main{padding:20px}h1{font-size:36px}.grid{grid-template-columns:1fr}#stage{min-height:320px}}
+  #fallback{position:absolute;inset:0;display:grid;align-content:center;justify-items:center;padding:32px;text-align:center;background:linear-gradient(#d4d5d1,#e3e2dc)}#fallback[hidden]{display:none}#fallback p{max-width:48ch}button:disabled,select:disabled{opacity:.55;cursor:default}.views{flex-wrap:wrap}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
+<main>
+<header><span class="eyebrow">Construction study · original authored example</span><h1>One body.<br>A handle that belongs to it.</h1>
+<p>The proposition is a low, settled volume with a light outward reach. Compare the upright construction with its broader revision, then change only the finish or illumination. The GLBs below are the actual delivery meshes.</p></header>
+<div class="controls">
+  <label>Geometry<select id="asset"><option value="low-bellied">Low-bellied revision</option><option value="upright">Upright construction</option><option value="toy-car">Khronos ToyCar</option></select></label>
+  <label>Surface<select id="surface"><option value="native">Exported materials</option><option value="white">Inspection white</option><option value="glaze">Teal glaze</option></select></label>
+  <label>Illumination<select id="light"><option value="neutral">Neutral broad studio</option><option value="directional">Warm key / cool fill</option><option value="hdri">Studio Small 09 HDRI</option></select></label>
+</div>
+<div id="stage" aria-label="Interactive 3D model. Drag to orbit; scroll to zoom."><div id="fallback"><p id="fallback-message">Starting the interactive viewer. It needs WebGL and access to the Three.js renderer modules on jsDelivr.</p><p><a href="#stills">View the local Blender stills</a> or <a href="vessel-study.blend">open the editable Blender source</a>. Both remain available without the interactive renderer.</p></div></div>
+<div class="views"><button data-view="threequarter">Three-quarter</button><button data-view="front">Front</button><button data-view="side">Handle edge</button><button data-view="top">Interior</button><button data-view="innerwall">Inner wall</button><button id="rotate" aria-pressed="false">Orbit</button></div>
+<p id="status" role="status">Interactive renderer starting; local stills and Blender source are available below.</p><p id="error" role="alert"></p>
+<p class="note">Drag to orbit; scroll to zoom. Geometry, surface and illumination are independent. A warm highlight can reveal a fillet, but cannot widen the body, open the handle or thin the rim. ToyCar keeps its original materials by default: it is a separate finished-asset reference, not a construction example.</p>
+<h2 id="stills">Change the form; then dress the same forms</h2>
+<p>These Blender Cycles stills share an orthographic camera and framing. Each row shares its material and lights. The browser uses Three.js with screen-space ambient occlusion to describe recesses and contact; this view-dependent approximation is not Cycles illumination.</p>
+<div class="grid">
+<figure><img src="upright-neutral.png" alt="Tall white vessel with narrow body, thick rim and a constant-section handle"><figcaption><b>Upright · neutral</b>The tall axis dominates. The thick rim and near-uniform handle compete with the narrow body.</figcaption></figure>
+<figure><img src="low-bellied-neutral.png" alt="Broader white vessel with a thinner rim and tapered handle flowing into the body"><figcaption><b>Low-bellied · neutral</b>Width grows while height falls. A thinner lip opens the cavity; wider root transitions join a lighter outer reach.</figcaption></figure>
+<figure><img src="upright-glaze.png" alt="The same upright vessel under warm and cool light with teal glaze"><figcaption><b>Upright · finish and light only</b>Richer reflections describe the same tall proportions and thick rim. Surface treatment has not made the form revision.</figcaption></figure>
+<figure><img src="low-bellied-glaze.png" alt="The revised low-bellied vessel under identical warm and cool light with teal glaze"><figcaption><b>Low-bellied · finish and light only</b>The changed body and handle survive the new finish. Grazing reflections expose the root transitions and lip.</figcaption></figure>
+</div>
+<footer><a href="vessel-study.blend">Editable Blender source</a> · <a href="../../scripts/build_vessel_study.py">Rebuild script</a> · <a href="../../references/form-construction-study.md">Construction and limits</a> · <a href="../reference-assets/SOURCE.md">External asset rights</a><p>Local GLB/EXR files; renderer modules from jsDelivr (Three.js 0.180.0, MIT). Serve this directory over localhost; direct file URLs do not reliably load assets. Network access is needed for renderer modules. No analytics or uploads.</p></footer>
+</main>
+<script>
+// This fallback runs before any network module can fail to import.
+window.studyStartup={
+  ready:false,
+  fail(message){
+    if(this.ready)return;
+    clearTimeout(this.timer);
+    document.getElementById('fallback-message').textContent=message;
+    document.getElementById('status').textContent='Interactive viewer unavailable. Local stills and Blender source remain available.';
+  },
+  finish(){
+    this.ready=true;clearTimeout(this.timer);
+    document.getElementById('fallback').hidden=true;
+    document.querySelectorAll('.controls select,.views button').forEach(control=>control.disabled=false);
+  }
+};
+document.querySelectorAll('.controls select,.views button').forEach(control=>control.disabled=true);
+window.studyStartup.timer=setTimeout(()=>window.studyStartup.fail('The renderer has not started. Check access to jsDelivr and reload, or use the local stills and editable source.'),15000);
+</script>
+<script type="module" onerror="window.studyStartup.fail('The renderer modules could not load. Check access to jsDelivr and reload, or use the local stills and editable source.')">
+try{
+const [THREE,{GLTFLoader},{EXRLoader},{OrbitControls},{RoomEnvironment},{EffectComposer},{RenderPass},{GTAOPass},{OutputPass},{RectAreaLightUniformsLib},{SMAAPass}]=await Promise.all([
+  import('three'),import('three/addons/loaders/GLTFLoader.js'),import('three/addons/loaders/EXRLoader.js'),
+  import('three/addons/controls/OrbitControls.js'),import('three/addons/environments/RoomEnvironment.js'),
+  import('three/addons/postprocessing/EffectComposer.js'),import('three/addons/postprocessing/RenderPass.js'),
+  import('three/addons/postprocessing/GTAOPass.js'),import('three/addons/postprocessing/OutputPass.js'),
+  import('three/addons/lights/RectAreaLightUniformsLib.js'),import('three/addons/postprocessing/SMAAPass.js')
+]);
+const el=id=>document.getElementById(id), stage=el('stage'), status=el('status');
+let renderer, object, environment, environmentRequest, version=0;
+const scene=new THREE.Scene();
+const backdrop=document.createElement('canvas');backdrop.width=1;backdrop.height=512;
+const backdropContext=backdrop.getContext('2d'), gradient=backdropContext.createLinearGradient(0,0,0,512);
+gradient.addColorStop(0,'#b7bdb9');gradient.addColorStop(1,'#dddcd6');backdropContext.fillStyle=gradient;backdropContext.fillRect(0,0,1,512);
+const backdropTexture=new THREE.CanvasTexture(backdrop);backdropTexture.colorSpace=THREE.SRGBColorSpace;scene.background=backdropTexture;
+const camera=new THREE.PerspectiveCamera(35,1,.05,80); camera.position.set(5,3.5,7);
+try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});}catch(e){throw new Error('WebGL is unavailable. Use the local stills or editable Blender source.');}
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.toneMapping=THREE.AgXToneMapping;renderer.toneMappingExposure=1;
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.VSMShadowMap;
+stage.append(renderer.domElement);
+const controls=new OrbitControls(camera,renderer.domElement); controls.target.set(.3,1.35,0);controls.enableDamping=true;controls.minDistance=3;controls.maxDistance=14;controls.maxPolarAngle=Math.PI/2-.025;
+const pmrem=new THREE.PMREMGenerator(renderer), room=new RoomEnvironment();
+const neutralEnvironment=pmrem.fromScene(room,.04).texture; room.dispose();
+RectAreaLightUniformsLib.init();
+const softbox=new THREE.RectAreaLight(0xffffff,6,4.5,5);softbox.position.set(-4,5,4);softbox.lookAt(0,1.3,0);scene.add(softbox);
+const key=new THREE.DirectionalLight(0xffc485,4), fill=new THREE.DirectionalLight(0x8bbaff,.8);
+key.position.set(-3,5,-2);fill.position.set(4,2,3);key.castShadow=true;key.shadow.mapSize.set(2048,2048);key.shadow.camera.left=-5;key.shadow.camera.right=5;key.shadow.camera.top=5;key.shadow.camera.bottom=-5;key.shadow.camera.near=.1;key.shadow.camera.far=18;key.shadow.normalBias=.001;key.shadow.bias=-.00002;key.shadow.radius=5;key.shadow.blurSamples=8;scene.add(key,fill);
+// The invisible receiver has real depth for contact AO without a visible floor edge.
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(200,200),new THREE.ShadowMaterial({color:0x252923,opacity:.24}));
+ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+const composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scene,camera));
+const occlusion=new GTAOPass(scene,camera,1,1,undefined,{radius:.45,thickness:.6,distanceExponent:1.5,distanceFallOff:1,scale:1,samples:24},{radius:6,samples:16});
+occlusion.blendIntensity=.8;composer.addPass(occlusion);composer.addPass(new OutputPass());composer.addPass(new SMAAPass());
+const views={threequarter:[5.2,5,8.2],front:[.35,2.1,9],side:[8,2.1,.001],top:[.35,9,.01],innerwall:[-4,8,3]};
+function setView(name){controls.target.set(.35,1.35,0);const distance=name==='side'||name==='front'?.83:.68;camera.position.set(...views[name]).sub(controls.target).multiplyScalar(distance*Math.max(1,1.1/camera.aspect)).add(controls.target);controls.update();}
+function appearance(){
+  if(!object)return;
+  object.traverse(o=>{if(!o.isMesh)return;
+    if(o.material!==o.userData.original)for(const mat of [o.material].flat())mat.dispose();
+    if(el('surface').value==='native'){o.material=o.userData.original;return;}
+    o.material=new THREE.MeshStandardMaterial({color:el('surface').value==='white'?new THREE.Color(.72,.72,.72):new THREE.Color(.025,.18,.165),roughness:el('surface').value==='white'?.48:.20});
+  });
+}
+async function lighting(){
+  const choice=el('light').value;key.visible=fill.visible=choice==='directional';softbox.visible=choice==='neutral';
+  scene.environment=neutralEnvironment;scene.environmentIntensity=choice==='directional'?.22:.24;
+  el('error').textContent='';
+  if(choice==='hdri'){
+    try{
+      if(!environmentRequest)environmentRequest=new EXRLoader().loadAsync('../reference-assets/studio-small-09/studio_small_09_1k.exr').then(texture=>{environment=pmrem.fromEquirectangular(texture).texture;texture.dispose();return environment;}).catch(error=>{environmentRequest=null;throw error;});
+      await environmentRequest;
+      if(el('light').value==='hdri'){scene.environment=environment;scene.environmentIntensity=1;}
+    }catch(error){if(el('light').value==='hdri'){softbox.visible=true;el('error').textContent='The HDRI could not load; neutral studio light is shown instead. Check that the local EXR is present.';}}
+  }
+}
+async function load(){
+  const token=++version, name=el('asset').value;status.textContent='Loading '+name+'…';el('error').textContent='';
+  const path=name==='toy-car'?'../reference-assets/toy-car/ToyCar.glb':name+'.glb';
+  try{
+    const gltf=await new GLTFLoader().loadAsync(path);if(token!==version)return;
+    if(object){scene.remove(object);object.traverse(o=>{if(o.isMesh){o.geometry.dispose();if(o.material!==o.userData.original)o.material.dispose();for(const mat of [o.userData.original].flat())mat.dispose();}});}
+    object=gltf.scene;let triangles=0;
+    object.traverse(o=>{if(o.isMesh){o.castShadow=o.receiveShadow=true;o.userData.original=o.material;triangles+=(o.geometry.index?.count??o.geometry.attributes.position.count)/3;}});
+    if(name==='toy-car'){
+      const box=new THREE.Box3().setFromObject(object), size=box.getSize(new THREE.Vector3());object.scale.multiplyScalar(3.3/Math.max(size.x,size.y,size.z));
+      box.setFromObject(object);const center=box.getCenter(new THREE.Vector3());object.position.sub(center);object.position.y-=box.min.y-center.y;
+    }
+    const bounds=new THREE.Box3().setFromObject(object);
+    ground.position.y=bounds.min.y-.001;
+    occlusion.setSceneClipBox(bounds.clone().expandByScalar(1));
+    scene.add(object);appearance();await lighting();if(token!==version)return;
+    window.studyStartup.finish();status.textContent=`${name} · ${triangles.toLocaleString()} triangles · Three.js ${THREE.REVISION} / WebGL · drag to inspect`;
+    window.studyReady={asset:name,triangles,renderer:THREE.REVISION};
+  }catch(error){if(token!==version)return;el('error').textContent='Could not load this local GLB. Serve the package over localhost and check that the asset file is present. '+error.message;status.textContent='Asset unavailable';window.studyStartup.fail('The renderer started, but the local model could not load. Serve this package over localhost, or use the stills and Blender source.');document.querySelectorAll('.controls select,.views button').forEach(control=>control.disabled=false);}
+}
+el('asset').addEventListener('change',load);el('surface').addEventListener('change',appearance);el('light').addEventListener('change',()=>lighting().catch(e=>el('error').textContent=e.message));
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+el('rotate').addEventListener('click',()=>{controls.autoRotate=!controls.autoRotate;el('rotate').setAttribute('aria-pressed',String(controls.autoRotate));el('rotate').textContent=controls.autoRotate?'Stop orbit':'Orbit';});
+function resize(){
+  const {width,height}=stage.getBoundingClientRect(),previousFit=Math.max(1,1.1/camera.aspect);
+  renderer.setSize(width,height,false);composer.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix();
+  camera.position.sub(controls.target).multiplyScalar(Math.max(1,1.1/camera.aspect)/previousFit).add(controls.target);
+}
+resize();new ResizeObserver(resize).observe(stage);
+setView('threequarter');renderer.setAnimationLoop(()=>{controls.update();composer.render();});await load();
+}catch(error){window.studyStartup.fail('The interactive renderer could not start. Check WebGL support and access to jsDelivr, then reload. The local stills and Blender source remain available.');console.error(error);}
+</script>
+</html>

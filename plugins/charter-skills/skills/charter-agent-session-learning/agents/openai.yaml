@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Agent Session Learning
+  short_description: Learn what went wrong and what worked in agent sessions
+  default_prompt: 'Use $charter-skills:charter-agent-session-learning on this session
+    or transcript: tell me what to change, if anything, and where, then what went
+    wrong and why, and what worked.'
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Document Fidelity
+  short_description: Make document properties survive the recipient's use
+  default_prompt: Use $charter-skills:charter-document-fidelity to create or repair
+    this document so its meaning, appearance and required editable or machine-readable
+    structure survive the recipient's actual use.
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Session Wind-Down
+  short_description: Bring sessions to a safe point before a restart or handoff
+  default_prompt: 'Use $charter-skills:charter-session-wind-down to bring the affected
+    sessions to a safe point: let in-flight work finish, start nothing new, keep how
+    to resume and tell me what is ready or still needs my action.'
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Archive Reorganization
+  short_description: Reorganize collections for retrieval with provenance intact
+  default_prompt: 'Use $charter-skills:charter-archive-reorganization to make this
+    collection easier to search and understand: choose its structure and names, plan
+    the moves, and keep bundles, versions and provenance intact.'
+policy:
+  allow_implicit_invocation: true

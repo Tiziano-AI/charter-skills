@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Apple Interface Design
+  short_description: Design native Apple scenes, interaction and adaptation
+  default_prompt: Use $charter-skills:charter-apple-interface-design to resolve the
+    native scene, interaction, adaptation, accessibility and framework choices for
+    this Apple experience.
+policy:
+  allow_implicit_invocation: true

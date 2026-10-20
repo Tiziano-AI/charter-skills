@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Skill Package Design
+  short_description: Design or fix SKILL.md skills that misroute or underperform
+  default_prompt: Use $charter-skills:charter-skill-package-design to decide what
+    belongs in this skill, write a card that survives truncation and put its decisive
+    rules in the body.
+policy:
+  allow_implicit_invocation: true

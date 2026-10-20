@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Provider Support Design
+  short_description: Design capability selection, adaptation and fallback
+  default_prompt: Use $charter-skills:charter-provider-support-design to decide what
+    this capability promises on each relevant provider or backend path, including
+    selection, adaptation, fallback, denial and diagnostics.
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Instruction System Design
+  short_description: Place and compose agent instructions, also after upgrades
+  default_prompt: Use $charter-skills:charter-instruction-system-design to decide
+    what this behavior needs taught, where each rule lives and how the instruction
+    layers compose, including after a model or harness upgrade.
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "charter-skills",
+  "version": "1.0.0-rc.8",
+  "description": "An opinionated, Mac-first specialist library for useful work with agents.",
+  "author": {
+    "name": "Tiziano AI"
+  },
+  "repository": "https://github.com/Tiziano-AI/charter-skills",
+  "license": "MIT",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Charter Skills",
+        "shortDescription": "An opinionated, Mac-first specialist library for useful work with agents.",
+        "developerName": "Tiziano AI",
+        "websiteURL": "https://github.com/Tiziano-AI/charter-skills",
+        "category": "Productivity"
+      }
+    }
+  }
+}

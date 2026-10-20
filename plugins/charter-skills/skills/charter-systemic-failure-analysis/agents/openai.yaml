@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Systemic Failure Analysis
+  short_description: Explain slowness or recurring failure and choose an intervention
+  default_prompt: Use $charter-skills:charter-systemic-failure-analysis to explain
+    what recreates this failure or where the time goes, and choose an intervention
+    that changes that mechanism.
+policy:
+  allow_implicit_invocation: true

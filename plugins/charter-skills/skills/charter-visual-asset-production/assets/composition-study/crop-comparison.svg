@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title description">
+  <title id="title">What a 9:16 crop removes from the forest scene</title>
+  <desc id="description">The first panel has Pepper and Carrot at left and a sunlit destination at right. Two 9:16 crops demonstrate the loss: a left crop retains the travelers but removes the building; a right crop retains the building but removes the travelers. This is an illustrative composition constraint, not a record of a previous agent failure.</desc>
+  <metadata>Original art: David Revoy, Pepper and Carrot episode 26 page 1, CC BY 4.0, https://www.peppercarrot.com/en/webcomic-sources/ep26_Books-Are-Great.html. Derivative diagram: Charter. Changes: panel extraction, crop demonstrations, overlays and new explanatory text. Full credits: README.md.</metadata>
+  <rect width="1600" height="1000" fill="#f4efdb"/>
+  <g font-family="Arial, sans-serif" fill="#163b32">
+    <text x="48" y="66" font-size="31" font-weight="700">One relationship needs both ends of the frame.</text>
+    <text x="48" y="110" font-size="21">Two 9:16 crops of the same landscape panel. Neither keeps the journey intact.</text>
+    <text x="48" y="164" font-size="17" font-weight="700" letter-spacing="1.2">SOURCE PANEL + CROP WINDOWS</text>
+    <text x="992" y="164" font-size="17" font-weight="700">TRAVELERS ONLY</text>
+    <text x="1298" y="164" font-size="17" font-weight="700">DESTINATION ONLY</text>
+  </g>
+  <svg x="48" y="190" width="896" height="605" viewBox="104 104 2276 1536" preserveAspectRatio="xMidYMid meet" overflow="hidden">
+    <image x="0" y="0" width="2481" height="3503" xlink:href="pepper-carrot-e26-p01-original.jpg"/>
+    <rect x="108" y="108" width="856" height="1528" fill="none" stroke="#fa775b" stroke-width="8"/>
+    <rect x="1520" y="108" width="856" height="1528" fill="none" stroke="#c5eaf0" stroke-width="8"/>
+  </svg>
+  <svg x="992" y="190" width="254" height="452" viewBox="104 104 864 1536" preserveAspectRatio="xMidYMid meet" overflow="hidden">
+    <image x="0" y="0" width="2481" height="3503" xlink:href="pepper-carrot-e26-p01-original.jpg"/>
+  </svg>
+  <path d="M992 650H1246" stroke="#c95338" stroke-width="4"/>
+  <svg x="1298" y="190" width="254" height="452" viewBox="1516 104 864 1536" preserveAspectRatio="xMidYMid meet" overflow="hidden">
+    <image x="0" y="0" width="2481" height="3503" xlink:href="pepper-carrot-e26-p01-original.jpg"/>
+  </svg>
+  <path d="M1298 650H1552" stroke="#47798b" stroke-width="4"/>
+  <g font-family="Arial, sans-serif" fill="#163b32" font-size="20">
+    <text x="992" y="691">Who is running?</text>
+    <text x="992" y="724">Preserved.</text>
+    <text x="992" y="774">Where are they going?</text>
+    <text x="992" y="807" font-weight="700">Removed.</text>
+    <text x="1298" y="691">Where is the path going?</text>
+    <text x="1298" y="724">Preserved.</text>
+    <text x="1298" y="774">Who is following it?</text>
+    <text x="1298" y="807" font-weight="700">Removed.</text>
+    <text x="48" y="850">For a place portrait, the right crop could work. For an invitation to follow these travelers,</text>
+    <text x="48" y="883">change the layout: retain the landscape panel and give text or another panel the tall space.</text>
+  </g>
+  <g font-family="Arial, sans-serif" fill="#365a4d" font-size="15">
+    <text x="48" y="958">Art: David Revoy · Pepper&amp;Carrot · CC BY 4.0 · peppercarrot.com</text>
+    <text x="1552" y="958" text-anchor="end">Charter composition diagram · crops + annotations</text>
+  </g>
+</svg>

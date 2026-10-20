@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Functional Design
+  short_description: Design how a product turns inputs into useful results
+  default_prompt: Use $charter-skills:charter-functional-design to specify this product's
+    substantive work through representative cases, connecting inputs to useful results
+    and deciding who or what performs each transformation.
+policy:
+  allow_implicit_invocation: true

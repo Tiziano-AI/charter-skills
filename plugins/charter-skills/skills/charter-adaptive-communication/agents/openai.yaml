@@ -1,0 +1,7 @@
+interface:
+  display_name: Charter · Adaptive Communication
+  short_description: Compose established meaning for its audience and medium
+  default_prompt: Use $charter-skills:charter-adaptive-communication to compose this
+    for its audience, purpose and medium while preserving its meaning.
+policy:
+  allow_implicit_invocation: true

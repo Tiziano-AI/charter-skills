@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Composition studies · Charter</title>
+  <style>
+    :root { color-scheme: light; --ink: #202922; --muted: #59635c; --line: #d7dbd3; --paper: #f2f2eb; --accent: #285d49; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #e4e6df; color: var(--ink); font: 15px/1.45 Arial, Helvetica, sans-serif; }
+    h1, h2, h3, p { margin: 0; }
+    button, input, select, textarea { font: inherit; }
+    button, select { cursor: default; }
+    .intro { width: min(1360px, calc(100% - 64px)); margin: 36px auto; }
+    .intro p { max-width: 78ch; }
+    .intro nav { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 16px; }
+    a { color: #245943; text-underline-offset: 4px; }
+    .study { width: 1440px; margin: 24px auto; padding: 38px 42px 34px; background: var(--paper); }
+    .study-head { display: grid; grid-template-columns: 1fr 490px; gap: 60px; align-items: end; margin-bottom: 28px; }
+    .kicker { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; }
+    .study-head h2 { font-size: 34px; line-height: 1.12; letter-spacing: -.035em; margin-top: 8px; }
+    .brief { font-size: 16px; line-height: 1.5; color: #49564c; }
+    .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .panel-heading { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; font-size: 18px; letter-spacing: -.01em; }
+    .letter { font: 12px/1 monospace; color: #607263; border: 1px solid #aab6a9; padding: 5px 7px; }
+    .screen { border: 1px solid #cdd2c8; background: #fff; }
+    .panel-note { padding-top: 13px; font-size: 15px; line-height: 1.48; }
+    .panel-note strong { display: block; color: #234d3a; margin-bottom: 3px; }
+    .context { margin-top: 25px; display: grid; grid-template-columns: 240px 1fr; gap: 28px; padding-top: 19px; border-top: 1px solid #aab6a9; }
+    .context h3 { font-size: 18px; line-height: 1.25; }
+    .context p { max-width: 103ch; }
+    .takeaway { margin-top: 16px; color: #59665c; font-size: 13px; }
+    .appbar { height: 53px; padding: 0 23px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e4e7e1; font-size: 13px; }
+    .brand { letter-spacing: -.045em; font-size: 21px; font-weight: 700; }
+    .quiet { color: #627064; }
+    .small { font-size: 12px; }
+    .button { display: inline-flex; align-items: center; justify-content: center; border: 1px solid #cdd5ce; border-radius: 6px; color: #2b4236; background: #fff; padding: 9px 13px; gap: 7px; white-space: nowrap; }
+    .primary { color: #fff; background: #285d49; border-color: #285d49; font-weight: 700; }
+    .pill { display: inline-flex; padding: 4px 8px; border-radius: 20px; font-size: 12px; background: #eef3ed; color: #355942; }
+    .label { display: block; color: #495a4e; font-size: 12px; font-weight: 700; margin-bottom: 5px; }
+    .field { min-height: 35px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #cbd3cd; border-radius: 5px; padding: 7px 10px; color: #304a3a; background: #fff; font-size: 13px; }
+    .creation { height: 560px; }
+    .creation-a { background: #fbfcf7; }
+    .creation-body { padding: 28px 30px; }
+    .creation-body h3 { font-size: 23px; letter-spacing: -.025em; }
+    .compose { margin-top: 25px; background: #fff; border: 1px solid #acbeb0; border-radius: 10px; box-shadow: 0 7px 20px #30493008; padding: 17px; }
+    .prompt { font-size: 16px; line-height: 1.45; color: #243b2c; }
+    .upload { display: flex; align-items: center; gap: 10px; margin: 16px 0; font-size: 12px; }
+    .pot { width: 42px; height: 42px; border-radius: 4px; background: #e6ddd0; flex: none; }
+    .compose-footer { display: flex; align-items: center; gap: 12px; justify-content: space-between; border-top: 1px solid #ecede8; padding-top: 14px; }
+    .example-row { margin-top: 18px; font-size: 12px; display: flex; gap: 20px; color: #5c6b5e; }
+    .lab-body { padding: 20px 24px; }
+    .lab-body h3 { font-size: 23px; letter-spacing: -.025em; }
+    .tabs { display: flex; gap: 22px; margin: 17px 0 19px; border-bottom: 1px solid #dee3dc; font-size: 13px; }
+    .tabs span { padding-bottom: 8px; }
+    .tabs .active { color: #285d49; border-bottom: 2px solid #285d49; font-weight: 700; }
+    .lab-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .lab-prompt { margin-top: 18px; }
+    .lab-prompt .field { min-height: 76px; line-height: 1.5; display: block; }
+    .lab-footer { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; }
+    .lab-upload { margin: 12px 0; }
+    .compare { min-height: 585px; }
+    .rooms-head { padding: 21px 22px 18px; }
+    .rooms-head h3 { font-size: 24px; letter-spacing: -.025em; margin-bottom: 5px; }
+    .rooms-filter { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; font-size: 12px; }
+    .rooms-filter span { background: #edf1e9; padding: 5px 8px; border-radius: 4px; }
+    .table-wrap { padding: 0 17px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { font-size: 11px; text-transform: uppercase; letter-spacing: .025em; text-align: left; color: #566154; padding: 11px 6px; border-bottom: 1px solid #bbc6b7; background: #f5f6f1; }
+    td { padding: 16px 6px; border-bottom: 1px solid #e2e6dc; vertical-align: top; }
+    th.num, td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    td strong { font-weight: 700; display: block; }
+    td small { font-size: 11px; color: #606b5c; }
+    .chosen td { background: #edf4e8; }
+    .choice-line { margin: 18px 22px 0; display: flex; justify-content: space-between; align-items: center; gap: 14px; font-size: 13px; }
+    .missing { color: #815130; }
+    .room-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; padding: 0 20px 20px; }
+    .room-card { border: 1px solid #dfe3d8; border-radius: 9px; overflow: hidden; }
+    .room-scene { display: block; height: 82px; width: 100%; background: #eee1cd; }
+    .room-card-body { padding: 10px 12px 12px; }
+    .room-title { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }
+    .room-title h4 { font-size: 15px; margin: 0; }
+    .room-title strong { font-size: 15px; font-variant-numeric: tabular-nums; }
+    .room-card dl { margin: 7px 0 0; display: grid; grid-template-columns: 1fr 1fr; font-size: 11px; gap: 3px 6px; }
+    .room-card dt { color: #63715f; }
+    .room-card dd { margin: 0; text-align: right; }
+    .room-card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 7px; font-size: 11px; color: #506346; }
+    .room-card-footer .button { padding: 3px 8px; font-size: 11px; }
+    .editorial { height: 585px; overflow: hidden; }
+    .editorial-a { background: #eeeadb; color: #243a30; position: relative; }
+    .journal-mast { display: flex; justify-content: space-between; align-items: baseline; margin: 20px 26px 0; padding-bottom: 12px; border-bottom: 1px solid #acb1a1; }
+    .journal-brand { font-family: Georgia, serif; font-size: 30px; letter-spacing: -.055em; }
+    .journal-article { position: relative; padding: 20px 26px; }
+    .journal-article h3 { font: 62px/.95 Georgia, serif; letter-spacing: -.055em; position: relative; z-index: 1; margin-top: 12px; max-width: 550px; }
+    .journal-deck { font: 18px/1.35 Georgia, serif; width: 245px; margin-top: 16px; position: relative; z-index: 2; }
+    .journal-art { position: absolute; width: 360px; height: 310px; right: -2px; top: 177px; }
+    .journal-byline { position: absolute; bottom: 28px; left: 26px; max-width: 230px; font-size: 11px; letter-spacing: .035em; }
+    .journal-read { display: block; margin-top: 16px; font-size: 14px; font-weight: 700; }
+    .dashboard { display: grid; grid-template-columns: 113px 1fr; height: 531px; background: #f3f5f5; }
+    .side { border-right: 1px solid #dee3e3; padding: 20px 12px; background: #fff; font-size: 12px; color: #596466; }
+    .side div { margin-bottom: 18px; }
+    .side .selected { color: #244b3e; font-weight: 700; background: #edf2ed; padding: 8px; margin-left: -5px; margin-right: -5px; border-radius: 4px; }
+    .dashboard-body { padding: 20px; }
+    .dashboard-body h3 { font-size: 23px; letter-spacing: -.02em; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin: 17px 0; }
+    .stats div { background: #fff; border: 1px solid #e0e5e4; padding: 11px; border-radius: 7px; }
+    .stats strong { font-size: 20px; display: block; }
+    .stats small { font-size: 10px; color: #65716d; }
+    .article-card { border-radius: 8px; border: 1px solid #dce2dc; background: #fff; padding: 17px; }
+    .article-card .mini-art { background: #eeeadb; height: 121px; width: 100%; }
+    .article-card h4 { font-size: 21px; line-height: 1.15; margin: 13px 0 9px; }
+    .article-card p { font-size: 13px; color: #5d6960; }
+    .article-card .meta { font-size: 10px; margin-top: 12px; color: #59665d; }
+    .article-card .button { width: 100%; margin-top: 14px; font-size: 12px; }
+    .toolbar-stage { background: #fff; border: 1px solid #cdd2c8; padding: 23px 25px 27px; }
+    .toolbar-label { margin-bottom: 14px; font-size: 18px; }
+    .bar { display: flex; gap: 12px; align-items: center; background: #f5f7f2; border: 1px solid #dfe4da; padding: 16px; position: relative; }
+    .document-name { font-size: 17px; font-weight: 700; margin-right: auto; min-width: 0; }
+    .document-name small { font-size: 12px; font-weight: 400; color: #63715f; display: block; margin-top: 4px; }
+    .save-slot { width: 160px; display: flex; align-items: center; }
+    .preview-slot { min-height: 40px; display: flex; align-items: stretch; }
+    .metrics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 26px; margin-top: 13px; color: #675b45; font-size: 13px; }
+    .metrics strong { display: block; margin-bottom: 4px; font-size: 14px; }
+    .metrics code { font-size: 12px; }
+    .toolbar-good { margin-top: 26px; }
+    .good-bar { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: center; }
+    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .control { --control-size: 36px; --control-pad: 12px; --control-block-pad: 7px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: var(--control-size); padding: var(--control-block-pad) var(--control-pad); border: 1px solid #bfccbf; border-radius: 6px; background: #fff; font-size: 13px; line-height: 20px; white-space: nowrap; }
+    .control--compact { --control-size: 32px; --control-pad: 10px; --control-block-pad: 5px; font-size: 12px; }
+    .control.primary { background: #285d49; color: #fff; border-color: #285d49; }
+    .status { color: #587149; font-size: 12px; white-space: nowrap; margin-right: 8px; }
+    .status:before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #69905a; margin-right: 6px; vertical-align: 1px; }
+    .status.pending { color: #7d5c2b; }
+    .status.pending:before { background: #a37b39; }
+    .control:disabled { background: #edf0e8; color: #64705d; border-color: #c6cfc0; }
+    .ownership { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 26px; padding-top: 21px; }
+    .ownership h4 { font-size: 14px; margin: 0 0 5px; }
+    .ownership p { font-size: 13px; color: #55644f; }
+    .ownership code { color: #304b3d; font-size: 12px; }
+    .stress { margin-top: 24px; display: grid; grid-template-columns: 700px 1fr; gap: 28px; align-items: center; }
+    .stress .bar { gap: 12px 20px; }
+    .stress p { font-size: 14px; color: #50614e; }
+    .stress strong { color: #2f4a38; }
+    .foot { margin-top: 20px; display: flex; justify-content: space-between; color: #687263; font-size: 11px; }
+    @media (max-width: 1472px) { .study { margin-left: 16px; margin-right: 16px; } }
+    @media print { body { background: white; } .intro { display: none; } .study { margin: 0; break-after: page; } }
+  </style>
+</head>
+<body>
+  <header class="intro">
+    <h1>Composition studies</h1>
+    <p>Original teaching material, not a production app template. The brands, data and illustrations are fictional; controls depict interface states and do not perform actions. Each pair holds a brief and its content constant, then changes the context in which the alternative becomes useful.</p>
+    <nav aria-label="Study index"><a href="#creation">Creation entrance</a><a href="#comparison">Comparison density</a><a href="#editorial">Editorial character</a><a href="#toolbar">Toolbar family</a></nav>
+  </header>
+
+  <section class="study" id="creation" aria-labelledby="creation-title">
+    <header class="study-head">
+      <div><p class="kicker">01 · The entrance frames the job</p><h2 id="creation-title">Start with the intended image<br>or the machine that makes it?</h2></div>
+      <p class="brief"><strong>Brief.</strong> A small ceramics shop needs one portrait product image from its pitcher photo. The maker knows the desired scene, not the generation parameters.</p>
+    </header>
+    <div class="pair">
+      <article>
+        <h3 class="panel-heading"><span class="letter">A</span> Creation entrance</h3>
+        <div class="screen creation creation-a">
+          <div class="appbar"><span class="brand">Stillroom</span><span class="quiet">My images &nbsp; · &nbsp; Silt Studio</span></div>
+          <div class="creation-body">
+            <h3>Create a product image</h3>
+            <div class="compose">
+              <span class="label">Describe your image</span>
+              <p class="prompt">Our stoneware pitcher on a sky-blue table.<br>Soft side light, one branch of olive, no lettering.</p>
+              <div class="upload"><svg class="pot" viewBox="0 0 42 42" aria-label="Pitcher reference"><path d="M14 10h14l-2 5 3 18H12l3-18z" fill="#a88767"/><path d="M27 16c12-2 11 15 1 13" fill="none" stroke="#a88767" stroke-width="4"/></svg><span><strong>pitcher-front.jpg</strong><br><span class="quiet">Reference photo attached</span></span></div>
+              <div class="compose-footer"><span class="small quiet">Portrait · 4:5 &nbsp; <span aria-hidden="true">⌄</span><br>1 image · Studio model · More settings</span><button class="button primary" type="button">Create image <span aria-hidden="true">↗</span></button></div>
+            </div>
+            <div class="example-row"><span>Try a scene:</span><span>On a kitchen shelf ↗</span><span>In the studio ↗</span></div>
+          </div>
+        </div>
+        <p class="panel-note"><strong>The scene and the next action share one place.</strong>The attached reference, prompt and output shape explain what will be made. Defaults keep model and sampling choices reachable without making them entrance requirements.</p>
+      </article>
+      <article>
+        <h3 class="panel-heading"><span class="letter">B</span> Capability and configuration inventory</h3>
+        <div class="screen creation">
+          <div class="appbar"><span class="brand">Stillroom</span><span class="quiet">My images &nbsp; · &nbsp; Silt Studio</span></div>
+          <div class="lab-body">
+            <h3>Image workspace</h3>
+            <div class="tabs"><span class="active">Generate</span><span>Edit</span><span>Upscale</span><span>Model library</span></div>
+            <div class="lab-grid">
+              <div><span class="label">Model</span><div class="field">Studio <span>⌄</span></div></div>
+              <div><span class="label">Mode</span><div class="field">Photo reference <span>⌄</span></div></div>
+              <div><span class="label">Output</span><div class="field">Portrait 4:5 <span>⌄</span></div></div>
+              <div><span class="label">Images</span><div class="field">1 <span>⌄</span></div></div>
+              <div><span class="label">Sampling steps</span><div class="field">24</div></div>
+              <div><span class="label">Seed</span><div class="field">Random</div></div>
+            </div>
+            <div class="lab-prompt"><span class="label">Prompt</span><div class="field">Our stoneware pitcher on a sky-blue table.<br>Soft side light, one branch of olive, no lettering.</div></div>
+            <div class="upload lab-upload"><svg class="pot" viewBox="0 0 42 42" aria-label="Pitcher reference"><path d="M14 10h14l-2 5 3 18H12l3-18z" fill="#a88767"/><path d="M27 16c12-2 11 15 1 13" fill="none" stroke="#a88767" stroke-width="4"/></svg><span><strong>pitcher-front.jpg</strong><br><span class="quiet">Reference photo attached</span></span></div>
+            <div class="lab-footer"><span class="small quiet">Advanced parameters <span aria-hidden="true">⌄</span></span><button class="button primary" type="button">Create image <span aria-hidden="true">↗</span></button></div>
+          </div>
+        </div>
+        <p class="panel-note"><strong>The system's dimensions arrive before the maker's scene.</strong>Nothing is missing, and the form is orderly. For this brief, equal emphasis on mode, model and sampling spends attention on decisions the maker need not make.</p>
+      </article>
+    </div>
+    <aside class="context"><h3>Change the job:<br>evaluate a model.</h3><p>An imaging engineer needs to hold the seed, dimensions and reference constant while varying a model or sampling setting. B's persistent parameter layout now exposes the independent variables and makes successive runs comparable. A's compressed settings would hide the engineer's main work.</p></aside>
+    <p class="takeaway">Transfer: capability placement follows the decision being made. A creation entrance can still disclose exact controls; a model lab can still keep its output visible.</p>
+    <footer class="foot"><span>Original fictional study · same prompt, reference and output settings</span><span>Charter / composition</span></footer>
+  </section>
+
+  <section class="study" id="comparison" aria-labelledby="comparison-title">
+    <header class="study-head">
+      <div><p class="kicker">02 · Density preserves a relationship</p><h2 id="comparison-title">Make the trade-off visible<br>without remembering each card.</h2></div>
+      <p class="brief"><strong>Brief.</strong> Choose a room for 12 people: step-free access and a projector are required, with a £180 session budget. Compare the same four shortlisted rooms.</p>
+    </header>
+    <div class="pair">
+      <article>
+        <h3 class="panel-heading"><span class="letter">A</span> Aligned comparison</h3>
+        <div class="screen compare">
+          <div class="appbar"><span class="brand">Commonplace</span><span class="quiet">Spaces / Shortlist</span></div>
+          <div class="rooms-head"><h3>A room for the whole team</h3><p class="small quiet">4 shortlisted spaces · prices per session</p><div class="rooms-filter"><span>12 people</span><span>Step-free</span><span>Projector</span><span>Budget £180</span></div></div>
+          <div class="table-wrap"><table><thead><tr><th>Room</th><th class="num">Seats</th><th>Step-free</th><th>Projector</th><th class="num">Price</th><th>Fit</th></tr></thead><tbody>
+            <tr><td><strong>North Loft</strong><small>Old Mill</small></td><td class="num">14</td><td>Yes</td><td>Yes</td><td class="num">£195</td><td class="missing">£15 over</td></tr>
+            <tr class="chosen"><td><strong>Garden Room</strong><small>Elm House</small></td><td class="num">12</td><td>Yes</td><td>Yes</td><td class="num">£160</td><td><strong>Matches</strong></td></tr>
+            <tr><td><strong>Reading Room</strong><small>Civic Library</small></td><td class="num">12</td><td>Yes</td><td class="missing">No</td><td class="num">£125</td><td class="missing">No projector</td></tr>
+            <tr><td><strong>East Studio</strong><small>Old Mill</small></td><td class="num">16</td><td class="missing">Unconfirmed</td><td>Yes</td><td class="num">£175</td><td class="missing">Access unknown</td></tr>
+          </tbody></table></div>
+          <div class="choice-line"><span><strong>Garden Room meets all 4 requirements.</strong><br><span class="quiet small">East Studio still needs an access check.</span></span><button class="button primary" type="button">View room ↗</button></div>
+        </div>
+        <p class="panel-note"><strong>Shared columns turn a collection into a comparison.</strong>The unknown stays distinct from “No”; numbers line up; the qualifying room and each exception can be found without retaining another room's details. Empty space remains where the decision needs no more content.</p>
+      </article>
+      <article>
+        <h3 class="panel-heading"><span class="letter">B</span> Attractive independent cards</h3>
+        <div class="screen compare">
+          <div class="appbar"><span class="brand">Commonplace</span><span class="quiet">Spaces / Shortlist</span></div>
+          <div class="rooms-head"><h3>A room for the whole team</h3><p class="small quiet">4 shortlisted spaces · prices per session</p><div class="rooms-filter"><span>12 people</span><span>Step-free</span><span>Projector</span><span>Budget £180</span></div></div>
+          <div class="room-cards">
+            <article class="room-card"><svg class="room-scene" viewBox="0 0 280 82" role="img" aria-label="Illustrated loft with roof beams and a long meeting table"><path d="M0 0h280v82H0z" fill="#ece0cd"/><path d="M0 64h280v18H0z" fill="#c4ae8c"/><path d="M0 4h280M30 0v66M246 0v66M0 0l140 35L280 0" fill="none" stroke="#9d7355" stroke-width="6"/><path d="M59 17h56v39H59zM171 17h56v39h-56z" fill="#c0d6d3" stroke="#f8f4e8" stroke-width="4"/><path d="M61 61h161v8H61zM72 69v13m138-13v13" fill="#a17b54" stroke="#856040" stroke-width="3"/><path d="M98 74v8m29-8v8m29-8v8m29-8v8" stroke="#4e695a" stroke-width="14"/></svg><div class="room-card-body"><div class="room-title"><h4>North Loft</h4><strong>£195</strong></div><p class="small quiet">Old Mill</p><dl><dt>Seats</dt><dd>14</dd><dt>Step-free</dt><dd>Yes</dd><dt>Projector</dt><dd>Yes</dd></dl><div class="room-card-footer"><span class="missing">£15 over budget</span><button class="button" type="button">View ↗</button></div></div></article>
+            <article class="room-card"><svg class="room-scene" viewBox="0 0 280 82" role="img" aria-label="Illustrated garden room with broad windows and plants"><path d="M0 0h280v82H0z" fill="#d6ddc8"/><path d="M31 9h218v52H31z" fill="#b6ccb0" stroke="#f6f3e5" stroke-width="6"/><path d="M68 58l19-31 14 24 21-36 25 42m19 0 20-36 26 36" fill="#88a27c"/><path d="M101 7v55m73-55V7" stroke="#f6f3e5" stroke-width="5"/><path d="M0 65h280v17H0z" fill="#c0af91"/><ellipse cx="139" cy="66" rx="70" ry="9" fill="#b18158"/><path d="M99 71v11m80-11v11" stroke="#8c6345" stroke-width="4"/><path d="M21 70Q10 44 26 31M25 59Q43 30 37 20M254 68Q239 42 251 30" fill="none" stroke="#5d7a4d" stroke-width="6"/><path d="M15 68h24l-4 14H19zm231 0h20l-3 14h-14z" fill="#b67d57"/></svg><div class="room-card-body"><div class="room-title"><h4>Garden Room</h4><strong>£160</strong></div><p class="small quiet">Elm House</p><dl><dt>Seats</dt><dd>12</dd><dt>Step-free</dt><dd>Yes</dd><dt>Projector</dt><dd>Yes</dd></dl><div class="room-card-footer"><span>Matches all 4</span><button class="button" type="button">View ↗</button></div></div></article>
+            <article class="room-card"><svg class="room-scene" viewBox="0 0 280 82" role="img" aria-label="Illustrated library room with bookshelves and green reading lamps"><path d="M0 0h280v82H0z" fill="#d9c6ad"/><path d="M14 5h80v59H14zm172 0h80v59h-80z" fill="#9c7d5f"/><path d="M20 11v15m9-15v15m9-15v15m12-15v15m10-15v15m12-15v15m11-15v15m108-15v15m9-15v15m9-15v15m12-15v15m10-15v15m12-15v15m11-15v15M20 38v16m13-16v16m11-16v16m12-16v16m13-16v16m13-16v16m109-16v16m13-16v16m11-16v16m12-16v16m13-16v16m13-16v16" stroke="#d6b394" stroke-width="6"/><path d="M105 13h68v47h-68z" fill="#d6e1d1" stroke="#f5eddf" stroke-width="4"/><path d="M0 65h280v17H0z" fill="#ac9275"/><path d="M62 67h158v8H62z" fill="#7c533b"/><path d="M95 66V51m91 15V51" stroke="#52694c" stroke-width="3"/><path d="M80 54q15-24 30 0m61 0q15-24 30 0" fill="#597454"/></svg><div class="room-card-body"><div class="room-title"><h4>Reading Room</h4><strong>£125</strong></div><p class="small quiet">Civic Library</p><dl><dt>Seats</dt><dd>12</dd><dt>Step-free</dt><dd>Yes</dd><dt>Projector</dt><dd>No</dd></dl><div class="room-card-footer"><span class="missing">No projector</span><button class="button" type="button">View ↗</button></div></div></article>
+            <article class="room-card"><svg class="room-scene" viewBox="0 0 280 82" role="img" aria-label="Illustrated studio with wide industrial windows and movable tables"><path d="M0 0h280v82H0z" fill="#dce4e3"/><path d="M20 7h169v55H20z" fill="#bbd4d8" stroke="#768b88" stroke-width="4"/><path d="M62 7v55m42-55v55m42-55v55M20 32h169" stroke="#768b88" stroke-width="3"/><path d="M210 17h48v40h-48z" fill="#f2efe4" stroke="#a7b3ac" stroke-width="2"/><path d="M0 65h280v17H0z" fill="#b5beb9"/><path d="M41 59h83v7H41zm116 0h83v7h-83z" fill="#c49973"/><path d="M49 66v16m67-16v16m49-16v16m67-16v16" stroke="#5d706e" stroke-width="3"/><path d="M63 74h38m79 0h37" stroke="#a7674e" stroke-width="7"/></svg><div class="room-card-body"><div class="room-title"><h4>East Studio</h4><strong>£175</strong></div><p class="small quiet">Old Mill</p><dl><dt>Seats</dt><dd>16</dd><dt>Step-free</dt><dd>Unconfirmed</dd><dt>Projector</dt><dd>Yes</dd></dl><div class="room-card-footer"><span class="missing">Access unknown</span><button class="button" type="button">View ↗</button></div></div></article>
+          </div>
+        </div>
+        <p class="panel-note"><strong>Each room is easy to browse, but each restarts the scan.</strong>The repeated labels and image areas support one room's identity. Comparing the same attribute across rooms requires crossing cards and rows, even though all the decision data is present.</p>
+      </article>
+    </div>
+    <aside class="context"><h3>Change the job:<br>discover a place.</h3><p>A visitor exploring spaces for an informal gathering may choose atmosphere before equipment. B's images and independent cards now support browsing and opening one appealing room. Keep the meaningful facts, and offer aligned comparison when the visitor has a shortlist; do not turn discovery into a spreadsheet by habit.</p></aside>
+    <p class="takeaway">Transfer: useful density brings related values together. It is not smaller type, more rows at any cost, or a ban on cards.</p>
+    <footer class="foot"><span>Original fictional study · identical room facts and requirement outcomes</span><span>Charter / composition</span></footer>
+  </section>
+
+  <section class="study" id="editorial" aria-labelledby="editorial-title">
+    <header class="study-head">
+      <div><p class="kicker">03 · Let the subject occupy the page</p><h2 id="editorial-title">An estuary has a character.<br>Its reading experience can too.</h2></div>
+      <p class="brief"><strong>Brief.</strong> Introduce an illustrated field essay to a curious reader. The entrance should make the estuary's shifting edge worth exploring, then offer the essay.</p>
+    </header>
+    <div class="pair">
+      <article>
+        <h3 class="panel-heading"><span class="letter">A</span> Subject-led editorial composition</h3>
+        <div class="screen editorial editorial-a">
+          <div class="journal-mast"><span class="journal-brand">fieldnotes</span><span class="small">Places &nbsp; / &nbsp; Journal &nbsp; / &nbsp; About</span></div>
+          <div class="journal-article"><p class="kicker">Estuary · No. 04</p><h3>Where the river<br>loosens its hold.</h3><p class="journal-deck">Salt, silt and the plants that hold a shifting shore.</p>
+            <svg class="journal-art" viewBox="0 0 400 330" role="img" aria-label="Original illustration of tidal water, saltmarsh reeds and a wading bird">
+              <path d="M0 202C78 159 96 226 162 179S270 158 400 105V330H0Z" fill="#b2c5bb"/><path d="M0 250C80 219 117 274 199 205S323 225 400 160V330H0Z" fill="#769d91"/><path d="M0 290C84 252 177 321 243 257S354 272 400 234" stroke="#e6e9d8" stroke-width="5" fill="none"/>
+              <path d="M56 288Q32 180 57 88M67 296Q84 181 72 133M85 296Q88 204 121 159M42 294Q21 224 10 211" fill="none" stroke="#4e674b" stroke-width="4"/><path d="M55 159Q22 135 28 97Q57 113 55 159M58 116Q74 84 66 52Q43 77 58 116M76 209Q105 188 107 150Q79 168 76 209" fill="#657b4d"/>
+              <path d="M222 290l12-59m17 62 10-66" stroke="#5a5c40" stroke-width="3" fill="none"/><path d="M224 217q-40-13-32-40 39-3 72 15l15-64q-21-20-8-30 15-8 25 7l30 7-28 7-8 86q-19 34-66 12" fill="#ecebdc"/><path d="M197 179q27 37 68 23-38-4-45-20" fill="#81988b"/><circle cx="286" cy="105" r="3" fill="#2b4233"/><path d="M296 108l32 5-31 7" fill="#a97746"/><path d="M232 290l-16 1m32 2-15 1" stroke="#5a5c40" stroke-width="3"/><circle cx="330" cy="45" r="28" fill="#c78b55"/>
+              <path d="M130 121q10-9 20 0m-10 0q10-8 20 0" fill="none" stroke="#56735b" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="journal-byline">WORDS BY LEAH MOSS<br>ILLUSTRATIONS BY FIELDNOTES<span class="journal-read">Read the field essay ↗</span></div>
+        </div>
+        <p class="panel-note"><strong>Type, image and open ground describe one place.</strong>Large type gives the title room to establish a voice; the illustration enters the reading field instead of sitting in a thumbnail. A restrained contents navigation leaves the subject first.</p>
+      </article>
+      <article>
+        <h3 class="panel-heading"><span class="letter">B</span> Regular application chrome</h3>
+        <div class="screen editorial">
+          <div class="appbar"><span class="brand">fieldnotes</span><span class="quiet">Search &nbsp; / &nbsp; Saved &nbsp; / &nbsp; Profile</span></div>
+          <div class="dashboard"><aside class="side"><div>Overview</div><div class="selected">Journal</div><div>Places</div><div>Species</div><div>Collections</div><div>About</div></aside><div class="dashboard-body"><p class="small quiet">Journal / Estuary</p><h3>Estuary · No. 04</h3><div class="stats"><div><strong>08</strong><small>Field essays</small></div><div><strong>12</strong><small>Places</small></div><div><strong>24</strong><small>Species</small></div></div><article class="article-card">
+            <svg class="mini-art" viewBox="0 0 400 145" role="img" aria-label="Original illustration of tidal water, saltmarsh reeds and a wading bird">
+              <path d="M0 93C78 59 96 105 162 69S270 68 400 25V145H0Z" fill="#b2c5bb"/><path d="M0 120C80 99 117 144 199 85S323 115 400 80V145H0Z" fill="#769d91"/><path d="M56 138Q32 90 57 8M67 146Q84 91 72 43M85 146Q88 104 121 69" fill="none" stroke="#4e674b" stroke-width="3"/><path d="M55 69Q22 45 28 17Q57 33 55 69M76 119Q105 98 107 60Q79 78 76 119" fill="#657b4d"/>
+              <g transform="translate(96,-66) scale(.72)"><path d="M222 290l12-59m17 62 10-66" stroke="#5a5c40" stroke-width="3" fill="none"/><path d="M224 217q-40-13-32-40 39-3 72 15l15-64q-21-20-8-30 15-8 25 7l30 7-28 7-8 86q-19 34-66 12" fill="#ecebdc"/><path d="M197 179q27 37 68 23-38-4-45-20" fill="#81988b"/><circle cx="286" cy="105" r="3" fill="#2b4233"/></g><circle cx="350" cy="24" r="15" fill="#c78b55"/>
+            </svg>
+            <h4>Where the river loosens its hold.</h4><p>Salt, silt and the plants that hold a shifting shore.</p><p class="meta">Words by Leah Moss · Illustrations by Fieldnotes</p><button class="button primary" type="button">Read the field essay ↗</button>
+          </article></div></div>
+        </div>
+        <p class="panel-note"><strong>The essay becomes one item in a managed collection.</strong>The shell is legible and the action is visible. Its navigation rail, statistics and equal containers make collection structure more prominent than the essay's voice; changing the accent would not change that hierarchy.</p>
+      </article>
+    </div>
+    <aside class="context"><h3>Change the job:<br>work an archive.</h3><p>A field researcher finding a place, species record or saved collection repeatedly needs stable navigation, filters and regular entries. B's shell can serve that utility directory. The expressive composition suits the essay's entrance; it need not govern the archive's working view.</p></aside>
+    <p class="takeaway">Transfer: character comes from how the subject controls scale, crop, pacing and type. It does not require ornamental clutter or unusual controls.</p>
+    <footer class="foot"><span>Original fictional study · original inline SVG artwork, no product screenshots</span><span>Charter / composition</span></footer>
+  </section>
+
+  <section class="study" id="toolbar" aria-labelledby="toolbar-title">
+    <header class="study-head">
+      <div><p class="kicker">04 · Give geometry an owner</p><h2 id="toolbar-title">A control family is a relationship,<br>not a collection of local fixes.</h2></div>
+      <p class="brief"><strong>Brief.</strong> A product-image editor places save status, output shape, preview and export in one toolbar. The export label can change; status is information, not an action.</p>
+    </header>
+    <div class="toolbar-stage">
+      <h3 class="toolbar-label"><span class="letter">A</span> &nbsp; A shared control family, undermined by local choices</h3>
+      <div class="bar"><div class="document-name">Stoneware / market launch<small>Image editor</small></div><div class="actions"><span class="save-slot"><span class="status">Saved locally</span></span><button class="control control--compact" type="button">Portrait · 4:5 <span aria-hidden="true">⌄</span></button><span class="preview-slot"><button class="control" type="button">Preview</button></span><button class="control primary" type="button">Export image <span aria-hidden="true">↗</span></button></div></div>
+      <div class="metrics"><p><strong>A stale width reservation</strong><code>.save-slot { width: 160px }</code><br>The passive status is short, but its wrapper still reserves room for a former, longer message.</p><p><strong>A wrapper changes the control</strong><code>.preview-slot { min-height: 40px }</code><br>Flex stretch makes Preview 40px high, despite the shared control's 36px minimum.</p><p><strong>A valid variant in the wrong group</strong><code>.control--compact { --control-size: 32px }</code><br>Output shape uses the compact variant next to default-sized actions, without a density reason.</p></div>
+      <h3 class="toolbar-label toolbar-good"><span class="letter">B</span> &nbsp; Keep the family; remove the competing geometry</h3>
+      <div class="bar good-bar"><div class="document-name">Stoneware / market launch<small>Image editor</small></div><div class="actions"><span class="status">Saved locally</span><button class="control" type="button">Portrait · 4:5 <span aria-hidden="true">⌄</span></button><button class="control" type="button">Preview</button><button class="control primary" type="button">Export image <span aria-hidden="true">↗</span></button></div></div>
+      <div class="ownership"><div><h4>Toolbar owns placement</h4><p>Flex layout, grouping, gaps and alignment live on the toolbar. Its containers do not supply control padding or stretch a button beyond its family size.</p></div><div><h4>The control owns its defaults</h4><p><code>.control</code> declares its own size, padding, type, border and radius. It works outside this toolbar too. This group's actions use the same default density.</p></div><div><h4>Content owns useful width</h4><p>“Preview” stays compact; “Export image” gets the width of its label and icon. Passive status remains unboxed and quieter, without an unused width reservation.</p></div></div>
+      <div class="stress"><div class="bar good-bar"><div class="document-name">Stoneware / market launch<small>700px available · longer label · save pending</small></div><div class="actions"><span class="status pending">Saving locally…</span><button class="control" type="button">Portrait · 4:5 <span aria-hidden="true">⌄</span></button><button class="control" type="button">Preview</button><button class="control primary" type="button" disabled>Export print-ready image <span aria-hidden="true">↗</span></button></div></div><p><strong>Changed content, same ownership.</strong><br>The same flex layout wraps the action group when both regions no longer fit. Export grows for its label, retaining the family metrics. Here export needs a saved version: the pending save changes status and availability, not control size.</p></div>
+    </div>
+    <aside class="context"><h3>When a difference<br>has a real job.</h3><p>A changing zoom readout may reserve width to keep adjacent controls still. A compact variant can serve a dense table, while a touch action needs a larger target. Those differences follow content or input conditions. Here the passive status and action buttons legitimately differ; unrelated wrapper dimensions do not justify three action heights.</p></aside>
+    <p class="takeaway">Transfer: align the relationship that matters. Equal heights can unify related actions; unequal widths, a quieter status or a larger touch target can be correct.</p>
+    <footer class="foot"><span>Original fictional study · CSS shows both ownership models directly</span><span>Charter / composition</span></footer>
+  </section>
+</body>
+</html>

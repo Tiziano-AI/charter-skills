@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Current Fact Research
+  short_description: Resolve what is true and applicable now
+  default_prompt: Use $charter-skills:charter-current-fact-research to resolve the
+    unstable or disputed external facts this question depends on and explain the supported
+    answer and its consequential uncertainty.
+policy:
+  allow_implicit_invocation: true

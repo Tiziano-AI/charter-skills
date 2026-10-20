@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Cross-Layer Change Design
+  short_description: Carry one semantic change through its source owners
+  default_prompt: Use $charter-skills:charter-cross-layer-change-design to carry this
+    accepted behavior change through its schemas, producers, consumers and generators,
+    replacing competing paths and accounting for real compatibility boundaries.
+policy:
+  allow_implicit_invocation: true

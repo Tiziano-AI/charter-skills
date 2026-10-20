@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Mac Cleanup
+  short_description: Remove rebuildable Mac material without breaking its consumers
+  default_prompt: Use $charter-skills:charter-macos-cleanup to qualify and remove
+    rebuildable caches, dependencies and outputs in the authorized scope, preserve
+    active and retained material, and report actual recovery with reconstruction recipes.
+policy:
+  allow_implicit_invocation: true

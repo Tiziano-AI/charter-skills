@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Session Coordination
+  short_description: Resolve dependencies and collisions between agent sessions
+  default_prompt: Use $charter-skills:charter-session-coordination to identify what
+    these sessions need from each other, resolve the collision or contribution handoff
+    and leave independent work undisturbed.
+policy:
+  allow_implicit_invocation: true

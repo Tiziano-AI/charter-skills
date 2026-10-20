@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · AI Evaluation
+  short_description: Decide a model, prompt or agent change from observed outputs
+  default_prompt: 'Use $charter-skills:charter-ai-evaluation to decide this model,
+    prompt or agent change from real outputs: expert-chosen hard cases, error analysis
+    before metrics, validated judges and cost.'
+policy:
+  allow_implicit_invocation: true

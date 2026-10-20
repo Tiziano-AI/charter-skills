@@ -1,0 +1,1082 @@
+{
+  "reference_rectangles": {
+    "near_lintel": {
+      "rect": [
+        -0.16,
+        -0.08,
+        0.62,
+        0.3
+      ],
+      "depth": 3,
+      "length": 2
+    },
+    "near_pier": {
+      "rect": [
+        0.03,
+        0.22,
+        0.2,
+        1.08
+      ],
+      "depth": 3,
+      "length": 2
+    },
+    "far_lintel": {
+      "rect": [
+        0.57,
+        0.27,
+        0.91,
+        0.32
+      ],
+      "depth": 9,
+      "length": 1.5
+    },
+    "far_left": {
+      "rect": [
+        0.57,
+        0.32,
+        0.62,
+        0.74
+      ],
+      "depth": 9,
+      "length": 1.5
+    },
+    "far_right": {
+      "rect": [
+        0.86,
+        0.32,
+        0.91,
+        0.74
+      ],
+      "depth": 9,
+      "length": 1.5
+    }
+  },
+  "hero_camera": {
+    "location": [
+      0,
+      -8,
+      2
+    ],
+    "target": [
+      0,
+      0,
+      2
+    ],
+    "lens_mm": 24,
+    "sensor_width_mm": 36
+  },
+  "pixel_dimensions": [
+    1000,
+    625
+  ],
+  "projection": {
+    "reference-informed": {
+      "origin": "bottom-left",
+      "range": "0..1 is the frame; values outside are retained",
+      "meaning": "Projected 3D bounding-box corners, not visible silhouette, occlusion, material or quality.",
+      "objects": {
+        "near_lintel": {
+          "projected_bbox_xy": [
+            [
+              -0.1600000113248825,
+              0.6200000047683716
+            ],
+            [
+              0.619999885559082,
+              1.0799998044967651
+            ]
+          ],
+          "camera_depth_range": [
+            3.0,
+            5.0
+          ]
+        },
+        "near_pier": {
+          "projected_bbox_xy": [
+            [
+              0.029999898746609688,
+              0.3199999928474426
+            ],
+            [
+              -0.08000023663043976,
+              0.779999852180481
+            ]
+          ],
+          "camera_depth_range": [
+            2.999999523162842,
+            5.0
+          ]
+        },
+        "far_lintel": {
+          "projected_bbox_xy": [
+            [
+              0.5600000023841858,
+              0.9099999666213989
+            ],
+            [
+              0.6542855501174927,
+              0.729999840259552
+            ]
+          ],
+          "camera_depth_range": [
+            9.0,
+            10.5
+          ]
+        },
+        "far_left": {
+          "projected_bbox_xy": [
+            [
+              0.5600000023841858,
+              0.6200000047683716
+            ],
+            [
+              0.2599998116493225,
+              0.679999828338623
+            ]
+          ],
+          "camera_depth_range": [
+            8.999999046325684,
+            10.5
+          ]
+        },
+        "far_right": {
+          "projected_bbox_xy": [
+            [
+              0.808571457862854,
+              0.9100000262260437
+            ],
+            [
+              0.2599998116493225,
+              0.679999828338623
+            ]
+          ],
+          "camera_depth_range": [
+            8.999999046325684,
+            10.5
+          ]
+        },
+        "distant disc": {
+          "projected_bbox_xy": [
+            [
+              0.7300000190734863,
+              0.7699999809265137
+            ],
+            [
+              0.4359998404979706,
+              0.4999998211860657
+            ]
+          ],
+          "camera_depth_range": [
+            25.0,
+            25.0
+          ]
+        }
+      }
+    },
+    "equalized-values": {
+      "origin": "bottom-left",
+      "range": "0..1 is the frame; values outside are retained",
+      "meaning": "Projected 3D bounding-box corners, not visible silhouette, occlusion, material or quality.",
+      "objects": {
+        "near_lintel.001": {
+          "projected_bbox_xy": [
+            [
+              -0.1600000113248825,
+              0.6200000047683716
+            ],
+            [
+              0.619999885559082,
+              1.0799998044967651
+            ]
+          ],
+          "camera_depth_range": [
+            3.0,
+            5.0
+          ]
+        },
+        "near_pier.001": {
+          "projected_bbox_xy": [
+            [
+              0.029999898746609688,
+              0.3199999928474426
+            ],
+            [
+              -0.08000023663043976,
+              0.779999852180481
+            ]
+          ],
+          "camera_depth_range": [
+            2.999999523162842,
+            5.0
+          ]
+        },
+        "far_lintel.001": {
+          "projected_bbox_xy": [
+            [
+              0.5600000023841858,
+              0.9099999666213989
+            ],
+            [
+              0.6542855501174927,
+              0.729999840259552
+            ]
+          ],
+          "camera_depth_range": [
+            9.0,
+            10.5
+          ]
+        },
+        "far_left.001": {
+          "projected_bbox_xy": [
+            [
+              0.5600000023841858,
+              0.6200000047683716
+            ],
+            [
+              0.2599998116493225,
+              0.679999828338623
+            ]
+          ],
+          "camera_depth_range": [
+            8.999999046325684,
+            10.5
+          ]
+        },
+        "far_right.001": {
+          "projected_bbox_xy": [
+            [
+              0.808571457862854,
+              0.9100000262260437
+            ],
+            [
+              0.2599998116493225,
+              0.679999828338623
+            ]
+          ],
+          "camera_depth_range": [
+            8.999999046325684,
+            10.5
+          ]
+        },
+        "distant disc.001": {
+          "projected_bbox_xy": [
+            [
+              0.7300000190734863,
+              0.7699999809265137
+            ],
+            [
+              0.4359998404979706,
+              0.4999998211860657
+            ]
+          ],
+          "camera_depth_range": [
+            25.0,
+            25.0
+          ]
+        }
+      }
+    },
+    "inferred-side": {
+      "origin": "bottom-left",
+      "range": "0..1 is the frame; values outside are retained",
+      "meaning": "Projected 3D bounding-box corners, not visible silhouette, occlusion, material or quality.",
+      "objects": {
+        "near_lintel.002": {
+          "projected_bbox_xy": [
+            [
+              0.14087329804897308,
+              0.38485774397850037
+            ],
+            [
+              0.46501901745796204,
+              0.6896487474441528
+            ]
+          ],
+          "camera_depth_range": [
+            15.096251487731934,
+            19.125835418701172
+          ]
+        },
+        "near_pier.002": {
+          "projected_bbox_xy": [
+            [
+              0.17400074005126953,
+              0.31798648834228516
+            ],
+            [
+              0.3036237359046936,
+              0.5967027544975281
+            ]
+          ],
+          "camera_depth_range": [
+            16.637500762939453,
+            19.287084579467773
+          ]
+        },
+        "far_lintel.002": {
+          "projected_bbox_xy": [
+            [
+              0.5810091495513916,
+              0.8788540363311768
+            ],
+            [
+              0.5938607454299927,
+              0.740445077419281
+            ]
+          ],
+          "camera_depth_range": [
+            15.663126945495605,
+            19.863752365112305
+          ]
+        },
+        "far_left.002": {
+          "projected_bbox_xy": [
+            [
+              0.576235294342041,
+              0.666736364364624
+            ],
+            [
+              0.35629716515541077,
+              0.7031450271606445
+            ]
+          ],
+          "camera_depth_range": [
+            18.41375160217285,
+            21.045001983642578
+          ]
+        },
+        "far_right.002": {
+          "projected_bbox_xy": [
+            [
+              0.7640694379806519,
+              0.8756835460662842
+            ],
+            [
+              0.23763059079647064,
+              0.638795018196106
+            ]
+          ],
+          "camera_depth_range": [
+            15.803751945495605,
+            18.435001373291016
+          ]
+        },
+        "distant disc.002": {
+          "projected_bbox_xy": [
+            [
+              1.2921141386032104,
+              1.3910695314407349
+            ],
+            [
+              0.5493391752243042,
+              0.6744773983955383
+            ]
+          ],
+          "camera_depth_range": [
+            23.916669845581055,
+            25.416669845581055
+          ]
+        }
+      }
+    },
+    "continuous-side": {
+      "origin": "bottom-left",
+      "range": "0..1 is the frame; values outside are retained",
+      "meaning": "Projected 3D bounding-box corners, not visible silhouette, occlusion, material or quality.",
+      "objects": {
+        "near_lintel.003": {
+          "projected_bbox_xy": [
+            [
+              0.14087329804897308,
+              0.38485774397850037
+            ],
+            [
+              0.46501901745796204,
+              0.6896487474441528
+            ]
+          ],
+          "camera_depth_range": [
+            15.096251487731934,
+            19.125835418701172
+          ]
+        },
+        "near_pier.003": {
+          "projected_bbox_xy": [
+            [
+              0.17400074005126953,
+              0.31932953000068665
+            ],
+            [
+              0.26526591181755066,
+              0.5967027544975281
+            ]
+          ],
+          "camera_depth_range": [
+            16.637500762939453,
+            19.426668167114258
+          ]
+        },
+        "far_lintel.003": {
+          "projected_bbox_xy": [
+            [
+              0.5810091495513916,
+              0.8788540363311768
+            ],
+            [
+              0.5938607454299927,
+              0.740445077419281
+            ]
+          ],
+          "camera_depth_range": [
+            15.663126945495605,
+            19.863752365112305
+          ]
+        },
+        "far_left.003": {
+          "projected_bbox_xy": [
+            [
+              0.576235294342041,
+              0.666736364364624
+            ],
+            [
+              0.35629716515541077,
+              0.7031450271606445
+            ]
+          ],
+          "camera_depth_range": [
+            18.41375160217285,
+            21.045001983642578
+          ]
+        },
+        "far_right.003": {
+          "projected_bbox_xy": [
+            [
+              0.7640694379806519,
+              0.8756835460662842
+            ],
+            [
+              0.23763059079647064,
+              0.638795018196106
+            ]
+          ],
+          "camera_depth_range": [
+            15.803751945495605,
+            18.435001373291016
+          ]
+        },
+        "distant disc.003": {
+          "projected_bbox_xy": [
+            [
+              1.2921141386032104,
+              1.3910695314407349
+            ],
+            [
+              0.5493391752243042,
+              0.6744773983955383
+            ]
+          ],
+          "camera_depth_range": [
+            23.916669845581055,
+            25.416669845581055
+          ]
+        },
+        "continuous return": {
+          "projected_bbox_xy": [
+            [
+              0.36218735575675964,
+              0.5790154337882996
+            ],
+            [
+              0.5204588174819946,
+              0.6898366808891296
+            ]
+          ],
+          "camera_depth_range": [
+            16.323335647583008,
+            19.823335647583008
+          ]
+        },
+        "raised far joint": {
+          "projected_bbox_xy": [
+            [
+              0.54964679479599,
+              0.6017569303512573
+            ],
+            [
+              0.5999075770378113,
+              0.7360387444496155
+            ]
+          ],
+          "camera_depth_range": [
+            18.650001525878906,
+            19.89000129699707
+          ]
+        }
+      }
+    },
+    "continuous-hero": {
+      "origin": "bottom-left",
+      "range": "0..1 is the frame; values outside are retained",
+      "meaning": "Projected 3D bounding-box corners, not visible silhouette, occlusion, material or quality.",
+      "objects": {
+        "near_lintel.004": {
+          "projected_bbox_xy": [
+            [
+              -0.1600000113248825,
+              0.6200000047683716
+            ],
+            [
+              0.619999885559082,
+              1.0799998044967651
+            ]
+          ],
+          "camera_depth_range": [
+            3.0,
+            5.0
+          ]
+        },
+        "near_pier.004": {
+          "projected_bbox_xy": [
+            [
+              0.029999898746609688,
+              0.3199999928474426
+            ],
+            [
+              -0.22888916730880737,
+              0.779999852180481
+            ]
+          ],
+          "camera_depth_range": [
+            2.999999523162842,
+            5.0
+          ]
+        },
+        "far_lintel.004": {
+          "projected_bbox_xy": [
+            [
+              0.5600000023841858,
+              0.9099999666213989
+            ],
+            [
+              0.6542855501174927,
+              0.729999840259552
+            ]
+          ],
+          "camera_depth_range": [
+            9.0,
+            10.5
+          ]
+        },
+        "far_left.004": {
+          "projected_bbox_xy": [
+            [
+              0.5600000023841858,
+              0.6200000047683716
+            ],
+            [
+              0.2599998116493225,
+              0.679999828338623
+            ]
+          ],
+          "camera_depth_range": [
+            8.999999046325684,
+            10.5
+          ]
+        },
+        "far_right.004": {
+          "projected_bbox_xy": [
+            [
+              0.808571457862854,
+              0.9100000262260437
+            ],
+            [
+              0.2599998116493225,
+              0.679999828338623
+            ]
+          ],
+          "camera_depth_range": [
+            8.999999046325684,
+            10.5
+          ]
+        },
+        "distant disc.004": {
+          "projected_bbox_xy": [
+            [
+              0.7300000190734863,
+              0.7699999809265137
+            ],
+            [
+              0.4359998404979706,
+              0.4999998211860657
+            ]
+          ],
+          "camera_depth_range": [
+            25.0,
+            25.0
+          ]
+        },
+        "continuous return.001": {
+          "projected_bbox_xy": [
+            [
+              0.5172042846679688,
+              0.5879725217819214
+            ],
+            [
+              0.5745518207550049,
+              0.8189002275466919
+            ]
+          ],
+          "camera_depth_range": [
+            4.849999904632568,
+            9.300000190734863
+          ]
+        },
+        "raised far joint.001": {
+          "projected_bbox_xy": [
+            [
+              0.5170212984085083,
+              0.5777778029441833
+            ],
+            [
+              0.5737587213516235,
+              0.7311109900474548
+            ]
+          ],
+          "camera_depth_range": [
+            9.0,
+            9.40000057220459
+          ]
+        }
+      }
+    },
+    "distant-camera": {
+      "origin": "bottom-left",
+      "range": "0..1 is the frame; values outside are retained",
+      "meaning": "Projected 3D bounding-box corners, not visible silhouette, occlusion, material or quality.",
+      "objects": {
+        "near_lintel.005": {
+          "projected_bbox_xy": [
+            [
+              0.10399997234344482,
+              0.5720000267028809
+            ],
+            [
+              0.5981814861297607,
+              0.847999632358551
+            ]
+          ],
+          "camera_depth_range": [
+            9.0,
+            11.000000953674316
+          ]
+        },
+        "near_pier.005": {
+          "projected_bbox_xy": [
+            [
+              0.21799997985363007,
+              0.3527272641658783
+            ],
+            [
+              0.15199962258338928,
+              0.6679996848106384
+            ]
+          ],
+          "camera_depth_range": [
+            9.0,
+            11.0
+          ]
+        },
+        "far_lintel.005": {
+          "projected_bbox_xy": [
+            [
+              0.5687272548675537,
+              0.942799985408783
+            ],
+            [
+              0.6767269968986511,
+              0.7483996748924255
+            ]
+          ],
+          "camera_depth_range": [
+            15.000000953674316,
+            16.5
+          ]
+        },
+        "far_left.005": {
+          "projected_bbox_xy": [
+            [
+              0.5687272548675537,
+              0.6295999884605408
+            ],
+            [
+              0.2407996654510498,
+              0.6943996548652649
+            ]
+          ],
+          "camera_depth_range": [
+            15.0,
+            16.5
+          ]
+        },
+        "far_right.005": {
+          "projected_bbox_xy": [
+            [
+              0.85345458984375,
+              0.9428000450134277
+            ],
+            [
+              0.2407996654510498,
+              0.6943996548652649
+            ]
+          ],
+          "camera_depth_range": [
+            15.0,
+            16.5
+          ]
+        },
+        "distant disc.005": {
+          "projected_bbox_xy": [
+            [
+              0.8338709473609924,
+              0.8919354677200317
+            ],
+            [
+              0.4070964455604553,
+              0.49999967217445374
+            ]
+          ],
+          "camera_depth_range": [
+            31.0,
+            31.0
+          ]
+        }
+      }
+    },
+    "short-lintel": {
+      "origin": "bottom-left",
+      "range": "0..1 is the frame; values outside are retained",
+      "meaning": "Projected 3D bounding-box corners, not visible silhouette, occlusion, material or quality.",
+      "objects": {
+        "near_lintel.006": {
+          "projected_bbox_xy": [
+            [
+              -0.1600000113248825,
+              0.5
+            ],
+            [
+              0.619999885559082,
+              1.0799998044967651
+            ]
+          ],
+          "camera_depth_range": [
+            3.0,
+            5.0
+          ]
+        },
+        "near_pier.006": {
+          "projected_bbox_xy": [
+            [
+              0.029999898746609688,
+              0.3199999928474426
+            ],
+            [
+              -0.08000023663043976,
+              0.779999852180481
+            ]
+          ],
+          "camera_depth_range": [
+            2.999999523162842,
+            5.0
+          ]
+        },
+        "far_lintel.006": {
+          "projected_bbox_xy": [
+            [
+              0.5600000023841858,
+              0.9099999666213989
+            ],
+            [
+              0.6542855501174927,
+              0.729999840259552
+            ]
+          ],
+          "camera_depth_range": [
+            9.0,
+            10.5
+          ]
+        },
+        "far_left.006": {
+          "projected_bbox_xy": [
+            [
+              0.5600000023841858,
+              0.6200000047683716
+            ],
+            [
+              0.2599998116493225,
+              0.679999828338623
+            ]
+          ],
+          "camera_depth_range": [
+            8.999999046325684,
+            10.5
+          ]
+        },
+        "far_right.006": {
+          "projected_bbox_xy": [
+            [
+              0.808571457862854,
+              0.9100000262260437
+            ],
+            [
+              0.2599998116493225,
+              0.679999828338623
+            ]
+          ],
+          "camera_depth_range": [
+            8.999999046325684,
+            10.5
+          ]
+        },
+        "distant disc.006": {
+          "projected_bbox_xy": [
+            [
+              0.7300000190734863,
+              0.7699999809265137
+            ],
+            [
+              0.4359998404979706,
+              0.4999998211860657
+            ]
+          ],
+          "camera_depth_range": [
+            25.0,
+            25.0
+          ]
+        }
+      }
+    },
+    "literal-inventory": {
+      "origin": "bottom-left",
+      "range": "0..1 is the frame; values outside are retained",
+      "meaning": "Projected 3D bounding-box corners, not visible silhouette, occlusion, material or quality.",
+      "objects": {
+        "near_pier.007": {
+          "projected_bbox_xy": [
+            [
+              0.21145012974739075,
+              0.29854118824005127
+            ],
+            [
+              0.2959480285644531,
+              0.6402612924575806
+            ]
+          ],
+          "camera_depth_range": [
+            20.56984519958496,
+            23.086830139160156
+          ]
+        },
+        "near_lintel.007": {
+          "projected_bbox_xy": [
+            [
+              0.20722448825836182,
+              0.41633614897727966
+            ],
+            [
+              0.5793231129646301,
+              0.7207685112953186
+            ]
+          ],
+          "camera_depth_range": [
+            18.833993911743164,
+            21.871734619140625
+          ]
+        },
+        "far_left.007": {
+          "projected_bbox_xy": [
+            [
+              0.5632669925689697,
+              0.6122520565986633
+            ],
+            [
+              0.35858920216560364,
+              0.5986109972000122
+            ]
+          ],
+          "camera_depth_range": [
+            22.8004150390625,
+            24.822683334350586
+          ]
+        },
+        "far_right.007": {
+          "projected_bbox_xy": [
+            [
+              0.7139732241630554,
+              0.769128143787384
+            ],
+            [
+              0.3065495789051056,
+              0.5645156502723694
+            ]
+          ],
+          "camera_depth_range": [
+            21.177392959594727,
+            23.199661254882812
+          ]
+        },
+        "far_lintel.007": {
+          "projected_bbox_xy": [
+            [
+              0.5657643675804138,
+              0.7713762521743774
+            ],
+            [
+              0.5381647944450378,
+              0.642195999622345
+            ]
+          ],
+          "camera_depth_range": [
+            20.995128631591797,
+            23.911359786987305
+          ]
+        },
+        "distant disc.007": {
+          "projected_bbox_xy": [
+            [
+              0.6833229660987854,
+              0.7527145743370056
+            ],
+            [
+              0.41991788148880005,
+              0.5405548214912415
+            ]
+          ],
+          "camera_depth_range": [
+            25.4736270904541,
+            26.723440170288086
+          ]
+        }
+      }
+    },
+    "engineered-gate": {
+      "origin": "bottom-left",
+      "range": "0..1 is the frame; values outside are retained",
+      "meaning": "Projected 3D bounding-box corners, not visible silhouette, occlusion, material or quality.",
+      "objects": {
+        "left_pier": {
+          "projected_bbox_xy": [
+            [
+              0.28092363476753235,
+              0.3965713381767273
+            ],
+            [
+              0.19823111593723297,
+              0.6556797027587891
+            ]
+          ],
+          "camera_depth_range": [
+            12.933084487915039,
+            18.262720108032227
+          ]
+        },
+        "right_pier": {
+          "projected_bbox_xy": [
+            [
+              0.6034286618232727,
+              0.71907639503479
+            ],
+            [
+              0.19823111593723297,
+              0.6556797027587891
+            ]
+          ],
+          "camera_depth_range": [
+            12.933084487915039,
+            18.262720108032227
+          ]
+        },
+        "joined_cap": {
+          "projected_bbox_xy": [
+            [
+              0.2794370651245117,
+              0.7205629348754883
+            ],
+            [
+              0.6491574048995972,
+              0.7739218473434448
+            ]
+          ],
+          "camera_depth_range": [
+            12.845916748046875,
+            17.914052963256836
+          ]
+        },
+        "far_left.008": {
+          "projected_bbox_xy": [
+            [
+              0.4005712568759918,
+              0.43472152948379517
+            ],
+            [
+              0.33292385935783386,
+              0.5715274810791016
+            ]
+          ],
+          "camera_depth_range": [
+            18.997413635253906,
+            20.255107879638672
+          ]
+        },
+        "far_right.008": {
+          "projected_bbox_xy": [
+            [
+              0.5652784705162048,
+              0.5994287133216858
+            ],
+            [
+              0.33292385935783386,
+              0.5715274810791016
+            ]
+          ],
+          "camera_depth_range": [
+            18.997413635253906,
+            20.255107879638672
+          ]
+        },
+        "far_lintel.008": {
+          "projected_bbox_xy": [
+            [
+              0.40029677748680115,
+              0.5997032523155212
+            ],
+            [
+              0.5683447122573853,
+              0.6170087456703186
+            ]
+          ],
+          "camera_depth_range": [
+            18.945112228393555,
+            19.993606567382812
+          ]
+        },
+        "distant disc.008": {
+          "projected_bbox_xy": [
+            [
+              0.46722376346588135,
+              0.5327762365341187
+            ],
+            [
+              0.42291906476020813,
+              0.5269374847412109
+            ]
+          ],
+          "camera_depth_range": [
+            23.051921844482422,
+            23.191389083862305
+          ]
+        }
+      }
+    }
+  },
+  "technical_check": "Known camera-axis point projects to (0.5, 0.5); not artistic acceptance."
+}

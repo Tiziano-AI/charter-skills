@@ -1,0 +1,9 @@
+interface:
+  display_name: Charter · Repository Assessment
+  short_description: Trace a new or changed repository to capability and next work
+  default_prompt: 'Use $charter-skills:charter-repository-assessment to bring me up
+    to speed on this repository: trace a representative product path, establish what
+    it supports now and where behavior is owned, then recommend the first useful work
+    without changing it.'
+policy:
+  allow_implicit_invocation: true

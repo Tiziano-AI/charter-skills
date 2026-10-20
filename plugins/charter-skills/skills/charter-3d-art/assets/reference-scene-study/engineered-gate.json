@@ -1,0 +1,20 @@
+{
+  "reference": "reference.png",
+  "candidate": "engineered-gate.png",
+  "source_dimensions": [
+    [
+      1000,
+      625
+    ],
+    [
+      1000,
+      625
+    ]
+  ],
+  "panel_dimensions": [
+    1000,
+    625
+  ],
+  "placement": "reference left; candidate right; contain with gray letterbox, no stretch",
+  "overlay": "50% stored-sample blend of display images; diagnostic only, not a candidate"
+}

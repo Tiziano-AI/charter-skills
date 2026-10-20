@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Architecture Simplification
+  short_description: Remove custom machinery while preserving required capability
+  default_prompt: Use $charter-skills:charter-architecture-simplification to compare
+    suitable primitives, identify removable and residual responsibilities, and choose
+    one simpler capability-preserving architecture.
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Product Strategy
+  short_description: Choose whom to serve, how to win and which bet comes first
+  default_prompt: Use $charter-skills:charter-product-strategy to choose whom this
+    product should serve, why it can win, how distribution and economics support that
+    choice, what it excludes and which bet comes first.
+policy:
+  allow_implicit_invocation: true

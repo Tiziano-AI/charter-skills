@@ -1,0 +1,11 @@
+{
+  "canonical_top_entries": [
+    "intake",
+    "clients",
+    "shared-reference",
+    "review-queues",
+    "reorganization-records"
+  ],
+  "check_ds_store": false,
+  "check_exact_duplicates": false
+}

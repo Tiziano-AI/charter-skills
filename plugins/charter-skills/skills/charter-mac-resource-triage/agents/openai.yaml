@@ -1,0 +1,7 @@
+interface:
+  display_name: Charter · Mac Resource Triage
+  short_description: Trace Mac CPU, GPU, memory, and I/O load
+  default_prompt: Use $charter-skills:charter-mac-resource-triage to identify what
+    is consuming CPU, GPU, unified memory, swap, or I/O on this Mac.
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Web Interface Design
+  short_description: Shape websites and web apps around subject and experience
+  default_prompt: Use $charter-skills:charter-web-interface-design to build or improve
+    this website or web app with subject-led visual character, responsive composition,
+    accessible browser interaction and coherent state where the work needs it.
+policy:
+  allow_implicit_invocation: true

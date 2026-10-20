@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Game Design
+  short_description: Shape mechanics, feel and the player's experience
+  default_prompt: Use $charter-skills:charter-game-design to shape this game's play
+    around the intended player experience, preserving its chosen genre and form of
+    play.
+policy:
+  allow_implicit_invocation: true

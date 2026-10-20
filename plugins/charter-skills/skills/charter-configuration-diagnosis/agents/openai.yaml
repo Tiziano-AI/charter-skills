@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Configuration Diagnosis
+  short_description: Find why a setting has no effect and fix its source
+  default_prompt: 'Use $charter-skills:charter-configuration-diagnosis to find why
+    this setting does not take effect: trace which process reads it, from which source
+    and when it was loaded, then fix the input that wins.'
+policy:
+  allow_implicit_invocation: true

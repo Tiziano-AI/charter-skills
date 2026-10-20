@@ -1,0 +1,10 @@
+{
+  "name": "charter-skills",
+  "version": "1.0.0-rc.8",
+  "description": "An opinionated, Mac-first specialist library for useful work with agents.",
+  "author": {
+    "name": "Tiziano AI"
+  },
+  "repository": "https://github.com/Tiziano-AI/charter-skills",
+  "license": "MIT"
+}

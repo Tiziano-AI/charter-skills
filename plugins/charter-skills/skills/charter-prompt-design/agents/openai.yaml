@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Prompt Design
+  short_description: Write, adapt or choose a prompt for one model call or role
+  default_prompt: Use $charter-skills:charter-prompt-design to write, adapt or choose
+    this prompt, controlling judge bias and naming the cheapest trial that would settle
+    a close call.
+policy:
+  allow_implicit_invocation: true

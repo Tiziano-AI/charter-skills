@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Stream Protocol Repair
+  short_description: Repair stream framing, retained output and outcome semantics
+  default_prompt: Use $charter-skills:charter-stream-protocol-repair to trace this
+    protocol at the consumer boundary and repair the framing, partial-output, callback,
+    cancellation, replay or terminal behavior that changes its outcome.
+policy:
+  allow_implicit_invocation: true

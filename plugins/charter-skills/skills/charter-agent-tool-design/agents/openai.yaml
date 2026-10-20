@@ -1,0 +1,9 @@
+interface:
+  display_name: Charter · Agent Tool Design
+  short_description: Design CLIs, MCP servers and plugins that agents call
+  default_prompt: Use $charter-skills:charter-agent-tool-design to shape this CLI,
+    MCP server or plugin around the job its agent callers perform, with discoverable
+    operations and identities, results and errors that permit the next action, and
+    effects that stay recoverable through cancel, disable and uninstall.
+policy:
+  allow_implicit_invocation: true

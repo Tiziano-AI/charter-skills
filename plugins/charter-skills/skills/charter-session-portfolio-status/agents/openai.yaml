@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Session Portfolio Status
+  short_description: Explain outcomes and needed attention across agent sessions
+  default_prompt: Use $charter-skills:charter-session-portfolio-status to show what
+    is now true across my projects, what is running or waiting and where attention
+    matters, without continuing the work.
+policy:
+  allow_implicit_invocation: true
