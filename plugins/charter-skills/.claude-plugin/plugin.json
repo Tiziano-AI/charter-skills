@@ -6,5 +6,6 @@
     "name": "Tiziano AI"
   },
   "repository": "https://github.com/Tiziano-AI/charter-skills",
-  "license": "MIT"
+  "license": "MIT",
+  "icon": "./assets/charter-skills.png"
 }
