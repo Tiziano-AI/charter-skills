@@ -1,40 +1,56 @@
+<img src="assets/charter-skills.png" width="72" height="72" alt="">
+
 # Charter Skills
 
-An opinionated, Mac-first specialist library for useful work with agents:
-product decisions, design, engineering, research and creative production.
-Release **1.0.0-rc.8** adds expertise to Codex and Claude Code without
-replacing their native behavior, model, permissions or settings.
+Specialist skills for product, design, engineering, research and creative work
+in Codex and Claude Code. Charter is an opinionated, Mac-first library: call
+on the expertise a task needs while keeping your agent's native model,
+permissions and settings.
+
+**Version 1.0.0-rc.9**
 
 > **Release candidate.**
 
-Begin with Work Discovery when you do not know which specialist you need, or
-invoke a specialist directly. You do not need to learn Charter's deployment
-system or install a service.
+## Choose a starting point
+
+Bring an idea, problem, document or task. Start with **Work Discovery** when
+you are unsure how to approach it, or choose a specialist from the
+[catalogue](CATALOGUE.md) when you know what you need.
+
+- “Improve this frontend; the first visit feels confusing.”
+- “Explore a logo direction and produce something we can use.”
+- “This setting does not take effect. Find the cause and fix it.”
+- “We want an AI feature. Help us decide what it should actually do.”
+
+A clear request should lead to work, not an intake interview. Work Discovery's
+seven use-case guides suggest useful combinations; they are not mandatory
+stages or a requirement to load every skill. You can invoke specialists
+directly, and the native agent can select them when relevant.
 
 ## Install
 
-Installation requires a public Charter Skills release listed in the shared
-[Tiziano AI marketplace](https://github.com/Tiziano-AI/plugins). If Charter
-Skills is not listed, this guide does not offer an installation path. The
-product repository is not a separate marketplace.
+Install **Charter Skills** from the shared
+[Tiziano AI marketplace](https://github.com/Tiziano-AI/plugins). The commands
+below register that marketplace and install this library, not the other
+plugins it lists.
 
-You can continue working in your Mac desktop app after setup. The Terminal
-commands below require Git and the matching Codex or Claude Code CLI; having
-the desktop app does not establish that those commands are installed.
+These setup commands run in Terminal; afterward, you can work in your Mac
+desktop app or CLI. You need Git and the CLI for the host you use. Installing
+the desktop app does not necessarily install its Terminal command.
 
 Open Terminal from Applications → Utilities. Check `git --version` and either
 `codex --version` or `claude --version`, depending on the app you use. If the
 matching command is missing, follow the official
 [Codex CLI setup](https://developers.openai.com/codex/cli) or
 [Claude Code setup](https://code.claude.com/docs/en/setup) first. You do not
-need both CLIs, Charter's deployment engine or a Charter account. Public
+need both CLIs, a Charter account or Charter's deployment engine. Public
 repository access needs no private token. Follow your organization's
-installation and plugin policies rather than bypassing them.
+installation and plugin policies.
 
-The local CLI installation, update and removal path has been exercised with
-Codex CLI 0.163.0 and Claude Code 2.1.304. The desktop steps follow the host
-documentation; desktop sessions and first-time setup on a colleague's Mac
-have not been qualified for this release candidate.
+**Compatibility:** installation, update and removal have been exercised with
+Codex CLI 0.163.0 and Claude Code 2.1.304. The desktop instructions follow the
+host documentation; desktop use and first-time setup on a colleague's Mac
+remain untested for this release candidate.
 
 ### Codex: macOS app and CLI
 
@@ -72,8 +88,10 @@ claude plugin list
 ```
 
 Desktop **local Code** sessions and the CLI share plugin configuration. In
-desktop Code, choose **Local**, select your project and inspect **+ → Plugins
-→ Manage plugins**. This package does not cover Chat, Cowork or remote sessions.
+desktop Code, choose **Local** and select your project. Next to the prompt,
+open **+ → Add plugins**, or **+ → Plugins → Manage plugins**, depending on
+your app version. This guide covers local Code, not Chat, Cowork or remote
+sessions.
 
 Start a fresh session, or run `/reload-plugins`. Invoke:
 
@@ -85,41 +103,26 @@ Keep the full namespace; other specialists follow the same pattern. See
 [Claude's desktop plugin guide](https://code.claude.com/docs/en/desktop#install-plugins)
 and [plugin commands](https://code.claude.com/docs/en/plugins/cli-reference).
 
-## Start with the work
+## What gets installed
 
-Work Discovery accepts an idea, problem, document or clear task. It should
-help resolve consequential questions and carry the work to the requested
-result, not impose an intake interview on an already clear request.
+The library contains on-demand guidance, linked examples and a macOS Cleanup
+helper. Adaptive Communication is **selectable**, not always-on. It does not
+install Charter's standing or personal instructions, runtime adapters, custom
+roles, Forge or deployment engine. There is no MCP server, install hook,
+account setup, scheduled job or automatic cleanup.
 
-- “Improve this frontend; the first visit feels confusing.”
-- “Explore a logo direction and produce something we can use.”
-- “This setting does not take effect. Find the cause and fix it.”
-- “We want an AI feature. Help us decide what it should actually do.”
-
-The [catalogue](CATALOGUE.md) lists the library and links to Work Discovery's
-seven use-case guides. They are helpful combinations, not mandatory stages or
-a requirement to load every skill. Specialists can also be invoked directly
-or selected by the native agent when relevant.
-
-Adaptive Communication is **selectable**, not always-on. The package excludes
-Charter's standing instructions, runtime adapters, custom roles, personal
-instructions, Forge and deployment engine. It includes no MCP server, install
-hook, account setup, scheduled job or automatic cleanup.
-
-## Tools and privacy
-
-Most skills provide expertise without a special runtime. The actual task
-still needs its production tools: research access for current facts, a visual
-production tool for images, Xcode for native Apple development, or a suitable
-3D editor and renderer. Installation does not supply these tools or grant
-account access. A missing prerequisite should be reported, not hidden by
-invented paths or false completion.
+Skills do not supply the tools or accounts your work needs: research access
+for current facts, image tools, Xcode for native Apple development, or a 3D
+editor and renderer. If a prerequisite is missing, the agent should say what
+is missing rather than claim the work is complete.
 
 The macOS Cleanup helper uses Python 3.11+ and its standard library. It checks
 the interpreter, guarded-removal support and any relevant native owner/version
 before admitting an operation. Inspection is not permission to delete. Keep
 its plans, operation reports and recovery state until the work is settled;
 uninstalling the plugin does not settle an interrupted operation.
+
+### Privacy
 
 This plugin runs no collection service and uploads nothing on installation.
 When you use a skill, your agent and any tools it calls retain their own data
@@ -173,8 +176,9 @@ skill directories or editing caches.
 
 If public Git access fails, check the exact repository URL and your network
 or organization's Git policy. Do not place credentials in a repository URL.
-For a concrete missed result, report what you asked, what happened, the host
-and installed release, without including secrets or private transcripts.
+For a concrete missed result, [open an issue](https://github.com/Tiziano-AI/charter-skills/issues)
+with what you asked, what happened, the host and installed release. Leave out
+secrets and private transcripts.
 Skills do not promise identical results across models.
 
 Original teaching, helpers and other authored material use the [MIT License](LICENSE).

@@ -1,7 +1,7 @@
 {
   "name": "charter-skills",
-  "version": "1.0.0-rc.8",
-  "description": "An opinionated, Mac-first specialist library for useful work with agents.",
+  "version": "1.0.0-rc.9",
+  "description": "Specialist skills for product, design, engineering, research and creative work.",
   "author": {
     "name": "Tiziano AI"
   },

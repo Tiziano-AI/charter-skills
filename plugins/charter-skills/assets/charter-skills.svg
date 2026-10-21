@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <title>Charter Skills</title>
+  <desc>Editable vector artwork for the Tiziano AI plugin family. The adjacent PNG is rendered from this source at 512 by 512 pixels.</desc>
+  <rect width="128" height="128" rx="28" fill="#215B48"/>
+  <path d="M24 25c13 1 25 6 34 14v64c-9-8-21-13-34-14V25zm46 14c9-8 21-13 34-14v64c-13 1-25 6-34 14V39z" fill="#F8F0DE"/>
+  <path d="m75 34 20-10v22l-10-2-10 12V34z" fill="#F0B06E"/>
+</svg>

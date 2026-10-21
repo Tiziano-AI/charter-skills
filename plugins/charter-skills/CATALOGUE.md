@@ -1,10 +1,10 @@
 # Charter Skills catalogue
 
-Start with Work Discovery; browsing this catalogue is optional.
+Browse the specialists below, or start with [Work Discovery](skills/charter-work-discovery/SKILL.md) for help choosing an approach.
 
 ## Use-case guides
 
-The [seven guides](skills/charter-work-discovery/references/catalogue-routes.md) live with Work Discovery. They offer candidate combinations, not required stages or a load-all list.
+Work Discovery's [seven guides](skills/charter-work-discovery/references/catalogue-routes.md) show how specialists can work together. Use them as starting points, not a fixed sequence.
 
 ## Specialists
 
