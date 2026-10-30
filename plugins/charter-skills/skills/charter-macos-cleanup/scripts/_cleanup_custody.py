@@ -334,7 +334,6 @@ class Custody:
                         if key
                         not in {
                             "snapshot",
-                            "payload_files",
                             "distributions",
                             "preserve",
                         }

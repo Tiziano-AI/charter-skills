@@ -23,9 +23,14 @@ or plugin belongs to its own guide; there the answer is the right call.
 
 ## One core, several surfaces
 
-The same product is often a CLI, an MCP server and a plugin at once. Keep
-domain operations, target resolution, authentication and configuration in one
-core and make each surface a thin exposure of it; two surfaces with their own
+The same product is often a CLI, an MCP server and a plugin at once. Before
+fixing its name, check that its identity has coherent native spellings across
+the repository, distribution package, installable plugin, executable, tool
+namespace and configuration prefixes it actually exposes. Their naming
+grammars need not accept one identical literal; keep the relationship
+recognizable without unrelated aliases or recurring workarounds. Keep domain
+operations, target resolution, authentication and configuration in one core
+and make each surface a thin exposure of it; two surfaces with their own
 resolvers will disagree about which account or file a call touches. Choose
 surfaces by the caller's host:
 

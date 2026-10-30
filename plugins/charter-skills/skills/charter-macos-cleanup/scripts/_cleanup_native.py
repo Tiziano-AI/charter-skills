@@ -1,4 +1,4 @@
-"""Version-qualified native owners. No caller-supplied command is executable.
+"""Semantically bounded native owners. No caller-supplied command is executable.
 
 Discovery invokes only local, non-bootstrapping reads. A dynamic owner operation
 binds its destinations and policy, not a frozen inventory of cache entries.
@@ -6,6 +6,7 @@ binds its destinations and policy, not a frozen inventory of cache entries.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import platform
@@ -19,15 +20,7 @@ from typing import Callable
 
 from _cleanup_common import CleanupError, canonical_digest
 
-ADAPTER_VERSION = "native-owners-1"
-VERSIONS = {
-    "npm": "11.19.0",
-    "uv": "0.12.23",
-    "pnpm": "12.9.1",
-    "container": "1.5.0",
-    "buildx": "0.33.0",
-    "orb": "2.2.3",
-}
+ADAPTER_VERSION = "native-owners-2"
 PACKAGE_OWNERS = {"npm", "uv", "pnpm"}
 ENGINE_OWNERS = {"apple-buildkit", "apple-container", "orbstack-buildx", "orbstack"}
 _ENV_KEYS = {
@@ -44,6 +37,8 @@ _ENV_KEYS = {
     "DOCKER_HOST",
     "DOCKER_CONTEXT",
     "CONTAINER_ROOT",
+    "NODE_OPTIONS",
+    "NODE_PATH",
 }
 
 
@@ -63,18 +58,22 @@ def _env() -> dict[str, str]:
     return result
 
 
-def _read(argv: list[str]) -> str:
+def _read(argv: list[str], *, environment: dict | None = None) -> str:
     try:
         result = subprocess.run(
             argv,
             cwd="/",
-            env=_env(),
+            env=dict(_env(), **(environment or {})),
             stdin=subprocess.DEVNULL,
             capture_output=True,
             text=True,
             timeout=30,
             check=False,
         )
+    except UnicodeError as error:
+        raise CleanupError(
+            "native_output_invalid", "Native owner read is not valid text", command=argv
+        ) from error
     except (OSError, subprocess.TimeoutExpired) as error:
         raise CleanupError(
             "native_read_unavailable",
@@ -88,6 +87,12 @@ def _read(argv: list[str]) -> str:
             "Native owner refused a read",
             command=argv,
             exit_code=result.returncode,
+        )
+    if len(result.stdout.encode("utf-8")) > 1024 * 1024:
+        raise CleanupError(
+            "native_output_limit",
+            "Native discovery output exceeds the bounded read budget",
+            command=argv,
         )
     return result.stdout.strip()
 
@@ -136,7 +141,13 @@ def _executable(name: str) -> dict:
     # Multicall executables such as OrbStack's docker-tools dispatch by argv[0].
     # Retain the public entrypoint spelling while binding its resolved bytes.
     identity.update(
-        {"path": path, "resolved_path": resolved, "size": s.st_size, "mtime_ns": s.st_mtime_ns}
+        {
+            "path": path,
+            "resolved_path": resolved,
+            "size": s.st_size,
+            "mtime_ns": s.st_mtime_ns,
+            "sha256": _file_digest(Path(resolved)),
+        }
     )
     # Bind the interpreter as well as npm's JavaScript entrypoint. Other scripts
     # and package-manager shims can bootstrap and are deliberately not admitted.
@@ -147,7 +158,7 @@ def _executable(name: str) -> dict:
         if name == "npm" and first in (b"#!/usr/bin/env node", b"#!/usr/bin/node"):
             interpreter = "node" if first == b"#!/usr/bin/env node" else "/usr/bin/node"
             identity["interpreter"] = _executable(interpreter)
-        elif name == "container":
+        elif Path(name).name == "container":
             wrapper = re.fullmatch(
                 rb'#!/bin/bash\nCONTAINER_INSTALL_ROOT="([^"$`\\\n]+)" exec "([^"$`\\\n]+)"[ \t]+"\$@"\n?',
                 script,
@@ -187,19 +198,96 @@ def _executable(name: str) -> dict:
     return identity
 
 
+def _file_digest(path: Path) -> str:
+    before = path.stat()
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    after = path.stat()
+    if (before.st_ino, before.st_size, before.st_mtime_ns, before.st_ctime_ns) != (
+        after.st_ino,
+        after.st_size,
+        after.st_mtime_ns,
+        after.st_ctime_ns,
+    ):
+        raise CleanupError("native_conflict", "Owner implementation changed while being read")
+    return digest.hexdigest()
+
+
 def _version(exe: dict, owner: str, args: list[str] | None = None) -> str:
     text = _read([exe["path"], *(args or ["--version"])])
-    found = re.search(r"(?<![\d.])v?(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)(?![\d.])", text)
-    version = found.group(1) if found else None
-    if version != VERSIONS[owner]:
+    versions = set(re.findall(r"(?<![\d.])v?(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)(?![\d.])", text))
+    if len(versions) != 1:
         raise CleanupError(
-            "native_version_unsupported",
-            "Owner version has not been qualified for this route",
+            "native_output_invalid",
+            "Owner did not report one unambiguous version",
             owner=owner,
-            observed=version,
-            supported=VERSIONS[owner],
         )
-    return version
+    return versions.pop()
+
+
+def _capabilities(argv: list[str], options: tuple[str, ...]) -> None:
+    """Check command spelling, not deletion semantics or release eligibility."""
+    help_text = _read([*argv, "--help"])
+    missing = [option for option in options if not re.search(re.escape(option) + r"\b", help_text)]
+    if missing:
+        raise CleanupError(
+            "native_capability_missing", "Owner lacks required command options", missing=missing
+        )
+
+
+def _environment_digest() -> str:
+    return canonical_digest(
+        {
+            k: v
+            for k, v in _env().items()
+            if k in _ENV_KEYS or k.lower().startswith(("npm_config_", "pnpm_", "uv_", "container_"))
+        }
+    )
+
+
+def _npm_implementation(exe: dict) -> dict:
+    """Bind installed code, not an approved source hash or a tiny launcher alone."""
+    root = Path(exe.get("resolved_path", exe["path"])).parent.parent
+    try:
+        package = json.loads((root / "package.json").read_text())
+        if (
+            not isinstance(package, dict)
+            or package.get("name") != "npm"
+            or not (root / "lib/commands/cache.js").is_file()
+        ):
+            raise ValueError("npm package layout is absent")
+        rows = []
+        for base in (root / "package.json", root / "npmrc", root / "lib", root / "node_modules"):
+            pending = [(base, frozenset())]
+            while pending:
+                path, ancestors = pending.pop()
+                if not path.exists() and path.name == "npmrc":
+                    continue
+                resolved = path.resolve(strict=True)
+                if not resolved.is_relative_to(root):
+                    raise ValueError("npm implementation escapes its installed package")
+                if path.is_dir():
+                    if resolved in ancestors:
+                        raise ValueError("npm implementation has a directory-link cycle")
+                    pending.extend((child, ancestors | {resolved}) for child in path.iterdir())
+                elif path.is_file():
+                    rows.append([str(path.relative_to(root)), str(resolved), _file_digest(path)])
+                else:
+                    raise ValueError("npm implementation contains a non-regular module")
+        return {
+            "root": str(root),
+            "version": package.get("version"),
+            "files": len(rows),
+            "digest": canonical_digest(sorted(rows)),
+        }
+    except (OSError, ValueError, TypeError) as error:
+        raise CleanupError(
+            "native_implementation_unavailable",
+            "Cannot bind installed npm modules",
+            reason=str(error),
+        ) from error
 
 
 def _resolved(path: str) -> str:
@@ -297,14 +385,7 @@ def _candidate(
     identity = dict(
         identity,
         adapter=ADAPTER_VERSION,
-        environment_digest=canonical_digest(
-            {
-                k: v
-                for k, v in _env().items()
-                if k in _ENV_KEYS
-                or k.lower().startswith(("npm_config_", "pnpm_", "uv_", "container_"))
-            }
-        ),
+        environment_digest=_environment_digest(),
     )
     candidate = {
         "kind": "native",
@@ -343,6 +424,7 @@ def _package(owner: str, target: str | None) -> dict:
     identity = {"executable": exe, "version": _version(exe, owner), "cwd": "/"}
     binary = exe["path"]
     if owner == "npm":
+        identity["implementation"] = _npm_implementation(exe)
         cache = _resolved(target or _read([binary, "config", "get", "cache"]))
         cache_child = Path(cache) / "_cacache"
         if cache_child.is_symlink():
@@ -357,13 +439,27 @@ def _package(owner: str, target: str | None) -> dict:
         }
         identity["config"] = {"cache": cache}
     elif owner == "uv":
+        disabled = _env().get("UV_NO_CACHE", "false").lower()
+        if not target and disabled not in {"false", "0", "no", "off"}:
+            raise CleanupError(
+                "native_configuration_unsupported",
+                "UV_NO_CACHE disables a persistent cache; select an exact persistent target",
+                variable="UV_NO_CACHE",
+            )
+        environment = {"UV_NO_CACHE": "false"} if target else {}
+        _capabilities([binary, "cache", "prune"], ("--cache-dir",))
         args = [binary, "cache", "dir"] + (["--cache-dir", target] if target else [])
-        cache = _resolved(_read(args))
+        cache = _resolved(_read(args, environment=environment))
+        if target and cache != _resolved(target):
+            raise CleanupError(
+                "native_scope_unsupported", "uv did not resolve the selected persistent cache"
+            )
         paths = [cache]
         action = {
             "type": "uv_cache_prune",
             "cache": cache,
-            "effect": "Prune unused uv cache entries with native in-use protection; never force",
+            "environment": environment,
+            "effect": "Prune dangling cache entries, all centralized project environments and temporary build environments; native uv lock does not protect external Python consumers",
         }
         identity["config"] = {"cache": cache}
     else:
@@ -379,22 +475,39 @@ def _package(owner: str, target: str | None) -> dict:
             key: _json_read([*args, "config", "get", key, "--json"])
             for key in ("cache-dir", "global-dir", "dlx-cache-max-age")
         }
-        # pnpm 12.9.1 config get reports explicit values. These fallbacks are
-        # its defaults.rs / derive_layout.rs, not inferred from another pnpm.
+        _capabilities([*args, "store", "prune"], ("--ignore-workspace", "--store-dir"))
+        for key in ("cache-dir", "global-dir"):
+            if config[key] is not None and (not isinstance(config[key], str) or not config[key]):
+                raise CleanupError(
+                    "native_output_invalid", "pnpm directory configuration is ambiguous", key=key
+                )
+        age = config["dlx-cache-max-age"]
+        if age is not None and (type(age) is not int or age < 0):
+            raise CleanupError(
+                "native_output_invalid", "pnpm dlx expiry must be a nonnegative integer"
+            )
+        age = 1440 if age is None else age
+        # Resolve the layout through the installed owner, not a frozen v11
+        # path. The read-only bin override avoids an unrelated PATH validation
+        # in global root; it changes neither the global nor engine store root.
         env = _env()
         cache = config["cache-dir"] or str(
             Path(env["XDG_CACHE_HOME"]) / "pnpm"
             if env.get("XDG_CACHE_HOME")
             else Path.home() / "Library/Caches/pnpm"
         )
-        pnpm_home = env.get("PNPM_HOME") or str(
-            Path(env["XDG_DATA_HOME"]) / "pnpm"
-            if env.get("XDG_DATA_HOME")
-            else Path.home() / "Library/pnpm"
+        global_pkg_dir = _resolved(
+            _read([*args, "--config.global-bin-dir=/usr/bin", "root", "--global"])
         )
-        global_root = config["global-dir"] or str(Path(pnpm_home) / "global")
-        global_pkg_dir = _resolved(str(Path(global_root) / "v11"))
-        private = str(Path(global_pkg_dir).parent.parent / "package-manager-store/v11/tmp/private")
+        engine_root = _resolved(str(Path(global_pkg_dir).parent.parent / "package-manager-store"))
+        engine_store = _resolved(
+            _read([binary, "--ignore-workspace", "--store-dir", engine_root, "store", "path"])
+        )
+        if not Path(engine_store).is_relative_to(engine_root):
+            raise CleanupError(
+                "native_scope_unsupported", "pnpm engine store escaped its configured root"
+            )
+        private = str(Path(engine_store) / "tmp/private")
         paths = [_resolved(str(Path(cache) / "dlx")), store, _resolved(private)]
         identity["config"] = dict(
             config,
@@ -402,16 +515,44 @@ def _package(owner: str, target: str | None) -> dict:
             global_pkg_dir=global_pkg_dir,
             store=store,
             private_engine_installs=paths[2],
+            engine_store=engine_store,
         )
         action = {
             "type": "pnpm_store_prune",
             "store": store,
+            "cache_dir": _resolved(cache),
+            "global_dir": str(Path(global_pkg_dir).parent),
+            "dlx_cache_max_age": age,
+            "phases": [
+                {
+                    "kind": "expired_dlx",
+                    "path": paths[0],
+                    "max_age_minutes": age,
+                    "protection": "external activity check; expiry is not proof of disuse",
+                },
+                {
+                    "kind": "unreferenced_packages",
+                    "path": store,
+                    "protection": "native reference/link/loader policy",
+                },
+                {
+                    "kind": "abandoned_private_installs",
+                    "path": paths[2],
+                    "protection": "native in-use lock with age fallback",
+                },
+            ],
             "effect": "Sequentially remove expired dlx entries, prune the selected store, then abandoned private engine installs",
         }
     identity["destinations"] = [_path_identity(p, missing=True) for p in paths]
-    return _candidate(
+    result = _candidate(
         owner, target, action, identity, [{"kind": "path", "path": p} for p in paths], paths=paths
     )
+    if owner == "uv":
+        result["retained_reason"] = {
+            "code": "native_environment_scope_conflict",
+            "message": "uv cache prune also removes all centralized project environments; environment retirement is outside cache cleanup and there is no native exclusion selector",
+        }
+    return result
 
 
 def discover_native(owner: str, target: str | None = None) -> list[dict]:
@@ -443,6 +584,8 @@ def revalidate_native(candidate: dict) -> dict:
 
 
 def _argv(candidate: dict) -> list[str] | None:
+    if candidate["action"]["type"] == "orbstack_observe_reclaim":
+        return None
     exe, action = candidate["identity"]["executable"]["path"], candidate["action"]
     match action["type"]:
         case "npm_cacache_clean":
@@ -450,7 +593,17 @@ def _argv(candidate: dict) -> list[str] | None:
         case "uv_cache_prune":
             return [exe, "cache", "prune", "--cache-dir", action["cache"]]
         case "pnpm_store_prune":
-            return [exe, "--ignore-workspace", "--store-dir", action["store"], "store", "prune"]
+            return [
+                exe,
+                "--ignore-workspace",
+                "--store-dir",
+                action["store"],
+                "--config.cache-dir=" + action["cache_dir"],
+                "--config.global-dir=" + action["global_dir"],
+                "--config.dlx-cache-max-age=" + str(action["dlx_cache_max_age"]),
+                "store",
+                "prune",
+            ]
         case _:
             from _cleanup_engines import engine_argv
 
@@ -479,7 +632,12 @@ def _process_identity(pid: int) -> dict | None:
     return {"pid": pid, "started": result.stdout.strip()}
 
 
-def _run_effect(argv: list[str], before_submit: Callable[[dict], None] | None) -> dict:
+def _run_effect(
+    argv: list[str],
+    before_submit: Callable[[dict], None] | None,
+    *,
+    environment: dict | None = None,
+) -> dict:
     checkpoint = before_submit or (lambda value: None)
     checkpoint({"phase": "intent", "command": argv, "execution_ended": False})
     process = None
@@ -488,11 +646,12 @@ def _run_effect(argv: list[str], before_submit: Callable[[dict], None] | None) -
         process = subprocess.Popen(
             argv,
             cwd="/",
-            env=_env(),
+            env=dict(_env(), **(environment or {})),
             stdin=subprocess.DEVNULL,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
+            errors="replace",
             start_new_session=True,
         )
         process_identity = _process_identity(process.pid)
@@ -547,6 +706,8 @@ def _run_effect(argv: list[str], before_submit: Callable[[dict], None] | None) -
 
 def execute_native(candidate: dict, *, before_submit: Callable[[dict], None] | None = None) -> dict:
     fresh = revalidate_native(candidate)
+    if fresh.get("retained_reason"):
+        raise CleanupError(**fresh["retained_reason"])
     argv = _argv(fresh)
     before = fresh["measurements"]
     if argv is None:
@@ -586,7 +747,12 @@ def execute_native(candidate: dict, *, before_submit: Callable[[dict], None] | N
                 if result.get("stdout_truncated"):
                     raise ValueError("incomplete output")
                 rows = [json.loads(line) for line in result["stdout"].splitlines() if line.strip()]
-                result["engine_reclaimed_bytes"] = sum(row["Size"] for row in rows)
+                if any(
+                    not isinstance(row, dict) or type(row.get("size")) is not int or row["size"] < 0
+                    for row in rows
+                ):
+                    raise ValueError("unrecognized cache sizes")
+                result["engine_reclaimed_bytes"] = sum(row["size"] for row in rows)
                 result["engine_byte_precision"] = "exact owner-reported cache sizes, not host bytes"
             except (ValueError, KeyError, TypeError):
                 result["engine_byte_precision"] = "unknown: output incomplete or unrecognized"

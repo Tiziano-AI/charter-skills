@@ -6,8 +6,16 @@ A scan is a saved, bounded observation. It records discovery coverage, excluded
 boundaries, candidates, metadata preimages and reconstruction evidence. A plan
 selects qualified candidates and binds the current helper bytes, scan, exact
 object identities or native policy and destination scope. It is immutable:
-changed helper bytes, inputs, ancestors, contents, endpoints or owner settings
-require inspection and planning again.
+changed helper bytes, inputs, ancestors, contents, command identities, observed
+versions, endpoints, nodes or owner settings require inspection and planning
+again before new execution. That stale-plan protection is distinct from admitting
+a fresh installation through its supported operation contract.
+
+The helper bounds saved scans, plans and operation growth so emitted reports
+remain readable by their next consumer. A bounded inventory can carry explicit
+incomplete coverage, findings and narrower inspection as the next step;
+pagination alone does not establish a complete saved inventory. A selected plan
+that cannot fit its required operation record is refused before execution.
 
 The agent still determines whether material is authored, retained, reproducible
 or source-linked. A typed reason is not a machine proof of those judgments.
@@ -48,8 +56,8 @@ in that OS account therefore see overlapping resource claims. The private
 directory is independent of the package's installation state. Short admission
 locking serializes claim decisions; each foreground writer also holds an
 attempt lease. A crash releases the live lease but leaves durable custody.
-A new operation filename cannot evade it. Venv payload attempts claim their environment conservatively
-while selecting only the inventoried files.
+A new operation filename cannot evade it. Venv payload attempts claim their
+environment conservatively while selecting only the inventoried files.
 
 The operation file carries the plan, actions, lifecycle checkpoints, actual
 outcomes and reconstruction recipes. The private claim carries enough intent
@@ -59,9 +67,16 @@ is a recovery problem, not authority to run again.
 
 `status --operation <path>` reads one attempt. `status` discovers shared claims
 without knowing its filename. Status may settle a dead writer's claim using
-the installed route's readback and persist the result. It performs no cleanup,
-trim, restart or retry. A status read cannot settle a writer that still holds
-its lease.
+the original bound route's readback and persist the result. It performs no
+cleanup, trim, restart or retry. A status read cannot settle a writer that still
+holds its lease.
+
+Readback must establish the original service/namespace and the command identity
+needed to observe it. A replacement executable, changed route environment such
+as `CONTAINER_ROOT`, or a same-named container in another service cannot settle
+the original claim. A stopped or different incarnation proves termination only
+on the original bound route. If that route cannot be established, keep the claim
+unresolved; do not start services or connect to a remote replacement.
 
 Identity drift before native submission releases custody as an unsubmitted
 conflict; uncertainty after the durable submission checkpoint retains it.
@@ -79,10 +94,20 @@ not successful cleanup merely because no resource claim remains.
 Top-level JSON uses `schema_version`, `command`, `state`, `data` and `issues`.
 Exit 0 means a completed read/plan or completed/no-change execution; 1 means a
 conflict, skip, partial or unresolved operation; 2 means unusable arguments,
-input or contract. A successful inspect can still have incomplete coverage:
-read `coverage`, per-candidate issues and `next_cursor`. A batch with both
-removals and skips is partial, never “all removed.” Detailed reports remain in
-the saved JSON rather than flooding the model with every payload filename.
+input or contract. A successful inspect can still have incomplete coverage or
+refused native families: read `coverage`, `native_findings`, candidate issues
+and `next_cursor`. A batch with both removals and skips is partial, never “all
+removed.” Detailed reports remain in saved JSON rather than flooding the model
+with every payload filename.
+
+`request_coverage` preserves the requested-family dispositions through planning
+and results, including unselected, retained and refused work.
+`result_scope: selected_plan` limits the execution outcome to selected actions.
+Read status's `observation_state` and `custody_state` separately from the cleanup
+outcome: completing a status read or settling an orphan claim does not turn a
+partial or unstarted cleanup into success. Account for families outside the
+saved scan as well when the user's request was broader. Neither zero claims nor
+one successful exit code establishes whole-request completion.
 
 ## Measurement and package lifecycle
 
@@ -98,8 +123,10 @@ This package has no daemon, queue, scheduler or background restart. A native
 service request can nevertheless outlive its CLI, which is why custody exists.
 Disabling or removing the skill stops its discovery, not accepted service work
 or the account's shared claims. Package updates and removal must preserve those
-claims and caller-owned reports. Recover with another still-available copy of
-the same qualified package, or restore that package through its native
-installation route; do not infer that removing the skill ended an operation.
-Updating the package does not change an already-running agent's loaded
-instructions.
+claims and caller-owned reports. The current helper can read retained operation
+metadata and custody after an update without executing a stale plan. Recovery
+does not require exact historical release equality, but it still requires the
+original bound service route for termination readback. If the helper is absent,
+restore it through its owning installation route; do not hand-edit records or
+infer that removing the skill ended an operation. Updating the package does not
+change an already-running agent's loaded instructions.

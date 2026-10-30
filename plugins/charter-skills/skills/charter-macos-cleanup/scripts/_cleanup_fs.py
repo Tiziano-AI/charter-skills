@@ -19,6 +19,8 @@ import tempfile
 from contextlib import contextmanager
 from pathlib import Path
 
+import _cleanup_common as reports
+
 AT_REMOVEDIR = 0x0080
 AT_SYMLINK_NOFOLLOW_ANY = 0x0800
 AT_RESOLVE_BENEATH = 0x2000
@@ -112,7 +114,7 @@ def _parent(path):
         raise
 
 
-def _walk(parent_fd, name, relative, device, entries):
+def _walk(parent_fd, name, relative, device, entries, budget):
     if name == ".git":
         raise FilesystemError("protected_git_metadata", "Git metadata is never a cleanup payload.")
     if len(entries) >= MAX_ENTRIES or relative.count("/") >= MAX_DEPTH:
@@ -134,6 +136,11 @@ def _walk(parent_fd, name, relative, device, entries):
     row = {"relative_path": relative, "signature": before}
     if stat.S_ISLNK(mode):
         row["link_target"] = os.readlink(name, dir_fd=parent_fd)
+    budget[0] -= reports.encoded_size(row)
+    if budget[0] < 0:
+        raise FilesystemError(
+            "snapshot_byte_limit", "Snapshot exceeds its byte budget; inspect narrower roots."
+        )
     entries.append(row)
     if stat.S_ISDIR(mode):
         fd = os.open(name, _DIRECTORY_FLAGS, dir_fd=parent_fd)
@@ -147,6 +154,7 @@ def _walk(parent_fd, name, relative, device, entries):
                     f"{relative}/{child}" if relative else child,
                     device,
                     entries,
+                    budget,
                 )
             if _signature(os.fstat(fd)) != before:
                 raise FilesystemError("tree_changed", "Directory changed during inventory.")
@@ -177,7 +185,14 @@ def snapshot(path: str, *, protected_roots=()) -> dict:
         try:
             root_stat = os.stat(name, dir_fd=fd, follow_symlinks=False)
             result.update(device=root_stat.st_dev, inode=root_stat.st_ino, ancestors=ancestors)
-            _walk(fd, name, "", root_stat.st_dev, result["entries"])
+            _walk(
+                fd,
+                name,
+                "",
+                root_stat.st_dev,
+                result["entries"],
+                [reports.MAX_REPORT_BYTES // 2],
+            )
         finally:
             os.close(fd)
         check_fd, _, after = _parent(path)
@@ -195,6 +210,158 @@ def snapshot(path: str, *, protected_roots=()) -> dict:
     result["allocated_bytes"] = sum(s["allocated_bytes"] for s in unique.values())
     result["digest"] = _digest({key: result.get(key) for key in ("path", "ancestors", "entries")})
     return result
+
+
+def _payload_digest(value):
+    return _digest({key: value.get(key) for key in ("format", "path", "ancestors", "entries")})
+
+
+def snapshot_files(path: str, relative_paths, *, protected_roots=()) -> dict:
+    """Exact files with one shared ancestor table; never inventory unselected siblings."""
+    # The anchor is retained; protect each removal target, not the skeleton.
+    path = _path(path)
+    names = sorted(_relative(name) for name in relative_paths)
+    if len(names) != len(set(names)):
+        raise FilesystemError("overlapping_targets", "Exact payload files must be unique.")
+    result = {
+        "format": "payload-v1",
+        "path": path,
+        "complete": False,
+        "ancestors": [],
+        "entries": [],
+        "issues": [],
+    }
+    ancestors = {}
+    remaining = reports.MAX_REPORT_BYTES // 2
+    try:
+        root_fd, _, chain = _parent(path + "/.cleanup-preimage")
+        try:
+            root = _signature(os.fstat(root_fd))
+            result.update(device=root["device"], inode=root["inode"])
+        finally:
+            os.close(root_fd)
+        for ancestor in chain:
+            ancestors[ancestor["path"]] = ancestor
+            remaining -= reports.encoded_size(ancestor)
+        for name in names:
+            if len(result["entries"]) >= MAX_ENTRIES or name.count("/") >= MAX_DEPTH:
+                raise FilesystemError("snapshot_limit", "Qualify fewer files or narrower roots.")
+            target = _path(path + "/" + name, protected_roots)
+            fd, leaf, chain = _parent(target)
+            try:
+                for ancestor in chain:
+                    key = ancestor["path"]
+                    if key in ancestors and ancestors[key] != ancestor:
+                        raise FilesystemError("ancestor_changed", "Payload ancestor changed.")
+                    if key not in ancestors:
+                        remaining -= reports.encoded_size(ancestor)
+                        ancestors[key] = ancestor
+                signature = _signature(os.stat(leaf, dir_fd=fd, follow_symlinks=False))
+                if signature["device"] != root["device"]:
+                    raise FilesystemError("device_boundary", "Payload crosses a filesystem.")
+                if not (stat.S_ISREG(signature["mode"]) or stat.S_ISLNK(signature["mode"])):
+                    raise FilesystemError(
+                        "not_payload_file", "Payload accepts files and links only."
+                    )
+                row = {"relative_path": name, "signature": signature}
+                if stat.S_ISLNK(signature["mode"]):
+                    row["link_target"] = os.readlink(leaf, dir_fd=fd)
+                if signature != _signature(os.stat(leaf, dir_fd=fd, follow_symlinks=False)):
+                    raise FilesystemError("tree_changed", "Payload changed during inventory.")
+                remaining -= reports.encoded_size(row)
+                if remaining < 0:
+                    raise FilesystemError(
+                        "snapshot_byte_limit",
+                        "Payload exceeds its byte budget; inspect narrower roots.",
+                    )
+                result["entries"].append(row)
+            finally:
+                os.close(fd)
+        for ancestor in ancestors.values():
+            fd, _, chain = _parent(ancestor["path"].rstrip("/") + "/.cleanup-preimage")
+            os.close(fd)
+            if chain[-1] != ancestor:
+                raise FilesystemError(
+                    "ancestor_changed", "Payload ancestor changed during inventory."
+                )
+        result["complete"] = True
+    except (OSError, FilesystemError) as error:
+        result["issues"].append(_issue(getattr(error, "code", "snapshot_unavailable"), str(error)))
+    result["ancestors"] = [ancestors[key] for key in sorted(ancestors)]
+    unique = {
+        (row["signature"]["device"], row["signature"]["inode"]): row["signature"]
+        for row in result["entries"]
+    }
+    result["logical_bytes"] = sum(sig["size"] for sig in unique.values())
+    result["allocated_bytes"] = sum(sig["allocated_bytes"] for sig in unique.values())
+    result["digest"] = _payload_digest(result)
+    return result
+
+
+def _validate_payload_snapshot(expected):
+    if not isinstance(expected, dict) or expected.get("format") != "payload-v1":
+        raise FilesystemError("invalid_snapshot", "Expected a compact payload-v1 snapshot.")
+    root = _path(expected["path"])
+    if not expected.get("complete"):
+        raise FilesystemError("incomplete_snapshot", "Incomplete payload cannot authorize removal.")
+    if expected.get("digest") != _payload_digest(expected):
+        raise FilesystemError("invalid_snapshot", "Payload preimage digest does not match.")
+    if not isinstance(expected["entries"], list) or len(expected["entries"]) > MAX_ENTRIES:
+        raise FilesystemError("snapshot_limit", "Payload entries exceed bounded coverage.")
+    ancestors = {row["path"]: row["signature"] for row in expected["ancestors"]}
+    if len(ancestors) != len(expected["ancestors"]) or root not in ancestors:
+        raise FilesystemError(
+            "invalid_snapshot", "Payload ancestors must be unique and include its root."
+        )
+    seen, needed = set(), set()
+    for row in expected["entries"]:
+        relative = _relative(row["relative_path"])
+        if relative.count("/") >= MAX_DEPTH:
+            raise FilesystemError("snapshot_limit", "Payload path exceeds bounded depth.")
+        target = root + "/" + relative
+        signature = row["signature"]
+        if relative in seen:
+            raise FilesystemError("overlapping_targets", "Exact payload files must be unique.")
+        if not (stat.S_ISREG(signature["mode"]) or stat.S_ISLNK(signature["mode"])):
+            raise FilesystemError("not_payload_file", "Payload must contain unique files or links.")
+        if signature["device"] != expected["device"] or any(
+            part == ".git" or _is_lock(part) for part in relative.split("/")
+        ):
+            raise FilesystemError(
+                "persistent_lock", "Payload cannot reach locks, Git or another device."
+            )
+        seen.add(relative)
+        for parent in Path(target).parents:
+            key = str(parent)
+            needed.add(key)
+            if key not in ancestors or not stat.S_ISDIR(ancestors[key]["mode"]):
+                raise FilesystemError(
+                    "invalid_snapshot", "Payload lacks an exact directory ancestor."
+                )
+    if not seen or needed != ancestors.keys():
+        raise FilesystemError(
+            "invalid_snapshot", "Payload must have files and only their exact ancestors."
+        )
+    if [row["relative_path"] for row in expected["entries"]] != sorted(seen):
+        raise FilesystemError(
+            "invalid_snapshot", "Payload entries must follow canonical path order."
+        )
+    identity = ancestors[root]
+    if (identity["device"], identity["inode"]) != (expected["device"], expected["inode"]):
+        raise FilesystemError("invalid_snapshot", "Payload root identity does not match.")
+
+
+def validate_payload_snapshot(expected: dict) -> None:
+    """Validate the closed exact-file selection before a claim or removal."""
+    try:
+        _validate_payload_snapshot(expected)
+    except (KeyError, TypeError, ValueError, AttributeError) as error:
+        raise FilesystemError("invalid_snapshot", "Malformed compact payload preimage.") from error
+
+
+def payload_paths(expected: dict) -> list[str]:
+    validate_payload_snapshot(expected)
+    return [expected["path"] + "/" + row["relative_path"] for row in expected["entries"]]
 
 
 def _unlinkat(parent_fd, name, directory=False):
@@ -471,78 +638,91 @@ def guard_remove(expected: dict, preserve=(), *, protected_roots=()) -> dict:
         )
 
 
-def remove_snapshots(snapshots: list[dict], *, protected_roots=()) -> dict:
-    """Precheck all exact files before removal; retain the directory skeleton."""
-    removed = []
+def _payload_file(expected, row, ancestors):
+    path = expected["path"] + "/" + row["relative_path"]
+    entry = {"relative_path": "", "signature": row["signature"]}
+    if "link_target" in row:
+        entry["link_target"] = row["link_target"]
+    return {
+        "path": path,
+        "entries": [entry],
+        "ancestors": [ancestors[str(parent)] for parent in reversed(Path(path).parents)],
+    }
+
+
+def remove_payload(expected: dict, *, protected_roots=()) -> dict:
+    """Precheck every exact file, then guarded-unlink only that closed selection.
+
+    Outcomes refer to the snapshot's sorted entry prefix rather than copying all
+    filenames or preimages into each durable operation checkpoint.
+    """
+    count = 0
+    extra = {"selection_digest": expected.get("digest") if isinstance(expected, dict) else None}
     try:
-        current = [_check(item, protected_roots) for item in snapshots]
-        paths = sorted(item["path"] for item in current)
-        if len(paths) != len(set(paths)) or any(
-            right.startswith(left + "/") for left, right in zip(paths, paths[1:])
-        ):
+        validate_payload_snapshot(expected)
+        current = snapshot_files(
+            expected["path"],
+            [row["relative_path"] for row in expected["entries"]],
+            protected_roots=protected_roots,
+        )
+        if not current["complete"] or current["digest"] != expected["digest"]:
             raise FilesystemError(
-                "overlapping_targets",
-                "Exact targets must be unique and non-overlapping.",
-            )
-        if any(
-            len(item["entries"]) != 1 or stat.S_ISDIR(item["entries"][0]["signature"]["mode"])
-            for item in current
-        ):
-            raise FilesystemError(
-                "not_payload_file",
-                "Exact payload removal accepts files and links, not directories.",
-            )
-        if any(_is_lock(item["path"]) for item in current):
-            raise FilesystemError(
-                "persistent_lock", "Persistent lock names are retained, never unlinked."
+                "preimage_changed", "Payload identity, ancestors or files changed."
             )
         qualification = qualify_guards()
         if not qualification["supported"]:
-            return _result("skipped", issues=qualification["issues"])
-        for item in current:
+            return _result("skipped", issues=qualification["issues"], **extra)
+        ancestors = {row["path"]: row for row in current["ancestors"]}
+        peers = {}
+        for row in current["entries"]:
+            signature = row["signature"]
+            peers.setdefault((signature["device"], signature["inode"]), []).append(row)
+        removed_ids = set()
+        for row in current["entries"]:
+            extra["next_relative_path"] = row["relative_path"]
+            item = _payload_file(current, row, ancestors)
             result = _remove(item, {""}, protected_roots)
             if result["state"] != "completed":
                 return _result(
-                    "partial" if removed else result["state"],
-                    len(removed),
+                    "partial" if count else result["state"],
+                    count,
                     result["issues"],
-                    removed_paths=removed,
+                    removed_prefix_count=count,
+                    **extra,
                 )
-            removed.append(item["path"])
-            removed_signature = item["entries"][0]["signature"]
+            count += 1
+            removed_ids.add(id(row))
+            removed_signature = row["signature"]
             if removed_signature["nlink"] > 1:
-                for peer in current:
-                    signature = peer["entries"][0]["signature"]
-                    if peer["path"] in removed or (
-                        signature["device"],
-                        signature["inode"],
-                    ) != (removed_signature["device"], removed_signature["inode"]):
+                key = (removed_signature["device"], removed_signature["inode"])
+                for peer in peers[key]:
+                    if id(peer) in removed_ids:
                         continue
-                    now = _signature(os.lstat(peer["path"]))
+                    signature = peer["signature"]
+                    peer_path = current["path"] + "/" + peer["relative_path"]
+                    parent, name, _ = _parent(peer_path)
+                    try:
+                        now = _signature(os.stat(name, dir_fd=parent, follow_symlinks=False))
+                    finally:
+                        os.close(parent)
                     stable = set(signature) - {"nlink", "ctime_ns"}
                     if (
                         any(now[key] != signature[key] for key in stable)
                         or now["nlink"] != signature["nlink"] - 1
                     ):
-                        return _result(
-                            "partial",
-                            len(removed),
-                            [
-                                _issue(
-                                    "preimage_changed",
-                                    "A hardlink peer changed beyond our unlink.",
-                                )
-                            ],
-                            removed_paths=removed,
+                        raise FilesystemError(
+                            "preimage_changed", "A hardlink peer changed beyond our unlink."
                         )
-                    peer["entries"][0]["signature"] = now
-        return _result("completed" if removed else "no_change", len(removed), removed_paths=removed)
+                    peer["signature"] = now
+        extra.pop("next_relative_path", None)
+        return _result("completed", count, removed_prefix_count=count, **extra)
     except (OSError, FilesystemError, KeyError, TypeError) as error:
         return _result(
-            "partial" if removed else "conflict",
-            len(removed),
+            "partial" if count else "conflict",
+            count,
             [_issue(getattr(error, "code", "invalid_snapshot"), str(error))],
-            removed_paths=removed,
+            removed_prefix_count=count,
+            **extra,
         )
 
 

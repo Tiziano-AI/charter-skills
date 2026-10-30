@@ -171,7 +171,7 @@ def make_plan(scan, selection, kind="cleanup"):
                     candidate_id=identifier,
                 )
             selected.append({**candidate, "qualification": _qualification(group, candidate)})
-    return seal(
+    plan = seal(
         {
             "schema_version": 1,
             "helper_version": HELPER_VERSION,
@@ -181,8 +181,37 @@ def make_plan(scan, selection, kind="cleanup"):
             "scan_digest": scan["digest"],
             "protected_roots": sorted(set(scan.get("roots", []) + scan.get("project_roots", []))),
             "candidates": selected,
+            "request_coverage": {
+                "inspection_complete": scan.get("coverage", {}).get("complete", False),
+                "roots": scan.get("roots", []),
+                "native_owners": scan.get("coverage", {}).get("native_owners", []),
+                "issues": scan.get("issues", []),
+                "native_findings": scan.get("native_findings", []),
+                "candidates": [
+                    {
+                        **{
+                            k: c[k]
+                            for k in ("id", "kind", "owner", "category", "path", "retained_reason")
+                            if k in c
+                        },
+                        "selection_state": "selected"
+                        if c["id"] in seen
+                        else "scope_refused"
+                        if c.get("kind") == "native" and c.get("retained_reason")
+                        else "unqualified"
+                        if c.get("retained_reason")
+                        else "not_selected",
+                    }
+                    for c in scan["candidates"]
+                ],
+            },
         }
     )
+    # Selection must fit its next durable consumer, not merely the plan writer.
+    from _cleanup_execute import validate_capacity
+
+    validate_capacity(plan)
+    return plan
 
 
 def qualification_unchanged(candidate):
@@ -209,7 +238,6 @@ def summary(candidate, detail=False):
         if k
         not in {
             "snapshot",
-            "payload_files",
             "qualification",
             "evidence_preimages",
             "distributions",
@@ -234,7 +262,9 @@ def summary(candidate, detail=False):
             {k: d.get(k) for k in ("name", "version", "metadata_path")}
             for d in candidate.get("distributions", [])
         ]
-        result["payload_file_count"] = len(candidate.get("payload_files", []))
+        result["payload_file_count"] = (
+            len(snap.get("entries", [])) if candidate.get("category") == "venv_payload" else 0
+        )
         result["selection_template"] = {
             "schema_version": 1,
             "groups": [

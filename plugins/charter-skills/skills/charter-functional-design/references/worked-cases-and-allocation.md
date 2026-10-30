@@ -31,8 +31,12 @@ score merely because the interface has a score field.
 The account matching might be deterministic for shared identifiers, assisted
 for aliases and unresolved for ambiguous matches. Interpretation of narrative
 evidence may need a model. The acceptance rule may be executable once the buyer
-has chosen it. This allocation follows the work; assigning everything to one
-"assessment agent" obscures which part actually supplies the judgment.
+has chosen it. This allocation follows the work. A box labeled "assessment
+agent" with no such decomposition hides which part supplies the judgment. When
+one model with tools supplies all of that judgment, say so and give it the
+tools; matching on shared identifiers and the buyer's adopted rule can still
+run as code around it. The decomposition describes the work, not a requirement
+for several components.
 
 Conversely, if the promised product is evidence search, passages with correct
 scope and locations may be the entire useful result. Adding an assessment

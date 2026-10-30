@@ -4,7 +4,7 @@ description: 'Design the substantive work of a new or incomplete product: turn i
   into usable findings, decisions or actions and assign each transformation. Not ordinary
   implementation of a clear function, market strategy or the journey through the product.'
 metadata:
-  content_version: charter-functional-design@2026.10.08.0
+  content_version: charter-functional-design@2026.10.24.0
 ---
 # Charter · Functional Design
 
@@ -53,13 +53,23 @@ value; a mature calculation with a known contract may need none.
 Function allocation decides what a person, deterministic code, model, service
 or existing workflow actually contributes. The distinction is consequential:
 
-- Deterministic transformations fit explicit rules, exact arithmetic,
-  normalization and mechanical validity. A model can propose a mapping without
-  becoming the authority for arithmetic or a mandatory field rule.
-- Model-mediated work fits interpretation, synthesis and candidate judgments
-  where the inputs vary in language or structure. Specify the evidence it can
-  use, the criterion it applies, the result it must produce and how ambiguity
-  changes that result. "Call the model" leaves all four undefined.
+- Deterministic transformations fit exact arithmetic, normalization, matching
+  on exact identifiers, listing the items a source itself enumerates, and
+  mechanical validity such as schema and whether a quoted passage exists in
+  its source. A decision rule the owner adopted can run as code over findings
+  already established. A model can propose a mapping without becoming the
+  authority for arithmetic or a mandatory field rule. Code can confirm that
+  every criterion has a finding; a rule that decides what a source means,
+  which passages bear on a criterion, or whether a source was examined enough
+  to support a finding is judgment even when it is written as code.
+- Model-mediated work fits interpretation, synthesis and judgment, including
+  what to search for and read when the model has tools. Specify the sources
+  and tools it can reach, the criterion it applies, the result it must produce
+  and how ambiguity changes that result; "call the model" leaves these
+  undefined. When that judgment is the product's value and a model step fails,
+  look first at the sources and tools it could reach, its instructions and the
+  model's capability. Moving the judgment into code changes what the product
+  is, so it is a choice for the product's owner, not a repair.
 - People supply preferences, authority, tacit expertise or genuinely necessary
   judgment. Design the information they receive and the effect of their answer;
   an unexplained review queue is merely a transfer of unfinished work.

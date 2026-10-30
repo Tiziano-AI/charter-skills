@@ -9,10 +9,13 @@ import uuid
 from collections import Counter
 from pathlib import Path
 
+import _cleanup_common as reports
 from _cleanup_common import (
     CleanupError,
+    bounded_json,
     canonical_digest,
     contract_digest,
+    encoded_size,
     read_json,
     write_json,
 )
@@ -25,6 +28,7 @@ from _cleanup_custody import (
     path_overlaps,
     scopes_overlap,
 )
+from _cleanup_fs import FilesystemError, validate_payload_snapshot
 
 STATES = {
     "completed",
@@ -36,6 +40,134 @@ STATES = {
     "blocked",
     "failed",
 }
+
+
+def _action_budget(candidate: dict) -> int:
+    # Diagnostics have a bounded inline representation. Identity, command and
+    # reconstruction scale with this exact reviewed candidate, not its file count.
+    return 8192 + encoded_size(
+        {
+            "identity": candidate.get("identity"),
+            "action": candidate.get("action"),
+            "reconstruction": candidate.get("qualification", {}).get("reconstruction"),
+        }
+    )
+
+
+def validate_capacity(plan: dict, operation_path="") -> None:
+    """Admit the complete durable journey before creating custody or effects."""
+    prospective = {
+        "schema_version": 1,
+        "helper_version": "1",
+        "operation_id": "0" * 32,
+        "operation_path": str(operation_path),
+        "kind": plan["kind"],
+        "plan": plan,
+        "actions": [],
+        "request_coverage": _request_coverage(
+            plan, {candidate["id"]: "execution_unresolved" for candidate in plan["candidates"]}
+        ),
+    }
+    reserve = 4096
+    for candidate in plan["candidates"]:
+        reserve += _action_budget(candidate) + encoded_size({"candidate_id": candidate["id"]})
+        if candidate["kind"] == "native":
+            reserve += 4096 + encoded_size(candidate)
+    if reserve >= reports.MAX_REPORT_BYTES:
+        raise CleanupError("report_too_large", "Select fewer candidates to retain durable outcomes")
+    bounded_json(prospective, reserve_bytes=reserve)
+
+
+def _bounded_outcome(value: dict, candidate: dict) -> dict:
+    if encoded_size(value) <= _action_budget(candidate):
+        return value
+    # Completion and recovery facts survive diagnostic compaction. The original
+    # preimages and reconstruction remain in the plan; omitted diagnostics are
+    # explicitly identified, never presented as a complete owner transcript.
+    keys = {
+        "state",
+        "reported_state",
+        "execution_ended",
+        "not_submitted",
+        "interrupted",
+        "process",
+        "command",
+        "exit_code",
+        "transport_complete",
+        "attribution",
+        "owner_identity",
+        "reconstruction",
+        "removed_count",
+        "removed_prefix_count",
+        "removed_path_count",
+        "selection_digest",
+        "next_relative_path",
+        "engine_reclaimed_bytes",
+        "engine_byte_precision",
+        "engine_reclaimed_reported",
+    }
+    result = {key: value[key] for key in keys if key in value}
+    result["diagnostics"] = {
+        "complete": False,
+        "source_digest": canonical_digest(value),
+        "source_bytes": encoded_size(value),
+        "omitted_fields": sorted(set(value) - keys - {"issues"}),
+    }
+    result["issues"] = [
+        {
+            "code": str(issue.get("code", "unknown"))[:128],
+            "message": str(issue.get("message", ""))[:256],
+        }
+        for issue in value.get("issues", [])[:8]
+        if isinstance(issue, dict)
+    ]
+    if isinstance(value.get("activity"), dict):
+        _retain_activity(result, value["activity"], _action_budget(candidate))
+    if encoded_size(result) > _action_budget(candidate):
+        raise CleanupError("report_too_large", "Owner recovery facts exceed the admitted budget")
+    return result
+
+
+def _retain_activity(result: dict, observed: dict, budget: int) -> None:
+    """Keep refusal causes ahead of bulky metadata bindings, within admission."""
+    rows = {key: observed.get(key, []) for key in ("busy", "issues", "dangling_references")}
+    summary = {
+        key: observed[key]
+        for key in (
+            "complete",
+            "process_complete",
+            "consumer_complete",
+            "consumer_metadata_inspected",
+            "process_uid",
+            "other_uid_open_files_unobserved",
+        )
+        if key in observed
+    }
+    summary.update(
+        **{key: [] for key in rows},
+        busy_count=len(rows["busy"]),
+        issue_count=len(rows["issues"]),
+        dangling_reference_count=len(rows["dangling_references"]),
+        omitted_counts={
+            **{key: len(items) for key, items in rows.items()},
+            "consumer_metadata": len(observed.get("consumer_metadata", [])),
+        },
+    )
+    result["activity"] = summary
+    result["diagnostics"]["omitted_fields"].remove("activity")
+    result["diagnostics"]["summarized_fields"] = ["activity"]
+    # Interleave examples so many busy records cannot erase visibility issues.
+    # Every retained row is exact; counts disclose unsaved records, not truncated
+    # paths that might name another object. Full metadata stays out of outcomes.
+    for index in range(8):
+        for key, items in rows.items():
+            if index >= len(items):
+                continue
+            summary[key].append(items[index])
+            summary["omitted_counts"][key] -= 1
+            if encoded_size(result) > budget:
+                summary[key].pop()
+                summary["omitted_counts"][key] += 1
 
 
 def _issue(error: BaseException) -> dict:
@@ -130,29 +262,19 @@ def _validate_filesystem_scopes(candidate: dict, scopes: list[dict]) -> None:
     target = candidate.get("path")
     normalize_scopes([{"kind": "path", "path": target}])
     if candidate.get("category") == "venv_payload":
-        payload = candidate.get("payload_files")
-        if (
-            not isinstance(payload, list)
-            or not payload
-            or not all(
-                isinstance(row, dict)
-                and isinstance(row.get("path"), str)
-                and row["path"].startswith(target.rstrip("/") + "/")
-                for row in payload
-            )
-        ):
+        if scopes != [{"kind": "path", "path": target}]:
             raise CleanupError(
                 "invalid_scopes",
-                "Python payload files must remain below the retained environment.",
+                "Python payload custody must cover the retained environment.",
             )
-        paths = {row["path"] for row in payload}
-        declared = {scope["path"] for scope in scopes if scope["kind"] == "path"}
-        if paths != declared or len(paths) != len(payload):
-            raise CleanupError(
-                "invalid_scopes",
-                "Python payload files must match the closed scope selection.",
-            )
-        snapshots = ((row["path"], row.get("snapshot")) for row in payload)
+        snapshot = candidate.get("snapshot")
+        if not isinstance(snapshot, dict) or snapshot.get("path") != target:
+            raise CleanupError("invalid_snapshot", "Payload snapshot must match its environment.")
+        try:
+            validate_payload_snapshot(snapshot)
+        except (FilesystemError, KeyError, TypeError, ValueError) as error:
+            raise CleanupError("invalid_snapshot", str(error)) from error
+        return
     elif not any(
         scope["kind"] == "path"
         and (target == scope["path"] or target.startswith(scope["path"].rstrip("/") + "/"))
@@ -185,14 +307,11 @@ def _outcome(value: dict, *, native: bool, invoked: bool) -> dict:
     return value
 
 
-def _summary(record: dict) -> dict:
-    counts = dict(
-        Counter(action["outcome"]["state"] for action in record["actions"] if "outcome" in action)
-    )
+def _aggregate(outcomes: list[dict], expected: int) -> dict:
+    counts = dict(Counter(outcome["state"] for outcome in outcomes))
     for state in sorted(STATES):
         counts.setdefault(state, 0)
-    counts["not_started"] = len(record["plan"]["candidates"]) - sum(counts.values())
-    record["counts"] = counts
+    counts["not_started"] = expected - sum(counts.values())
     if counts["execution_unresolved"]:
         result = "execution_unresolved"
     elif counts["partial"] or counts["not_started"]:
@@ -213,8 +332,51 @@ def _summary(record: dict) -> dict:
         result = present[0] if len(present) == 1 else "partial"
     else:
         result = "completed" if counts["completed"] else "no_change"
-    record["state"] = result
-    record["exit_code"] = 0 if result in {"completed", "no_change"} else 1
+    return {
+        "counts": counts,
+        "state": result,
+        "exit_code": 0 if result in {"completed", "no_change"} else 1,
+    }
+
+
+def _request_coverage(plan: dict, outcomes: dict) -> dict | None:
+    coverage = plan.get("request_coverage")
+    if coverage is None:
+        return None
+    rows = [
+        {
+            **row,
+            "state": outcomes.get(row["id"], "not_started")
+            if row["selection_state"] == "selected"
+            else row["selection_state"],
+        }
+        for row in coverage["candidates"]
+    ]
+    accounted = (
+        coverage["inspection_complete"]
+        and not coverage["native_findings"]
+        and all(row["state"] in {"completed", "no_change", "retained"} for row in rows)
+    )
+    return {**coverage, "candidates": rows, "state": "accounted" if accounted else "partial"}
+
+
+def _summary(record: dict) -> dict:
+    record.update(
+        _aggregate(
+            [action["outcome"] for action in record["actions"] if "outcome" in action],
+            len(record["plan"]["candidates"]),
+        )
+    )
+    record["result_scope"] = "selected_plan"
+    coverage = _request_coverage(
+        record["plan"],
+        {
+            action["candidate_id"]: action.get("outcome", {}).get("state", "not_started")
+            for action in record["actions"]
+        },
+    )
+    if coverage is not None:
+        record["request_coverage"] = coverage
     return record
 
 
@@ -226,13 +388,14 @@ def _run_action(
     lease = None
     invoked = False
     interrupted = False
+    checked = None
     try:
         lease = custody.claim(candidate, str(path), record["operation_id"])
         action["claim_id"] = lease.claim["claim_id"]
         write_json(path, record)
-        denied = preflight(candidate)
-        if denied is not None:
-            result = _outcome(denied, native=candidate["kind"] == "native", invoked=False)
+        checked = preflight(candidate)
+        if checked is not None and "state" in checked:
+            result = _outcome(checked, native=candidate["kind"] == "native", invoked=False)
         else:
             action["state"] = "preparing" if candidate["kind"] == "native" else "invoking"
             write_json(path, record)
@@ -245,7 +408,10 @@ def _run_action(
                         "invalid_checkpoint", "Lifecycle checkpoint must be an object."
                     )
                 action["state"] = "invoking"
-                action.setdefault("lifecycle", {}).update(facts)
+                lifecycle = {**action.get("lifecycle", {}), **facts}
+                if encoded_size(lifecycle) > 4096 + encoded_size(candidate):
+                    raise CleanupError("report_too_large", "Lifecycle exceeds its admitted budget")
+                action["lifecycle"] = lifecycle
                 lease.update(state="invoking", action=action)
                 write_json(path, record)
                 # Native dispatch must cross this durable before-submit
@@ -279,6 +445,9 @@ def _run_action(
             result["not_submitted"] = True
         if interrupted:
             record["interrupted"] = True
+    if checked is not None and "activity" in checked:
+        result["activity"] = checked["activity"]
+    result = _bounded_outcome(result, candidate)
     action["state"] = result["state"]
     action["outcome"] = result
     try:
@@ -314,6 +483,7 @@ def execute_plan(
     path = Path(operation_path).absolute()
     state = Path(state_dir) if state_dir is not None else custody_path()
     _validate(plan, confirm_digest, kind, path, state)
+    validate_capacity(plan, path)
     record = {
         "schema_version": 1,
         "helper_version": "1",
@@ -399,6 +569,9 @@ def _settle(lease, readback, operation: dict | None) -> dict | None:
         state=result["state"],
         outcome=result,
     )
+    # Custody owns termination evidence even if the caller's report cannot be
+    # updated. A later observation can finish reporting without the owner route.
+    lease.update(state=result["state"], action=action)
     if operation is not None:
         actions = operation["actions"]
         index = next(
@@ -414,7 +587,6 @@ def _settle(lease, readback, operation: dict | None) -> dict | None:
         else:
             actions[index] = action
         write_json(Path(claim["operation_path"]), _summary(operation))
-    lease.update(state=result["state"], action=action)
     if result.get("execution_ended") is True:
         lease.release()
     return result
@@ -483,11 +655,16 @@ def status(operation_path=None, *, state_dir=None, readback=None) -> dict:
         state = (
             "execution_unresolved"
             if claims
-            else (operation["state"] if operation is not None else "completed")
+            else operation["state"]
+            if operation is not None
+            else _aggregate([entry["outcome"] for entry in settled], len(settled))["state"]
         )
         return {
             "schema_version": 1,
             "state": state,
+            "observation_state": "partial" if issues else "completed",
+            "custody_state": "retained" if claims else "clear",
+            "result_scope": "operation" if path is not None else "recovered_claims",
             "exit_code": 0 if state in {"completed", "no_change"} and not issues else 1,
             "custody_path": str(custody.path),
             "claims": claims,

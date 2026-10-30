@@ -12,8 +12,8 @@ import sys
 import tomllib
 from pathlib import Path
 
-from _cleanup_common import CleanupError, canonical_digest
-from _cleanup_fs import FilesystemError, snapshot
+from _cleanup_common import CleanupError
+from _cleanup_fs import snapshot_files
 from _cleanup_plan import evidence
 
 MAX_METADATA_BYTES = 4 * 1024 * 1024
@@ -391,60 +391,34 @@ def inventory_environment(root: Path, owner: Path) -> dict:
                 issue("helper_environment", root, "the helper runtime is inside this environment")
             )
             break
-    payload = []
-    for relative in sorted(selected):
-        try:
-            observed = snapshot(str(root / relative))
-            payload.append(
-                {"relative_path": relative, "path": str(root / relative), "snapshot": observed}
+    observed = snapshot_files(str(root), sorted(selected))
+    if not observed["complete"]:
+        issues.append(issue("payload_snapshot_incomplete", root, "snapshot incomplete"))
+    for row in observed["entries"]:
+        relative, entry = row["relative_path"], row["signature"]
+        original = files[relative]
+        expected = {
+            "device": original.st_dev,
+            "inode": original.st_ino,
+            "size": original.st_size,
+            "mtime_ns": original.st_mtime_ns,
+            "ctime_ns": original.st_ctime_ns,
+        }
+        if any(entry.get(key) != value for key, value in expected.items()):
+            issues.append(
+                issue("environment_changed", root / relative, "file changed during inventory")
             )
-            if not observed.get("complete"):
-                issues.append(
-                    issue("payload_snapshot_incomplete", root / relative, "snapshot incomplete")
-                )
-            original = files[relative]
-            entries = observed.get("entries", [])
-            entry = entries[0].get("signature", {}) if entries else {}
-            expected = {
-                "device": original.st_dev,
-                "inode": original.st_ino,
-                "size": original.st_size,
-                "mtime_ns": original.st_mtime_ns,
-                "ctime_ns": original.st_ctime_ns,
-            }
-            if any(entry.get(key) != value for key, value in expected.items()):
-                issues.append(
-                    issue(
-                        "environment_changed",
-                        root / relative,
-                        "file identity or metadata changed during inventory",
-                    )
-                )
-        except (OSError, ValueError, FilesystemError) as exc:
-            issues.append(issue("payload_snapshot_failed", root / relative, str(exc)))
-    root_stat = root.lstat()
     evidence_unchanged(preimages, issues)
-    unique = {
-        (p["snapshot"].get("device"), p["snapshot"].get("inode")): p["snapshot"]
-        for p in payload
-        if "device" in p["snapshot"] and "inode" in p["snapshot"]
-    }
-    aggregate = {
-        "path": str(root),
-        "device": root_stat.st_dev,
-        "inode": root_stat.st_ino,
-        "digest": canonical_digest(payload),
-        "logical_bytes": sum(p["logical_bytes"] for p in unique.values()),
-        "allocated_bytes": sum(p["allocated_bytes"] for p in unique.values()),
-        "entries": [
-            {"relative_path": p["relative_path"], "snapshot": p["snapshot"]} for p in payload
-        ],
-        "complete": not any(i["blocking"] for i in issues),
-    }
+    observed["complete"] = observed["complete"] and not any(i["blocking"] for i in issues)
     return {
-        "snapshot": aggregate,
-        "payload_files": payload,
-        "distributions": distributions,
+        "snapshot": observed,
+        "distributions": [
+            {
+                **{key: value for key, value in dist.items() if key != "files"},
+                "file_count": len(dist["files"]),
+            }
+            for dist in distributions
+        ],
         "protected_paths": [str(root / name) for name in sorted(protected)],
         "inventory_issues": issues,
         "evidence_preimages": preimages,

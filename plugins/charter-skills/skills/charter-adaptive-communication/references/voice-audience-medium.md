@@ -86,10 +86,12 @@ flatten the voice; leaving only the image can make the critique unusable.
 The pairing serves both purposes when both matter.
 
 Intentional ambiguity belongs to some work. A story can leave the speaker's
-loyalty unresolved; an invitation can be playfully indirect. A contractual
-obligation or control label has different needs. Do not erase ambiguity
-merely because it exists, and do not invoke creativity to excuse accidental
-confusion about a consequential action.
+loyalty unresolved; an invitation can be playfully indirect. Such openness earns
+its place through what it lets the reader feel or imagine. If a line's emotional
+relationship does not work, making it more obscure will not repair it. A
+contractual obligation or control label has different needs. Do not erase
+ambiguity merely because it exists, and do not invoke creativity to excuse
+accidental confusion about a consequential action.
 
 Persuasion may emphasize a real benefit, sharpen a contrast and create a
 memorable invitation. “More room for the work you love” can fit a campaign;

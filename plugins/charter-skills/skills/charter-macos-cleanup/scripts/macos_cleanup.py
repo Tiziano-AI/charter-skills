@@ -42,9 +42,9 @@ if sys.version_info < (3, 11):
     )
     raise SystemExit(2)
 
-from _cleanup_discovery import discover
+from _cleanup_discovery import discover, fit_scan
 from _cleanup_execute import execute_plan, status
-from _cleanup_fs import FilesystemError, activity, guard_remove, remove_snapshots, venv_lock
+from _cleanup_fs import FilesystemError, activity, guard_remove, remove_payload, venv_lock
 from _cleanup_native import discover_native, execute_native, read_native, revalidate_native
 from _cleanup_plan import make_plan, qualification_unchanged, seal, summary, validate_document
 
@@ -94,7 +94,11 @@ def parser():
         help="Include local tool/download cache seeds, not blanket cache deletion",
     )
     inspect.add_argument(
-        "--owner", choices=OWNERS, help="Discover a version-qualified local native owner"
+        "--owner",
+        choices=OWNERS,
+        action="append",
+        default=[],
+        help="Inspect a local native operation contract; repeat for independent families",
     )
     inspect.add_argument(
         "--target",
@@ -180,32 +184,48 @@ def _inspect(args):
             )
         if (
             args.target
-            and not args.owner
+            and len(set(args.owner)) != 1
             or (args.candidate_path or args.project_root)
             and not args.root
         ):
             raise CleanupError(
                 "invalid_arguments",
-                "--target requires --owner; --candidate-path and --project-root require --root",
+                "--target requires exactly one owner; --candidate-path and --project-root require --root",
             )
         found = (
             discover(args.root, args.candidate_path, args.include_caches, args.project_root)
             if args.root
-            else {"candidates": [], "coverage": {}, "issues": []}
+            else {"candidates": [], "coverage": {"complete": True}, "issues": []}
         )
-        if args.owner:
-            native = discover_native(args.owner, args.target)
-            found["candidates"].extend(native if isinstance(native, list) else [native])
+        found["native_findings"] = []
+        found["coverage"]["native_owners"] = []
+        for owner in dict.fromkeys(args.owner):
+            family = {"owner": owner, "target": args.target}
+            try:
+                native = discover_native(owner, args.target)
+                candidates = native if isinstance(native, list) else [native]
+                found["candidates"].extend(candidates)
+                family.update(state="inspected", candidate_ids=[c["id"] for c in candidates])
+            except CleanupError as error:
+                # An unavailable owner does not erase other usable observations.
+                # Findings have no candidate ID and cannot authorize an effect.
+                finding = {**family, "state": "unavailable", "issue": error.as_dict()}
+                found["native_findings"].append(finding)
+                found["coverage"]["complete"] = False
+                family.update(state="unavailable", candidate_ids=[])
+            found["coverage"]["native_owners"].append(family)
         scan = seal(
-            {
-                "schema_version": 1,
-                "helper_version": HELPER_VERSION,
-                "type": "scan",
-                "contract_digest": contract_digest(),
-                "roots": args.root,
-                "project_roots": args.project_root,
-                **found,
-            }
+            fit_scan(
+                {
+                    "schema_version": 1,
+                    "helper_version": HELPER_VERSION,
+                    "type": "scan",
+                    "contract_digest": contract_digest(),
+                    "roots": args.root,
+                    "project_roots": args.project_root,
+                    **found,
+                }
+            )
         )
         write_json(args.output, scan, exclusive=True)
     candidates = scan["candidates"]
@@ -223,6 +243,7 @@ def _inspect(args):
         "digest": scan["digest"],
         "coverage": scan["coverage"],
         "issues": scan["issues"],
+        "native_findings": scan.get("native_findings", []),
         "total_candidates": len(candidates),
         "candidates": [summary(c) for c in candidates[offset:end]],
         "next_cursor": str(end) if end < len(candidates) else None,
@@ -231,6 +252,7 @@ def _inspect(args):
 
 
 def _preflight(candidate):
+    """Return a refusal with state, or successful activity observations."""
     changed = qualification_unchanged(candidate)
     if changed:
         return changed
@@ -255,6 +277,8 @@ def _preflight(candidate):
         consumer_roots=candidate["qualification"]["consumer_roots"],
         owner_roots=[candidate["owner_root"]] if candidate.get("owner_root") else [],
     )
+    if candidate["kind"] == "native" and candidate["owner"] == "pnpm":
+        _pnpm_references(observed)
     if observed["busy"] or not observed["complete"]:
         return {
             "state": "skipped",
@@ -267,7 +291,29 @@ def _preflight(candidate):
                 }
             ],
         }
-    return None
+    return {"activity": observed}
+
+
+def _pnpm_references(observed):
+    # Native unused-entry pruning cannot remove bytes at an already missing
+    # static target. Keep the scanner's finding, but do not confuse that dangling
+    # reference with a live dependency. This is not a native-reference allowlist:
+    # existing/unobservable targets and every process match still block.
+    busy, dangling = [], []
+    for row in observed["busy"]:
+        reference = row.get("reference")
+        if row.get("kind") in {"installed_symlink", "installed_shebang", "installed_metadata"} and (
+            isinstance(reference, str) and os.path.isabs(reference)
+        ):
+            try:
+                os.stat(reference)
+            except FileNotFoundError:
+                dangling.append(row)
+                continue
+            except OSError:
+                pass
+        busy.append(row)
+    observed.update(busy=busy, dangling_references=dangling)
 
 
 def _host_measurement(path):
@@ -294,13 +340,15 @@ def _execute(candidate, checkpoint, protected_roots):
         with venv_lock(candidate["path"]) as lock:
             # Lock acquisition can race an installer; recheck evidence while held.
             changed = qualification_unchanged(candidate)
-            result = changed or remove_snapshots(
-                [entry["snapshot"] for entry in candidate["payload_files"]],
-                protected_roots=protected_roots,
+            result = changed or remove_payload(
+                candidate["snapshot"], protected_roots=protected_roots
             )
             result["cooperative_lock"] = lock
     else:
         result = guard_remove(candidate["snapshot"], protected_roots=protected_roots)
+        if "removed_paths" in result:
+            result["removed_path_count"] = len(result.pop("removed_paths"))
+            result["selection_digest"] = candidate["snapshot"]["digest"]
     result.update(
         execution_ended=True,
         reconstruction=candidate["qualification"]["reconstruction"],
@@ -355,6 +403,8 @@ def dispatch(args):
                 "plan_path": str(Path(args.output).absolute()),
                 "digest": plan["digest"],
                 "kind": plan["kind"],
+                "result_scope": "selected_plan",
+                "request_coverage": plan["request_coverage"],
                 "candidates": [
                     dict(summary(c), qualification=c["qualification"]) for c in plan["candidates"]
                 ],
@@ -362,13 +412,7 @@ def dispatch(args):
         ), 0
     if args.command == "status":
         result = status(args.operation, readback=_readback)
-        code = (
-            1
-            if result["claims"] or result["issues"]
-            else result.get("operation", {}).get("exit_code", 0)
-            if result.get("operation")
-            else 0
-        )
+        code = result["exit_code"]
         return envelope("status", result["state"], _operation_summary(result)), code
     plan = read_json(args.plan)
     validate_document(plan, "plan")

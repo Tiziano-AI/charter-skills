@@ -7,6 +7,7 @@ import os
 import stat
 from pathlib import Path
 
+import _cleanup_common as reports
 from _cleanup_common import canonical_digest
 from _cleanup_fs import FilesystemError, snapshot
 from _cleanup_python import (
@@ -192,6 +193,67 @@ def _protected(candidate: dict) -> str | None:
     return None
 
 
+def fit_scan(scan: dict, *, reserve_bytes=0) -> dict:
+    """Fit an unsealed scan, preserving an explicit incomplete coverage finding.
+
+    A digest field is reserved here; callers seal the returned value, not the
+    oversized input. Omitted candidates never become executable placeholders.
+    """
+    result = {key: value for key, value in scan.items() if key != "digest"}
+    result["coverage"] = {**scan.get("coverage", {})}
+    reserve = reserve_bytes + 96
+    if reports.encoded_size(result) <= reports.MAX_REPORT_BYTES - reserve:
+        return result
+    candidates = list(result.get("candidates", []))
+    result["candidates"] = []
+    result["issues"] = list(result.get("issues", []))
+    coverage = result["coverage"]
+    previous_omitted = coverage.get("omitted_candidates", 0)
+    coverage.update(
+        complete=False,
+        omitted_candidates=previous_omitted + len(candidates),
+        narrower_roots=list(coverage.get("narrower_roots", [])),
+    )
+    roots = scan.get("roots", coverage.get("requested_roots", []))
+    overflow = issue(
+        "inventory_byte_limit",
+        roots[0] if roots else "",
+        "inventory incomplete: inspect the listed narrower roots separately; "
+        "split oversized non-environment outputs into qualified child candidates",
+    )
+    result["issues"].insert(0, overflow)
+    # Metadata also obeys the byte contract; retain a counted, visible omission.
+    coverage["omitted_excluded"] = coverage.get("omitted_excluded", 0)
+    coverage["omitted_issues"] = coverage.get("omitted_issues", 0)
+    while reports.encoded_size(result) > reports.MAX_REPORT_BYTES - reserve:
+        if coverage.get("excluded"):
+            container, key = coverage, "excluded"
+        elif len(result["issues"]) > 1:
+            container, key = result, "issues"
+        else:
+            break
+        values = container[key]
+        dropped = max(1, len(values) // 2)
+        container[key] = values[:-dropped]
+        coverage["omitted_" + key] += dropped
+    remaining = reports.MAX_REPORT_BYTES - reserve - reports.encoded_size(result)
+    for candidate in candidates:
+        cost = reports.encoded_size(candidate) + 1
+        if cost <= remaining:
+            result["candidates"].append(candidate)
+            coverage["omitted_candidates"] -= 1
+            remaining -= cost
+        else:
+            root = candidate.get("path") or candidate.get("owner_root")
+            if root and root not in coverage["narrower_roots"]:
+                cost = reports.encoded_size(root) + 1
+                if cost <= remaining:
+                    coverage["narrower_roots"].append(root)
+                    remaining -= cost
+    reports.bounded_json(result, reserve_bytes=reserve)
+    return result
+
+
 class _Discovery:
     def __init__(
         self,
@@ -216,6 +278,7 @@ class _Discovery:
         self.remaining = MAX_ENTRIES
         self.visited = 0
         self.complete = True
+        self.candidate_bytes = 2
 
     def problem(self, code: str, path: Path | str, detail: str) -> None:
         self.issues.append(issue(code, path, detail))
@@ -324,10 +387,6 @@ class _Discovery:
             if preimage_issues:
                 observed["complete"] = False
                 candidate["evidence_issues"] = preimage_issues
-            if category == "venv_payload":
-                candidate["scopes"] = [
-                    {"kind": "path", "path": row["path"]} for row in candidate["payload_files"]
-                ]
             reason = _protected(candidate)
             if context.get("owner_issues"):
                 candidate["owner_issues"] = context["owner_issues"]
@@ -349,7 +408,17 @@ class _Discovery:
                     "sha256:"
                 )[:24]
             )
-            self.candidates.append(candidate)
+            size = reports.encoded_size(candidate)
+            if self.candidate_bytes + size > reports.MAX_REPORT_BYTES * 3 // 4:
+                self.problem(
+                    "inventory_byte_limit",
+                    path,
+                    "candidate omitted: inspect this root separately; split oversized "
+                    "non-environment outputs into qualified child candidates",
+                )
+            else:
+                self.candidates.append(candidate)
+                self.candidate_bytes += size
         except (OSError, ValueError, FilesystemError) as exc:
             self.problem("candidate_unreadable", path, str(exc))
 
@@ -501,20 +570,22 @@ class _Discovery:
                 path,
                 "declaration is behind an excluded, candidate or uninspected boundary",
             )
-        return {
-            "candidates": sorted(self.candidates, key=lambda row: row["path"]),
-            "coverage": {
-                "complete": self.complete and not self.issues,
-                "requested_roots": self.raw_roots,
-                "inspected_roots": self.inspected_roots,
-                "requested_project_roots": self.requested_projects,
-                "inspected_project_roots": [str(path) for path in sorted(self.seen_projects)],
-                "metadata_entries": self.visited,
-                "limits": {"entries": MAX_ENTRIES, "depth": MAX_DEPTH, "roots": MAX_ROOTS},
-                "excluded": self.excluded,
-            },
-            "issues": self.issues,
-        }
+        return fit_scan(
+            {
+                "candidates": sorted(self.candidates, key=lambda row: row["path"]),
+                "coverage": {
+                    "complete": self.complete and not self.issues,
+                    "requested_roots": self.raw_roots,
+                    "inspected_roots": self.inspected_roots,
+                    "requested_project_roots": self.requested_projects,
+                    "inspected_project_roots": [str(path) for path in sorted(self.seen_projects)],
+                    "metadata_entries": self.visited,
+                    "limits": {"entries": MAX_ENTRIES, "depth": MAX_DEPTH, "roots": MAX_ROOTS},
+                    "excluded": self.excluded,
+                },
+                "issues": self.issues,
+            }
+        )
 
 
 def discover(

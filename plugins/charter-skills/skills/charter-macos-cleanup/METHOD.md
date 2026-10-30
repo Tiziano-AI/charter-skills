@@ -1,13 +1,15 @@
 # Charter · Mac Cleanup
 
 Recover Mac storage from redownloadable caches and rebuildable development
-material. Remove what qualifies and retain what does not; a report that skips
-everything has not achieved a cleanup. The package supplies one inventory,
-exact plans, guarded removal, native owner routes and shared operation custody.
-Your contribution is establishing reconstructibility, retention and consumers.
+material, preserving active and retained work. The helper owns bounded discovery,
+exact plans, guarded filesystem removal, native cache operations and shared
+operation custody. Establish reconstructibility, retention and consumers, then
+report what happened across the requested families, not just the selected batch.
 
 The two ordinary layers are download/tool caches and repository dependencies or
-outputs. Container reclaim is a separate operation on already-free guest blocks.
+outputs. Filesystem removal selects exact payloads; a native prune selects a
+store and policy whose entries the owner chooses at execution. Container reclaim
+is a separate operation on already-free guest blocks.
 Source code, Git/worktrees, installed apps/tools/runtimes, models, agent histories,
 correspondence, databases, recovery material and retained test/release evidence
 are outside this package. Duplicate selection needs its own byte-identity,
@@ -21,11 +23,13 @@ Start from the requested layer and the machine's owner guides. Use an existing
 storage inventory where available to choose bounded roots;
 do not repeatedly rescan the whole home. Read project instructions, manifests,
 lockfiles and output configuration for the candidates, not every source file.
-Use the helper's saved scan for subsequent inspection. Discovery recognizes
-metadata relationships; `--candidate-path` admits unfamiliar output layouts for
-qualification, not deletion by name. Application download caches need their
-owner's redownload route; arbitrary `Library/Caches` trees are not disposable
-just because of their location.
+Use the helper's saved scan for subsequent inspection. Read its coverage and
+findings before selecting: a native refusal does not invalidate usable filesystem
+candidates, and an unsupported operation does not prove its data is unreclaimable.
+Discovery recognizes metadata relationships; `--candidate-path` admits unfamiliar
+output layouts for qualification, not deletion by name. Application download
+caches need their owner's redownload route; arbitrary `Library/Caches` trees are
+not disposable just because of their location.
 
 For projects without a recognized manifest or repository marker, declare the
 project's actual consumer boundary with `inspect --project-root <project>`;
@@ -54,14 +58,20 @@ Before selecting a family, establish all three:
   editable Python install, app extension or service may load a checkout lazily
   without an open descriptor. Include relevant installed metadata directories
   or individual metadata files in `consumer_roots` (for example launcher and
-  extension registration locations); explain why those scopes cover this family.
-  An empty unrelated directory does not establish absence of consumers.
+  extension registration locations); explain why those scopes cover the selected
+  operation's risks. An empty unrelated directory does not establish absence of
+  consumers.
 
-The helper checks process arguments, working directories, descriptors and those
-bounded static consumer scopes freshly before each candidate. It reports
-incomplete visibility or executable metadata instead of evaluating it. Busy,
-changed or unreadable candidates are local skips, not permission to stop work,
-kill applications, force locks or retry until they disappear.
+Consumer protection follows the operation. Exact filesystem removal needs fresh
+checks for active writers and lazy/source-linked users. Native unused-entry
+pruning can rely on established native reference and locking behavior, with
+additional checks where it leaves a real consumer exposed. Establish generated
+metadata's relevance from its content and references, not its filename.
+Unrelated metadata need not veto another family; unknown executable hooks remain
+unresolved where their behavior could matter. Never import or execute inspected
+metadata to clear a finding. Busy, changed or unreadable candidates are local
+skips, not permission to stop work, kill applications, force locks or retry until
+they disappear.
 
 ## Use the packaged helper
 
@@ -88,10 +98,13 @@ python3 -I <script> status --operation <operation.json>
 ```
 
 `inspect` returns a default page and `next_cursor`; use `--scan`, `--cursor` and
-`--limit` to read the rest without a new scan. `--candidate` returns a selection
-template. Fill it with evidence and a reconstruction recipe; several IDs may
-share one qualification where their owner, inputs, retention and consumers are
-the same. Separate exceptions. The selection format is:
+`--limit` to read the rest without a new scan. Pagination limits the displayed
+page, not discovery coverage. If a report budget leaves coverage incomplete,
+narrow the root or candidate rather than treating omitted material as checked.
+`--candidate` returns a selection template. Fill it with evidence and a
+reconstruction recipe; several IDs may share one qualification where their
+owner, inputs, retention and consumers are the same. Separate exceptions.
+The selection format is:
 
 ```json
 {
@@ -114,9 +127,19 @@ binds helper bytes, object preimages and reconstruction evidence. Changed inputs
 need a fresh inspection and plan, not an edited digest.
 
 Native stores use `inspect --owner <owner> [--target <exact-target>] --output
-<scan.json>`. **Read [owner routes](references/owner-routes.md) before a native
-selection**: a native prune binds a store and policy, not a frozen file list.
-In particular, pnpm reaches three stores even when `--target` selects one.
+<scan.json>`. Repeat `--owner` for several families; `--target` requires a single
+owner. Expected refusals remain visible in `native_findings`, not selectable as
+cleanup candidates. **Read [owner routes](references/owner-routes.md) before a
+native selection**: uv prune can remove environments, and pnpm reaches three
+destinations even when `--target` selects one store. Keep native stores out of
+filesystem removal plans.
+
+Native compatibility depends on the operation's capabilities, effective scope
+and interpretable output, not equality with one examined release. The observed
+version and command identities still belong to the plan: a change after
+inspection requires fresh inspection and planning. A genuine unsupported
+capability or scope remains a finding for that family while other authorized
+work continues; do not downgrade tools, edit a plan or guess a raw command.
 
 ## Preserve environments, act on payloads
 
@@ -158,8 +181,15 @@ imply authority to trim every writable container mount. Apple Container trim is
 online and does not start stopped containers. OrbStack's route observes its
 automatic sparse recovery and sends no unsupported compaction command.
 
-Report removed, retained/skipped, partial and unresolved families with the
-recipe needed to resume use. Keep logical size, inode-deduplicated allocation,
-owner-reported cache bytes and host free-space changes distinct. APFS clones,
-snapshots and concurrent work prevent exact attribution from a simple delta.
-Do not claim host recovery from a guest trim acknowledgement alone.
+Use `request_coverage` to account for requested families, including unselected,
+retained and refused work. A result marked `result_scope: selected_plan` covers
+that selection, not the entire request. Report removed, genuinely retained,
+skipped, unsupported, partial and unresolved families, with reasons and any
+recipe needed to resume use. An unsupported family remains a tool limitation,
+not a retention decision. A completed status observation or zero open claims is
+not evidence that cleanup succeeded.
+
+Keep logical size, inode-deduplicated allocation, owner-reported cache bytes and
+host free-space changes distinct. APFS clones, snapshots and concurrent work
+prevent exact attribution from a simple delta. Do not claim host recovery from
+a guest trim acknowledgement alone.

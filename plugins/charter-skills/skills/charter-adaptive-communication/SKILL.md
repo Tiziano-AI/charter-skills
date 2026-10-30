@@ -4,7 +4,7 @@ description: Compose established meaning for its receiver, purpose and medium, r
   avoidable interpretation effort while preserving precision, relationships and expressive
   qualities.
 metadata:
-  content_version: charter-adaptive-communication@2026.10.16.0
+  content_version: charter-adaptive-communication@2026.10.30.0
 ---
 # Full specialist method
 

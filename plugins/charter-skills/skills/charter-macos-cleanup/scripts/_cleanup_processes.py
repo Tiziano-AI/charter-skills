@@ -6,6 +6,8 @@ the supplied consumer scope, not every possible dynamic reference on the Mac.
 
 from __future__ import annotations
 
+import ast
+import hashlib
 import json
 import os
 import plistlib
@@ -29,6 +31,24 @@ _METADATA_NAMES = {
     "extensions.yml",
 }
 _METADATA_SUFFIXES = {".pth", ".egg-link", ".plist", ".toml", ".yaml", ".yml"}
+_MAX_METADATA_BYTES = 1024 * 1024
+# These are syntax fingerprints of generated distutils shims, not tool-version
+# or filename admission rules. The complete referenced source must match; only
+# comments, formatting and docstrings are ignored. An altered/unknown hook is
+# unresolved, even under a familiar filename. Sources:
+# astral-sh/uv: crates/uv-virtualenv/src/_virtualenv.py (0.12.23, 0.13.4)
+# and the earlier distutils-only template observed in this project's environment.
+# pypa/setuptools: _distutils_hack/__init__.py (80.9.0)
+_GENERATED_MODULES = {
+    "8539fc3ceec96d14170b77004c60e04ee9032875b50c69f17e90f60a55e0d519": "virtualenv",
+    "7801fa5c5161c003fb923d66d132b10a8b0db1d36a4df6ff19b9348f2870667a": "virtualenv",
+    "0a5f2c37997a7e95ec1143e1f71392e35705c3a6343fb8b1b5ea1756142866e2": "distutils",
+}
+_DISTUTILS_HOOK = (
+    "import os; var = 'SETUPTOOLS_USE_DISTUTILS'; "
+    "enabled = os.environ.get(var, 'local') == 'local'; "
+    "enabled and __import__('_distutils_hack').add_shim()"
+)
 
 
 def _issue(code, message):
@@ -124,6 +144,49 @@ def _strings(value):
             yield from _strings(item)
 
 
+def _syntax_digest(tree):
+    for node in ast.walk(tree):
+        if (
+            isinstance(node, (ast.Module, ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+            and node.body
+            and isinstance(node.body[0], ast.Expr)
+            and isinstance(node.body[0].value, ast.Constant)
+            and isinstance(node.body[0].value.value, str)
+        ):
+            node.body.pop(0)
+
+    def shape(value):
+        if isinstance(value, ast.AST):
+            # ast.dump's omission of empty fields changed between supported
+            # Python releases. Empty generic parameters also appeared in 3.12.
+            return [
+                type(value).__name__,
+                [
+                    [name, shape(item)]
+                    for name, item in ast.iter_fields(value)
+                    if name != "type_params" or item
+                ],
+            ]
+        if isinstance(value, list):
+            return [shape(item) for item in value]
+        return [type(value).__name__, repr(value)]
+
+    return hashlib.sha256(json.dumps(shape(tree), separators=(",", ":")).encode()).hexdigest()
+
+
+def _literal_references(tree):
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Constant) or not isinstance(node.value, str):
+            continue
+        value = node.value
+        if value.startswith("/"):
+            yield os.path.normpath(value)
+        elif value.startswith("file://"):
+            parsed = urlparse(value)
+            if parsed.netloc in ("", "localhost"):
+                yield os.path.normpath(unquote(parsed.path))
+
+
 def _references(path, content):
     """Return static path strings, never execute .pth, shebangs or configuration."""
     if path.suffix == ".plist":
@@ -151,6 +214,164 @@ def _references(path, content):
         # Metadata often embeds paths after TOML/YAML assignment or JSON values.
         if value.startswith("/"):
             yield value
+
+
+def _metadata_signature(value):
+    return [
+        value.st_dev,
+        value.st_ino,
+        value.st_mode,
+        value.st_size,
+        value.st_mtime_ns,
+        value.st_ctime_ns,
+    ]
+
+
+def _ancestor_digest(ancestors):
+    return hashlib.sha256(json.dumps(ancestors, sort_keys=True).encode()).hexdigest()
+
+
+def _metadata_read(path, bindings, observed=None):
+    """Read and bind a real file and its ancestors, without invoking its loader."""
+    key = str(path)
+    if key in bindings:
+        return bindings[key]["content"]
+    if len(bindings) >= 20000:
+        raise ValueError("Referenced metadata exceeds bounded coverage.")
+    parent_fd, name, ancestors = _parent(key)
+    try:
+        before = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
+        if not stat.S_ISREG(before.st_mode) or before.st_size > _MAX_METADATA_BYTES:
+            raise ValueError("Referenced metadata is not a bounded regular file.")
+        if observed is not None and _metadata_signature(before) != _metadata_signature(observed):
+            raise OSError("Consumer metadata changed before opening.")
+        fd = os.open(name, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC, dir_fd=parent_fd)
+        try:
+            opened = os.fstat(fd)
+            with os.fdopen(fd, "rb", closefd=False) as stream:
+                content = stream.read(_MAX_METADATA_BYTES + 1)
+            after = os.fstat(fd)
+        finally:
+            os.close(fd)
+        if (
+            _metadata_signature(before) != _metadata_signature(opened)
+            or _metadata_signature(opened) != _metadata_signature(after)
+            or len(content) != after.st_size
+        ):
+            raise OSError("Consumer metadata changed while reading.")
+    finally:
+        os.close(parent_fd)
+    bindings[key] = {
+        "content": content,
+        "evidence": {
+            "path": key,
+            "signature": _metadata_signature(after),
+            "ancestor_sha256": _ancestor_digest(ancestors),
+            "sha256": hashlib.sha256(content).hexdigest(),
+        },
+    }
+    return content
+
+
+def _verify_metadata(bindings, issues):
+    for record in bindings.values():
+        evidence = record["evidence"]
+        try:
+            fd, name, ancestors = _parent(evidence["path"])
+            try:
+                fresh = os.stat(name, dir_fd=fd, follow_symlinks=False)
+            finally:
+                os.close(fd)
+            if (
+                _metadata_signature(fresh) != evidence["signature"]
+                or _ancestor_digest(ancestors) != evidence["ancestor_sha256"]
+            ):
+                raise OSError("Metadata identity or ancestors changed after reading.")
+        except OSError as error:
+            issues.append(_issue("consumer_metadata_changed", f"{evidence['path']}: {error}"))
+
+
+def _local_module(path, name):
+    """Resolve only an unambiguous adjacent source module; never ask importlib."""
+    if not name.isidentifier():
+        return None
+    candidates = [path.parent / f"{name}.py", path.parent / name / "__init__.py"]
+    present = [candidate for candidate in candidates if os.path.lexists(candidate)]
+    alternatives = [*path.parent.glob(f"{name}.*"), *path.parent.glob(f"{name}/__init__.*")]
+    if len(present) != 1 or any(
+        candidate.suffix in {".so", ".pyd", ".pyc"} for candidate in alternatives
+    ):
+        return None
+    return present[0]
+
+
+def _static_path_hook(tree):
+    """Recognize literal sys.path insertion, not arbitrary code around it."""
+    if not tree.body or ast.dump(tree.body[0]) != ast.dump(ast.Import([ast.alias("sys")])):
+        return False
+    for node in tree.body[1:]:
+        if not isinstance(node, ast.Expr) or not isinstance(node.value, ast.Call):
+            return False
+        call = node.value
+        if not isinstance(call.func, ast.Attribute) or call.keywords:
+            return False
+        if ast.dump(call.func.value) != ast.dump(ast.parse("sys.path", mode="eval").body):
+            return False
+        arguments = call.args
+        if call.func.attr == "insert" and len(arguments) == 2:
+            if not isinstance(arguments[0], ast.Constant) or type(arguments[0].value) is not int:
+                return False
+            arguments = arguments[1:]
+        elif call.func.attr != "append" or len(arguments) != 1:
+            return False
+        if not isinstance(arguments[0], ast.Constant) or not isinstance(arguments[0].value, str):
+            return False
+        if not arguments[0].value.startswith("/"):
+            return False  # Relative paths depend on the consumer's working directory.
+    return True
+
+
+def _hook_references(path, line, bindings):
+    """Interpret bounded syntax and recognized generated source, never execute it."""
+    try:
+        tree = ast.parse(line)
+        references = list(_literal_references(tree))
+        if _static_path_hook(tree):
+            return references, True
+        expected, generated_name = None, None
+        if _syntax_digest(tree) == _syntax_digest(ast.parse(_DISTUTILS_HOOK)):
+            generated_name, expected = "_distutils_hack", "distutils"
+        elif (
+            len(tree.body) == 1
+            and isinstance(tree.body[0], ast.Import)
+            and len(tree.body[0].names) == 1
+            and tree.body[0].names[0].asname is None
+        ):
+            generated_name, expected = tree.body[0].names[0].name, "virtualenv"
+        names = {
+            alias.name.split(".")[0]
+            for node in ast.walk(tree)
+            if isinstance(node, ast.Import)
+            for alias in node.names
+        }
+        if generated_name:
+            names.add(generated_name)
+        qualified = False
+        for name in sorted(names):
+            module = _local_module(path, name)
+            if module is None:
+                continue
+            references.append(str(module))
+            if module.is_symlink():
+                continue  # A source/cache link is a dependency, not trusted source.
+            content = _metadata_read(module, bindings)
+            source = ast.parse(content.decode("utf-8"))
+            references.extend(_literal_references(source))
+            if name == generated_name and expected:
+                qualified = _GENERATED_MODULES.get(_syntax_digest(source)) == expected
+        return references, qualified
+    except (SyntaxError, RecursionError):
+        return [], False
 
 
 def _consumer_files(roots, issues, *, maximum_files=20000):
@@ -235,8 +456,9 @@ def _consumer_files(roots, issues, *, maximum_files=20000):
             issues.append(_issue("consumer_scope_unreadable", str(error)))
 
 
-def _consumers(roots, targets):
+def _consumers(roots, targets, *, metadata=None):
     busy, issues, inspected = [], [], 0
+    bindings = {}
     if not roots:
         return (
             [],
@@ -260,67 +482,50 @@ def _consumers(roots, targets):
                 or path.suffix in _METADATA_SUFFIXES
                 or observed.st_mode & 0o111
             ):
-                parent_fd, name, _ = _parent(str(path))
-                try:
-                    fd = os.open(
-                        name,
-                        os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC,
-                        dir_fd=parent_fd,
-                    )
-                finally:
-                    os.close(parent_fd)
-                try:
-                    opened = os.fstat(fd)
-                    if (opened.st_dev, opened.st_ino) != (
-                        observed.st_dev,
-                        observed.st_ino,
-                    ):
-                        raise OSError("Consumer metadata changed while opening.")
-                    prefix = os.read(fd, 2)
-                    script = (
-                        observed.st_mode & 0o111
-                        and path.name not in _METADATA_NAMES
-                        and path.suffix not in _METADATA_SUFFIXES
-                    )
-                    if script and prefix != b"#!":
-                        continue
-                    if observed.st_size > 1024 * 1024:
-                        issues.append(
-                            _issue(
-                                "consumer_metadata_too_large",
-                                f"Metadata exceeds bounded read: {path}",
-                            )
-                        )
-                        continue
-                    content = prefix + os.read(fd, 1024 * 1024 + 1)
-                    after = os.fstat(fd)
-                    if (opened.st_size, opened.st_mtime_ns, opened.st_ctime_ns) != (
-                        after.st_size,
-                        after.st_mtime_ns,
-                        after.st_ctime_ns,
-                    ):
-                        raise OSError("Consumer metadata changed while reading.")
-                finally:
-                    os.close(fd)
+                script = (
+                    observed.st_mode & 0o111
+                    and path.name not in _METADATA_NAMES
+                    and path.suffix not in _METADATA_SUFFIXES
+                )
+                # Executable binaries are not metadata; inspect only their prefix
+                # instead of binding/reading every installed program in full.
+                if script:
+                    parent_fd, name, _ = _parent(str(path))
+                    try:
+                        fd = os.open(name, os.O_RDONLY | os.O_NOFOLLOW, dir_fd=parent_fd)
+                        try:
+                            if os.read(fd, 2) != b"#!":
+                                continue
+                        finally:
+                            os.close(fd)
+                    finally:
+                        os.close(parent_fd)
+                content = _metadata_read(path, bindings, observed)
                 if script:
                     kind = "installed_shebang"
                 references = list(_references(path, content))
-                if path.suffix == ".pth" and any(
-                    line.lstrip().startswith((b"import ", b"import\t"))
-                    for line in content.splitlines()
-                ):
-                    issues.append(
-                        _issue(
-                            "dynamic_consumer_reference",
-                            f"Executable .pth content was not evaluated: {path}",
-                        )
-                    )
+                if path.suffix == ".pth":
+                    for line in content.decode("utf-8").splitlines():
+                        if not line.lstrip().startswith(("import ", "import\t")):
+                            continue
+                        extra, qualified = _hook_references(path, line.strip(), bindings)
+                        references.extend(extra)
+                        if not qualified:
+                            issues.append(
+                                _issue(
+                                    "dynamic_consumer_reference",
+                                    f"Unresolved executable .pth content was not evaluated: {path}",
+                                )
+                            )
+                        else:
+                            bindings[str(path)].setdefault("qualified_hooks", 0)
+                            bindings[str(path)]["qualified_hooks"] += 1
             else:
                 continue
             inspected += 1
             for reference in references:
                 for target in targets:
-                    if _related(reference, target):
+                    if _related(reference, target) or _related(os.path.realpath(reference), target):
                         busy.append(
                             {
                                 "path": target,
@@ -336,6 +541,12 @@ def _consumers(roots, targets):
             plistlib.InvalidFileException,
         ) as error:
             issues.append(_issue("consumer_metadata_unreadable", f"{path}: {error}"))
+    _verify_metadata(bindings, issues)
+    if metadata is not None:
+        metadata.extend(
+            dict(record["evidence"], qualified_hooks=record.get("qualified_hooks", 0))
+            for record in bindings.values()
+        )
     return busy, issues, inspected
 
 
@@ -495,7 +706,8 @@ def activity(paths: list[str], *, consumer_roots=(), owner_roots=()) -> dict:
             )
         )
     process_complete = not issues
-    consumers, consumer_issues, inspected = _consumers(consumer_roots, targets)
+    metadata = []
+    consumers, consumer_issues, inspected = _consumers(consumer_roots, targets, metadata=metadata)
     busy.extend(consumers)
     issues.extend(consumer_issues)
     unique = {json.dumps(row, sort_keys=True): row for row in busy}
@@ -505,6 +717,7 @@ def activity(paths: list[str], *, consumer_roots=(), owner_roots=()) -> dict:
         "consumer_complete": not consumer_issues,
         "consumer_scope": list(map(os.fspath, consumer_roots)),
         "consumer_metadata_inspected": inspected,
+        "consumer_metadata": metadata,
         "process_uid": os.geteuid(),
         "other_uid_open_files_unobserved": len(foreign_pids - visible_pids),
         "busy": list(unique.values()),

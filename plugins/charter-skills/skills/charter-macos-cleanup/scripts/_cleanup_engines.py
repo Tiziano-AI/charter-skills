@@ -11,8 +11,11 @@ from pathlib import Path
 from _cleanup_common import CleanupError, canonical_digest
 from _cleanup_native import (
     _candidate,
+    _capabilities,
     _env,
+    _environment_digest,
     _executable,
+    _file_digest,
     _json_read,
     _measurement,
     _path_identity,
@@ -21,9 +24,6 @@ from _cleanup_native import (
     _version,
 )
 
-# Explicitly source-qualified buildctl contracts. Versions outside this set
-# remain unsupported until their prune/filter/output behavior is reviewed.
-BUILDCTL_VERSIONS = {"0.26.2"}
 PRIVATE_FILTER = 'private=""'
 
 
@@ -35,21 +35,39 @@ def _name(value: str | None) -> str:
 
 def _apple_snapshot(exe: dict, target: str) -> dict:
     rows = _json_read([exe["path"], "inspect", target])
-    if not isinstance(rows, list) or len(rows) != 1 or rows[0].get("id") != target:
+    if (
+        not isinstance(rows, list)
+        or len(rows) != 1
+        or not isinstance(rows[0], dict)
+        or rows[0].get("id") != target
+    ):
         raise CleanupError(
             "native_identity_unavailable", "Container inspection did not return the exact target"
         )
     row = rows[0]
     if not isinstance(row.get("configuration"), dict) or not isinstance(row.get("status"), dict):
-        raise CleanupError("native_output_invalid", "Container 1.5.0 inspection shape is missing")
+        raise CleanupError("native_output_invalid", "Container configuration/status is missing")
+    if not isinstance(row["status"].get("state"), str):
+        raise CleanupError("native_output_invalid", "Container state is missing")
     return row
 
 
 def _mounts(configuration: dict) -> tuple[list[dict], list[dict]]:
     included, skipped = [], []
+    if type(configuration.get("readOnly", False)) is not bool or not isinstance(
+        configuration.get("mounts", []), list
+    ):
+        raise CleanupError("native_output_invalid", "Container writable-mount scope is ambiguous")
     if not configuration.get("readOnly", False):
         included.append({"destination": "/", "kind": "rootfs"})
     for mount in configuration.get("mounts", []):
+        if (
+            not isinstance(mount, dict)
+            or any(key not in mount for key in ("source", "destination", "options", "type"))
+            or not isinstance(mount["options"], list)
+            or not all(isinstance(value, str) for value in mount["options"])
+        ):
+            raise CleanupError("native_mount_unsupported", "Container mount scope is incomplete")
         kind = mount.get("type")
         if not isinstance(kind, dict) or len(kind) != 1:
             raise CleanupError("native_mount_unsupported", "Cannot identify Container mount type")
@@ -68,10 +86,48 @@ def _mounts(configuration: dict) -> tuple[list[dict], list[dict]]:
     return included, skipped
 
 
+def _apple_service(exe: dict) -> dict:
+    status = _json_read([exe["path"], "system", "status", "--format", "json"])
+    server = status.get("server") if isinstance(status, dict) else None
+    paths = status.get("paths") if isinstance(status, dict) else None
+    if (
+        not isinstance(status, dict)
+        or status.get("status") != "running"
+        or not isinstance(server, dict)
+        or server.get("appName") != "container-apiserver"
+        or any(
+            not isinstance(server.get(k), str) or not server[k]
+            for k in ("version", "build", "commit")
+        )
+    ):
+        raise CleanupError(
+            "native_server_identity_unavailable",
+            "Container did not identify a running API server; client-only version is not server identification",
+        )
+    if not isinstance(paths, dict) or any(
+        not isinstance(paths.get(k), str) or not paths[k] for k in ("appRoot", "installRoot")
+    ):
+        raise CleanupError(
+            "native_server_identity_unavailable", "Container service namespace paths are absent"
+        )
+    return {
+        "server": {k: server[k] for k in ("appName", "version", "build", "commit")},
+        "paths": {k: _path_identity(paths[k]) for k in ("appRoot", "installRoot")},
+    }
+
+
 def _apple(owner: str, target: str | None) -> dict:
     target = _name(target or ("buildkit" if owner == "apple-buildkit" else None))
     exe = _executable("container")
+    if _env().get("CONTAINER_ROOT"):
+        raise CleanupError(
+            "native_configuration_unsupported",
+            "CONTAINER_ROOT override cannot identify the original XPC namespace",
+        )
     version = _version(exe, "container")
+    server = _apple_service(exe)
+    if owner == "apple-container":
+        _capabilities([exe["path"], "clean"], ("--debug",))
     row = _apple_snapshot(exe, target)
     if row["status"].get("state") != "running":
         raise CleanupError(
@@ -87,19 +143,17 @@ def _apple(owner: str, target: str | None) -> dict:
         )
     mounts, skipped = _mounts(config)
     endpoint = f"apple-container:xpc:uid:{os.getuid()}"
-    root = _env().get("CONTAINER_ROOT")
-    if root:
-        # The normal XPC route cannot prove that an arbitrary root override
-        # belongs to this service. Do not invent a second endpoint.
-        raise CleanupError(
-            "native_configuration_unsupported",
-            "CONTAINER_ROOT override requires separate qualification",
-        )
     engine = f"{endpoint}:container:{target}"
     identity = {
         "executable": exe,
         "version": version,
         "endpoint": endpoint,
+        "server": server,
+        "route": {
+            "uid": os.getuid(),
+            "home": _path_identity(str(Path.home())),
+            "container_root": None,
+        },
         "container": target,
         "created": config["creationDate"],
         "started": row["status"]["startedDate"],
@@ -127,23 +181,36 @@ def _apple(owner: str, target: str | None) -> dict:
     # buildctl environment defaults nor a TCP endpoint may redirect the prune.
     addr = "unix:///run/buildkit/buildkitd.sock"
     prefix = [exe["path"], "exec", target, "buildctl"]
-    version_text = _read([*prefix, "--version"])
-    found = re.search(r"\bv(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)(?![\d.])", version_text)
-    buildctl_version = found.group(1) if found else None
-    if buildctl_version not in BUILDCTL_VERSIONS:
+    buildctl_version = _version({"path": prefix[0]}, "buildctl", prefix[1:] + ["--version"])
+    _capabilities([*prefix, "prune"], ("--filter", "--format"))
+    daemon = _json_read([*prefix, "--addr", addr, "debug", "info", "--format", "{{json .}}"])
+    version_info = daemon.get("buildkitVersion") if isinstance(daemon, dict) else None
+    if not isinstance(version_info, dict) or any(
+        not isinstance(version_info.get(k), str) or not version_info[k]
+        for k in ("package", "version", "revision")
+    ):
         raise CleanupError(
-            "native_version_unsupported",
-            "Guest buildctl version is not qualified",
-            observed=buildctl_version,
-            supported=sorted(BUILDCTL_VERSIONS),
+            "native_server_identity_unavailable",
+            "Guest BuildKit daemon did not identify its implementation",
         )
-    identity.update(buildctl_version=buildctl_version, buildkit_endpoint=addr)
+    identity.update(
+        buildctl_version=buildctl_version,
+        buildkit_endpoint=addr,
+        buildkit_server={k: version_info[k] for k in ("package", "version", "revision")},
+    )
     rows = _json_read(
         [*prefix, "--addr", addr, "du", "--filter", "private", "--format", "{{json .}}"]
     )
     if rows is None:
         rows = []
-    if not isinstance(rows, list):
+    if not isinstance(rows, list) or any(
+        not isinstance(r, dict)
+        or not isinstance(r.get("id"), str)
+        or type(r.get("size")) is not int
+        or r["size"] < 0
+        or type(r.get("inUse")) is not bool
+        for r in rows
+    ):
         raise CleanupError("native_output_invalid", "Buildctl usage must be a JSON array")
     action = {
         "type": "apple_buildkit_private_prune",
@@ -153,7 +220,7 @@ def _apple(owner: str, target: str | None) -> dict:
     }
     result = _candidate(owner, target, action, identity, scopes, paths=paths)
     result["measurements"].update(
-        engine_bytes=sum(r["Size"] for r in rows if not r.get("InUse", True)),
+        engine_bytes=sum(r["size"] for r in rows if not r["inUse"]),
         engine_records=len(rows),
         engine_unit="bytes",
     )
@@ -174,9 +241,11 @@ def _socket(endpoint: str) -> dict:
 
 
 def _docker_endpoint(exe: dict, endpoint: str) -> tuple[str, dict]:
+    if not isinstance(endpoint, str) or not endpoint:
+        raise CleanupError("native_endpoint_invalid", "Builder node endpoint is missing")
     if "://" not in endpoint:
         rows = _json_read([exe["path"], "context", "inspect", _name(endpoint)])
-        if not isinstance(rows, list) or len(rows) != 1:
+        if not isinstance(rows, list) or len(rows) != 1 or not isinstance(rows[0], dict):
             raise CleanupError(
                 "native_identity_unavailable", "Docker context did not resolve uniquely"
             )
@@ -188,7 +257,7 @@ def _docker_endpoint(exe: dict, endpoint: str) -> tuple[str, dict]:
 def _inspect_builder(text: str, name: str) -> dict:
     before, separator, after = text.partition("Nodes:")
     header = dict(re.findall(r"^([^:\n]+):\s*(.*?)\s*$", before, re.M))
-    if not separator or header.get("Name") != name:
+    if not separator or header.get("Name") != name or "Error" in header:
         raise CleanupError("native_output_invalid", "Buildx did not inspect the selected builder")
     nodes = []
     for match in re.finditer(r"^Name:\s*(.+)$", after, re.M):
@@ -196,7 +265,12 @@ def _inspect_builder(text: str, name: str) -> dict:
         end = after.find("\nName:", match.end())
         block = after[start : end if end >= 0 else len(after)]
         values = dict(re.findall(r"^([^:\n]+):\s*(.*?)\s*$", block, re.M))
-        if values.get("Status") != "running" or "Error" in values:
+        if (
+            values.get("Status") != "running"
+            or "Error" in values
+            or not values.get("Endpoint")
+            or not values.get("BuildKit version")
+        ):
             raise CleanupError(
                 "native_target_not_running", "Every selected builder node must already be running"
             )
@@ -216,6 +290,7 @@ def _buildx(target: str | None) -> dict:
     target = _name(target or "orbstack")
     exe = _executable("docker")
     version = _version(exe, "buildx", ["buildx", "version"])
+    _capabilities([exe["path"], "buildx", "prune"], ("--filter", "--force", "--builder"))
     env = _env()
     docker_config = _resolved(env.get("DOCKER_CONFIG") or str(Path.home() / ".docker"))
     buildx_config = _resolved(env.get("BUILDX_CONFIG") or str(Path(docker_config) / "buildx"))
@@ -227,7 +302,7 @@ def _buildx(target: str | None) -> dict:
             raise CleanupError(
                 "native_configuration_unavailable", "Cannot read selected builder metadata"
             ) from error
-        if config.get("Name") != target or config.get("Dynamic"):
+        if not isinstance(config, dict) or config.get("Name") != target or config.get("Dynamic"):
             raise CleanupError(
                 "native_builder_unsupported", "Dynamic or mismatched builders are unsupported"
             )
@@ -244,13 +319,21 @@ def _buildx(target: str | None) -> dict:
             "Only local docker and docker-container drivers are qualified",
         )
     expected = config.get("Nodes", [])
-    if not expected:
+    if (
+        not isinstance(expected, list)
+        or not expected
+        or any(
+            not isinstance(node, dict) or not isinstance(node.get("Name"), str) or not node["Name"]
+            for node in expected
+        )
+        or len({n["Name"] for n in expected}) != len(expected)
+    ):
         raise CleanupError("native_identity_unavailable", "Builder contains no nodes")
     # Resolve EVERY node before any daemon-facing read. ls would probe unrelated
     # remote builders; inspect target cannot be used before this locality check.
     resolved = []
     for node in expected:
-        endpoint, socket = _docker_endpoint(exe, node["Endpoint"])
+        endpoint, socket = _docker_endpoint(exe, node.get("Endpoint"))
         resolved.append(
             {
                 "name": node["Name"],
@@ -271,20 +354,32 @@ def _buildx(target: str | None) -> dict:
         info = _json_read(
             [exe["path"], "--host", node["endpoint"], "info", "--format", "{{json .}}"]
         )
-        if "orbstack" not in str(info.get("OperatingSystem", "")).lower() or not info.get("ID"):
+        if (
+            not isinstance(info, dict)
+            or "orbstack" not in str(info.get("OperatingSystem", "")).lower()
+            or not isinstance(info.get("ID"), str)
+            or not info["ID"]
+            or not isinstance(info.get("ServerVersion"), str)
+            or not info["ServerVersion"]
+        ):
             raise CleanupError(
                 "native_engine_mismatch", "Resolved engine is not an identified OrbStack daemon"
             )
         plugins = info.get("ClientInfo", {}).get("Plugins", [])
-        plugin = next((p for p in plugins if p.get("Name") == "buildx"), None)
-        if not plugin or not plugin.get("Path"):
+        matches = [p for p in plugins if isinstance(p, dict) and p.get("Name") == "buildx"]
+        plugin = matches[0] if len(matches) == 1 else None
+        if not plugin or not isinstance(plugin.get("Path"), str):
             raise CleanupError(
                 "native_identity_unavailable",
                 "Docker did not identify the active Buildx plugin executable",
             )
         plugin_identity = _path_identity(plugin["Path"])
         ps = Path(plugin_identity["path"]).stat()
-        plugin_identity.update(size=ps.st_size, mtime_ns=ps.st_mtime_ns)
+        plugin_identity.update(
+            size=ps.st_size,
+            mtime_ns=ps.st_mtime_ns,
+            sha256=_file_digest(Path(plugin_identity["path"])),
+        )
         engines.append(
             {
                 "id": info["ID"],
@@ -329,6 +424,16 @@ def _buildx(target: str | None) -> dict:
         usage = [json.loads(line) for line in rows.splitlines() if line.strip()]
     except ValueError as error:
         raise CleanupError("native_output_invalid", "Buildx usage JSON is malformed") from error
+    if any(
+        not isinstance(r, dict)
+        or not isinstance(r.get("ID"), str)
+        or not isinstance(r.get("Size"), (str, int))
+        or type(r.get("Reclaimable")) is not bool
+        for r in usage
+    ):
+        raise CleanupError(
+            "native_output_invalid", "Buildx usage lacks record identity, size or reclaimability"
+        )
     result = _candidate("orbstack-buildx", target, action, identity, scopes)
     result["measurements"].update(
         engine_records=len(usage),
@@ -340,9 +445,7 @@ def _buildx(target: str | None) -> dict:
 
 
 def _orbstack(target: str | None) -> dict:
-    exe = _executable("orb")
-    version = _version(exe, "orb", ["version"])
-    # OrbStack 2.2.3's installed data/README.txt names data.img.raw. Its
+    # The installed data/README.txt names data.img.raw. Its
     # sandbox app-group directory is the vendor-owned default storage root.
     storage = Path.home() / "Library/Group Containers/HUAQ24HBR6.dev.orbstack/data/data.img.raw"
     path = _resolved(target or str(storage))
@@ -353,7 +456,7 @@ def _orbstack(target: str | None) -> dict:
             "native_storage_unsupported",
             "Only OrbStack's resolved app-group data.img.raw is qualified",
         )
-    identity = {"executable": exe, "version": version, "storage": _path_identity(path)}
+    identity = {"storage": _path_identity(path)}
     if identity["storage"]["type"] != stat.S_IFREG:
         raise CleanupError(
             "native_storage_unsupported", "OrbStack backing store is not a regular sparse file"
@@ -379,8 +482,10 @@ def discover_engine(owner: str, target: str | None) -> dict:
 
 
 def engine_argv(candidate: dict) -> list[str] | None:
-    exe = candidate["identity"]["executable"]["path"]
     action = candidate["action"]
+    if action["type"] == "orbstack_observe_reclaim":
+        return None
+    exe = candidate["identity"]["executable"]["path"]
     match action["type"]:
         case "apple_container_clean":
             return [exe, "clean", action["container"]]
@@ -409,20 +514,36 @@ def engine_argv(candidate: dict) -> list[str] | None:
                 PRIVATE_FILTER,
                 "--force",
             ]
-        case "orbstack_observe_reclaim":
-            return None
     raise CleanupError("native_action_unsupported", "Unsupported typed native action")
 
 
 def read_engine(candidate: dict, record: dict) -> dict | None:
     if candidate["owner"].startswith("apple-"):
-        try:
-            row = _apple_snapshot(
-                candidate["identity"]["executable"], candidate["identity"]["container"]
-            )
-        except CleanupError:
-            return None
         old = record.get("owner_identity", candidate["identity"])
+        try:
+            # Status must stay readable across helper upgrades, but a different
+            # executable, environment or service is not the original route.
+            exe = _executable(old["executable"]["path"])
+            if (
+                not _contains_identity(exe, old["executable"])
+                or _env().get("CONTAINER_ROOT")
+                or old.get("endpoint") != f"apple-container:xpc:uid:{os.getuid()}"
+                or old.get("environment_digest") != _environment_digest()
+            ):
+                return None
+            if "route" in old and old["route"] != {
+                "uid": os.getuid(),
+                "home": _path_identity(str(Path.home())),
+                "container_root": None,
+            }:
+                return None
+            # Unbound historical namespaces remain readable but unresolved;
+            # do not manufacture a service identity from a same-named target.
+            if "server" not in old or _apple_service(exe) != old["server"]:
+                return None
+            row = _apple_snapshot(exe, old["container"])
+        except (CleanupError, OSError, KeyError):
+            return None
         # An observed different VM incarnation, or the old VM now stopped,
         # establishes that its filesystem/BuildKit operations cannot continue.
         # Missing containers, unavailable services, and CLI exit alone do not.
@@ -440,3 +561,16 @@ def read_engine(candidate: dict, record: dict) -> dict | None:
     # Buildx supplies no per-prune handle. A changed socket/daemon ID is not
     # proof that the original daemon ended, so preserve unresolved custody.
     return None
+
+
+def _contains_identity(current: dict, saved: dict) -> bool:
+    """Compare the identity actually saved, permitting added binding fields."""
+    return all(
+        key in current
+        and (
+            _contains_identity(current[key], value)
+            if isinstance(value, dict) and isinstance(current[key], dict)
+            else current[key] == value
+        )
+        for key, value in saved.items()
+    )

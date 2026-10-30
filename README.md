@@ -7,7 +7,7 @@ in Codex and Claude Code. Charter is an opinionated, Mac-first library: call
 on the expertise a task needs while keeping your agent's native model,
 permissions and settings.
 
-**Version 1.0.0-rc.9**
+**Version 1.0.0-rc.10**
 
 > **Release candidate.**
 

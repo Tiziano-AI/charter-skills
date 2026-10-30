@@ -11,6 +11,7 @@ from pathlib import Path
 
 SCHEMA_VERSION = 1
 HELPER_VERSION = "1"
+MAX_REPORT_BYTES = 256 * 1024 * 1024
 
 
 class CleanupError(Exception):
@@ -45,6 +46,38 @@ def _pairs(items):
     return result
 
 
+def _json_chunks(value):
+    encoder = json.JSONEncoder(sort_keys=True, separators=(",", ":"), allow_nan=False)
+    for chunk in encoder.iterencode(value):
+        yield chunk.encode("utf-8")
+    yield b"\n"
+
+
+def encoded_size(value):
+    """Exact UTF-8 bytes used by every report writer, including its newline."""
+    return sum(len(chunk) for chunk in _json_chunks(value))
+
+
+def bounded_json(value, *, reserve_bytes=0):
+    """Encode before opening a report; reserve room for the next durable state."""
+    if not isinstance(reserve_bytes, int) or not 0 <= reserve_bytes < MAX_REPORT_BYTES:
+        raise CleanupError("invalid_report_reserve", "Reserve must fit the report byte budget")
+    limit = MAX_REPORT_BYTES - reserve_bytes
+    payload, size = bytearray(), 0
+    for chunk in _json_chunks(value):
+        size += len(chunk)
+        if size > limit:
+            raise CleanupError(
+                "report_too_large",
+                "Report exceeds the shared byte budget; inspect or select narrower roots",
+                max_report_bytes=MAX_REPORT_BYTES,
+                reserve_bytes=reserve_bytes,
+                encoded_bytes_at_least=size,
+            )
+        payload.extend(chunk)
+    return bytes(payload)
+
+
 def _parent(path):
     target = Path(os.path.abspath(os.fspath(path)))
     if target.name in {"", ".", ".."}:
@@ -64,14 +97,22 @@ def _parent(path):
 def read_json(path):
     parent, name = _parent(path)
     try:
-        fd = os.open(name, os.O_RDONLY | os.O_NOFOLLOW, dir_fd=parent)
-        with os.fdopen(fd, "r", encoding="utf-8") as stream:
+        fd = os.open(name, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=parent)
+        with os.fdopen(fd, "rb") as stream:
             info = os.fstat(stream.fileno())
-            if not stat.S_ISREG(info.st_mode) or info.st_size > 256 * 1024 * 1024:
+            if not stat.S_ISREG(info.st_mode) or info.st_size > MAX_REPORT_BYTES:
                 raise CleanupError("invalid_report", "Expected a bounded regular JSON file")
+            data = stream.read(MAX_REPORT_BYTES + 1)
+            after = os.fstat(stream.fileno())
+            if len(data) > MAX_REPORT_BYTES or (
+                info.st_size,
+                info.st_mtime_ns,
+                info.st_ctime_ns,
+            ) != (after.st_size, after.st_mtime_ns, after.st_ctime_ns):
+                raise CleanupError("invalid_report", "Report grew or changed while being read")
             try:
-                return json.load(
-                    stream,
+                return json.loads(
+                    data.decode("utf-8"),
                     object_pairs_hook=_pairs,
                     parse_constant=lambda _: (_ for _ in ()).throw(
                         ValueError("Non-finite JSON number")
@@ -85,7 +126,7 @@ def read_json(path):
 
 def write_json(path, value, exclusive=False):
     """Write a caller-owned report; refuse symlink traversal and foreign modes."""
-    payload = (json.dumps(value, sort_keys=True, indent=2, allow_nan=False) + "\n").encode()
+    payload = bounded_json(value)
     parent, name = _parent(path)
     temp = None
     try:
