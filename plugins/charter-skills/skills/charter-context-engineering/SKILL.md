@@ -5,7 +5,7 @@ description: 'Design or repair retrieval and context assembly for LLM products: 
   search, ranking, filters and context budget from representative questions; not general
   prompt writing or runtime session recovery.'
 metadata:
-  content_version: charter-context-engineering@2026.10.16.0
+  content_version: charter-context-engineering@2026.11.01.0
 ---
 # Full specialist method
 

@@ -114,6 +114,25 @@ that runtime rather than becoming something this skill changes. A tool that retu
 where a filtered excerpt would do has a contract problem, which
 `charter-agent-tool-design` owns.
 
+When repeated context makes prompt-cache reuse or input cost a design question,
+an identical prefix is an opportunity, not a hit. Inspect the effective request
+after SDK or gateway transformations, including tools, schemas, messages and
+content blocks. The adopted provider, API and model contract decides what can
+be written, which saved boundaries or resources a later request can find, and
+whether that entry is available within its scope and lifetime. Put reusable
+material before changing material where meaning permits, but preserve causal
+order, useful evidence and freshness rather than retaining wrong context or
+cutting useful content to improve cache statistics.
+
+Observed cache reads are not net savings. Interpret the provider's usage
+categories before adding them: a cached count may already be inside total
+input, while another API reports disjoint input, read and write counts. Compare
+the same useful work, including applicable writes, refresh or storage charges,
+output and additional calls, not just a hit ratio. [Ordering, reuse and
+cost](references/retrieval-and-assembly.md#ordering-and-budget) develops these
+distinctions and links the provider contracts. Ordinary retrieval work needs
+this depth only when reuse or cost changes the decision.
+
 ## Evaluate the answer and locate its failing stage
 
 Build a set of questions with known answers and their source locations,
@@ -133,7 +152,7 @@ received.
 
 [Pipeline stages in depth](references/retrieval-and-assembly.md) covers
 parsing checks, chunk design for tables, code and legal text, query rewriting,
-filter design, ordering and budget, compaction in agent loops, agents that
+filter design, ordering, prompt-cache eligibility and cost, compaction in agent loops, agents that
 search for themselves, and how to build and read the evaluation set. Open it
 when designing a pipeline, or when the failing stage is known and its repair
 is not obvious.

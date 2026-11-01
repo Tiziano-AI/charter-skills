@@ -128,9 +128,12 @@ keep it out of the system prompt.
 Choose k from the evaluation set: plot the share of questions whose gold
 passage reaches the prompt, and answer accuracy, against k. Past the point
 where that share flattens, more passages add distractors and cost. Reserve
-budget for instructions, history, retrieved context and the answer, and put
-the parts that do not change between calls first, where a prompt cache can
-reuse them.
+budget for instructions, history, retrieved context and the answer. When
+repeated context makes reuse worthwhile, put stable material before changing
+material where its meaning and the model's use permit it. A changing snapshot
+before an otherwise growing history breaks exact-prefix reuse of that history;
+moving only the latest question does not repair an earlier changing field.
+Keep necessary causal order, governing conditions and the current task clear.
 
 Relevance is not sufficiency. Ten relevant passages can repeat one claim and
 miss its exception, so deduplicate copies of one source without merging
@@ -141,6 +144,88 @@ scope are both retrieved, keep them adjacent. A label such as
 model check scope and cite. The answer contract should ask for citations by
 label, a plain statement of what the sources do not cover, and a question
 back when a missing attribute decides the answer.
+
+### Prompt-cache reuse and cost
+
+A provider prompt/KV cache reuses input computation; it is not a response cache,
+a durable memory store or an application checkpoint. Diagnose the layer whose
+reuse matters. Persisted history does not mean cached model input, and response
+storage controls need not control prompt caching.
+
+Separate the structural opportunity from its realization. Compare the effective
+requests the provider receives, not just the application's context object:
+tools and their order, schemas, instruction roles, message/content boundaries,
+multimodal representations and SDK or gateway transformations can change the
+rendered prefix. Deterministic serialization prevents accidental churn; it
+cannot make a changing early field stable. Internal provider rendering may not
+be visible, so a character-prefix comparison alone proves neither token
+identity nor a cache hit.
+
+Identical content still needs an admitted write and a reachable later lookup.
+Check the target API/model's minimum, write policy, cacheable boundaries and
+bounded lookback, or explicit-resource identity. A growing string can retain
+all the old bytes but lose the old endpoint as a lookup boundary; moving a
+marker to its new end need not find the earlier write. Then consider scope
+(account, workspace, project, region or deployment), expiry and eviction,
+routing affinity and concurrency: a parallel request can arrive before the
+first write is available. A cache key may influence routing or accounting;
+it neither makes changed input identical nor universally identifies a saved
+entry. Follow its contract instead of transplanting it across APIs.
+
+These provider distinctions change the design; use their current contracts
+for the selected model, endpoint and deployment rather than freezing prices,
+thresholds, retention values or support tables here:
+
+| Provider path | What changes the choice |
+| --- | --- |
+| [OpenAI prompt caching](https://developers.openai.com/api/docs/guides/prompt-caching) | Automatic token-prefix caching and breakpoint-aware model families have different write, lookup and pricing rules. In the latter, unchanged instructions can lack their own reusable entry if only a later changing boundary was written. Check the exact endpoint's schema and SDK as well as the guide; a longer common prefix alone does not establish eligibility. |
+| [xAI prompt caching](https://docs.x.ai/developers/advanced-api-usage/prompt-caching/how-it-works) | Automatic prefix reuse and per-server availability make [affinity](https://docs.x.ai/developers/advanced-api-usage/prompt-caching/maximizing-cache-hits) relevant. The Responses body key and Chat Completions header are endpoint-specific controls, not interchangeable wire fields or hit guarantees. Faithful conversation continuation, including reasoning items where required, differs from rebuilding one snapshot string. |
+| [Anthropic Messages caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) | Tool, system and message prefixes form an ordered hierarchy. Caching is opt-in per request: top-level automatic placement or explicit block markers select writes; a request with neither writes nothing. Backward lookup searches prior written boundaries within a bounded range. Minimums, availability of the initial write, invalidation and isolation depend on model/platform; a marker alone does not establish a cached prefix. |
+| Google [Gemini Developer API](https://ai.google.dev/gemini-api/docs/caching) and [Cloud caching](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/context-cache/context-cache-overview) | Implicit reuse and explicit cache resources have different support, lifecycle and costs. Developer API Interactions and generateContent do not expose the same cache controls; availability also differs by model family and Cloud route. An explicit resource needs a valid model, scope/location and lifetime; storing content is a separate cost decision, not a universal Gemini recipe. |
+
+Retain native usage and effective model/API, request or attempt identity and
+relevant settings in the product's existing diagnostics when measurement is
+needed. Missing usage is unknown, not zero. For streaming, usage may arrive in
+the terminal event rather than the text deltas. Preserve it through the adapter
+instead of inferring reads from latency or a prefix diff. Request identity also
+prevents shared openings, retries or aggregate and per-step totals from being
+counted twice.
+
+Build disjoint billable categories before pricing. For example, Anthropic's
+`input_tokens` excludes `cache_read_input_tokens` and
+`cache_creation_input_tokens`; the latter's lifetime subfields partition that
+creation total. OpenAI cached-input details and Google's generateContent
+`cachedContentTokenCount` are already within their respective input totals;
+Google Interactions has another usage schema. A write price can replace the
+ordinary input rate rather than supplement it, and a read can refresh expiry
+without becoming a write. Check [xAI usage](https://docs.x.ai/developers/advanced-api-usage/prompt-caching/usage-and-pricing),
+[Gemini usage metadata](https://ai.google.dev/api/generate-content#UsageMetadata)
+and the adopted endpoint's accounting before mapping fields with similar names.
+Separate read-token coverage from the fraction of requests with any hit; for
+coverage, divide summed reads by summed total input, not an unweighted average
+of request percentages. Neither measure is money saved.
+
+Compare total cost for equivalent useful results: uncached input, reads,
+writes or refreshes where billed, storage over its retained lifetime, output
+(including reasoning according to its accounting), tool charges and additional
+attempts or warmup calls. Apply the actual tier and context-length rates to
+the categories they govern; cached tokens can still count toward a context
+threshold. A larger retained prompt can improve read coverage while raising
+total cost, and writing a suffix that never recurs can cost more than ordinary
+input. Longer retention earns its cost through useful later reads, not through
+its advertised discount. Distinguish a conditional list-price calculation from
+observed usage, provider billing and a forecast of future hits.
+
+Choose the smallest comparison that can change the product decision, not a
+cache audit for every RAG task. Offline checks can establish stable content,
+preserved meaning and correctly emitted boundaries or keys; they cannot prove
+provider admission or savings. When an admitted live observation is needed,
+inspect reads, costs and answer quality separately. Reordering evidence or
+changing compaction still needs the product's substantive quality check. Keep
+freshness, access revocation and history correctness even when they invalidate
+cache, and do not add cache infrastructure or change provider merely to improve
+the metric. Context assembly belongs here; native controls and usage transport
+belong in the product's provider adapter, without a second context workflow.
 
 ## Long agent loops and compaction
 
@@ -159,10 +244,9 @@ Handing exploration of a large source to a sub-agent keeps its noise out of the
 main context, but the returned contribution may omit a needed relationship.
 Give the integrating reader access to sources that must be understood together.
 
-Prompt-cache behavior is provider-specific: where exact-prefix reuse applies,
-changing tool definitions or earlier context can reduce cache hits. Preserve
-useful stability without retaining wrong or irrelevant context merely for a
-cache. Exercise a product-owned compaction at a point where it could lose a
+Compaction changes the next request as well as its size; apply the reuse and
+cost distinctions above when that trade-off matters. Exercise a product-owned
+compaction at a point where it could lose a
 constraint or unresolved effect, then inspect the next action and result. A
 replay that never invokes that transition says nothing about its retention.
 
