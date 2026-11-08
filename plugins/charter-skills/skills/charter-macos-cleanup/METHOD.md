@@ -27,7 +27,19 @@ Use the helper's saved scan for subsequent inspection. Read its coverage and
 findings before selecting: a native refusal does not invalidate usable filesystem
 candidates, and an unsupported operation does not prove its data is unreclaimable.
 Discovery recognizes metadata relationships; `--candidate-path` admits unfamiliar
-output layouts for qualification, not deletion by name. Application download
+output layouts for qualification, not deletion by name or a filter on discovery.
+For known exact outputs, combine `--root <whole-owner>` with
+`--candidate-path <output> --only-candidates`. This reads only the requested
+payloads and fixed ownership metadata along their ancestors inside the root;
+it does not enumerate unrelated siblings. Keep the root broad enough to observe
+the real repository, manifest or declared owner: process matching still covers
+that whole owner. Static consumer checks inspect the supplied `consumer_roots`;
+include the relevant installed launcher and registration metadata there.
+Coverage then describes the requested
+candidates, not an inventory of the roots. Missing, unreadable or changed paths
+and symlink, application, filesystem or environment boundaries remain findings;
+they do not trigger a direct-snapshot fallback. To inspect a virtual environment,
+request its root, not a child behind its inventory boundary. Application download
 caches need their owner's redownload route; arbitrary `Library/Caches` trees are
 not disposable just because of their location.
 
@@ -60,7 +72,8 @@ Before selecting a family, establish all three:
   or individual metadata files in `consumer_roots` (for example launcher and
   extension registration locations); explain why those scopes cover the selected
   operation's risks. An empty unrelated directory does not establish absence of
-  consumers.
+  consumers. Scope launcher and registration metadata, not unrelated evidence
+  archives merely because they contain familiar metadata suffixes.
 
 Consumer protection follows the operation. Exact filesystem removal needs fresh
 checks for active writers and lazy/source-linked users. Native unused-entry
@@ -69,7 +82,19 @@ additional checks where it leaves a real consumer exposed. Establish generated
 metadata's relevance from its content and references, not its filename.
 Unrelated metadata need not veto another family; unknown executable hooks remain
 unresolved where their behavior could matter. Never import or execute inspected
-metadata to clear a finding. Busy, changed or unreadable candidates are local
+metadata to clear a finding. An external launcher referencing the project's
+source can consume its dependencies lazily; a normal internal link to a retained
+sibling is not by itself a consumer of the selected payload. Python
+`direct_url.json` with recognized `archive_info`, `vcs_info` or non-editable
+`dir_info` records installation provenance, not a runtime link to that origin.
+An editable VCS install records its local clone with editable `dir_info`, not
+`vcs_info`. Editable directory metadata still protects its source; separate
+`.pth`, symlinks and launchers remain runtime links regardless of the origin
+record. Ambiguous or malformed metadata and unknown executable hooks remain
+unresolved. Static checks
+exclude only metadata that the exact removal will discard: retained locks,
+their ancestors and environment skeletons remain observable. Process checks
+still cover the whole owner. Busy, changed or unreadable candidates are local
 skips, not permission to stop work, kill applications, force locks or retry until
 they disappear.
 
@@ -100,11 +125,15 @@ python3 -I <script> status --operation <operation.json>
 `inspect` returns a default page and `next_cursor`; use `--scan`, `--cursor` and
 `--limit` to read the rest without a new scan. Pagination limits the displayed
 page, not discovery coverage. If a report budget leaves coverage incomplete,
-narrow the root or candidate rather than treating omitted material as checked.
-`--candidate` returns a selection template. Fill it with evidence and a
+inspect smaller exact candidates with `--only-candidates`, keeping their whole
+owner root, rather than treating omitted material as checked. Read sizes from
+`inspect` responses, where `measurement` holds them: a filesystem candidate in
+the raw saved scan has no `measurement` and keeps its sizes under `snapshot`, so
+a script that reads `measurement` from the file finds nothing and can report
+zero. `--candidate` returns a selection template. Fill it with evidence and a
 reconstruction recipe; several IDs may share one qualification where their
-owner, inputs, retention and consumers are the same. Separate exceptions.
-The selection format is:
+owner, inputs, retention and consumers are the same. Separate exceptions. The
+selection format is:
 
 ```json
 {
@@ -125,6 +154,14 @@ per family, not once per file. A confirmed digest binds the plan; it is not a
 substitute for authority. `inspect`/`plan` do not remove target data; the plan
 binds helper bytes, object preimages and reconstruction evidence. Changed inputs
 need a fresh inspection and plan, not an edited digest.
+
+Evidence files are hashed in bounded-memory chunks without a file-size cutoff;
+bind a large retained input directly, not a separate note containing its hash.
+Consumer traversal deduplicates overlapping roots and does not spend metadata
+allowance on ordinary source files or directories. The separate allowance of
+20,000 actual metadata bindings remains fail-closed: `consumer_coverage` reports
+each supplied root, what was visited and any omitted metadata. Continue with a
+relevant narrower scope when that check is incomplete; do not call it covered.
 
 Native stores use `inspect --owner <owner> [--target <exact-target>] --output
 <scan.json>`. Repeat `--owner` for several families; `--target` requires a single

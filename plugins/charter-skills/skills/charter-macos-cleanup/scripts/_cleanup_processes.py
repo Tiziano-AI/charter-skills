@@ -15,10 +15,11 @@ import shlex
 import stat
 import subprocess
 import sys
+from bisect import bisect_left
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
-from _cleanup_fs import _DIRECTORY_FLAGS, _parent
+from _cleanup_fs import _DIRECTORY_FLAGS, _parent, _removal_names
 
 _METADATA_NAMES = {
     "package.json",
@@ -32,6 +33,13 @@ _METADATA_NAMES = {
 }
 _METADATA_SUFFIXES = {".pth", ".egg-link", ".plist", ".toml", ".yaml", ".yml"}
 _MAX_METADATA_BYTES = 1024 * 1024
+MAX_CONSUMER_METADATA = 20000
+
+
+class _MetadataLimit(ValueError):
+    """A real metadata read, rather than directory discovery, hit its bound."""
+
+
 # These are syntax fingerprints of generated distutils shims, not tool-version
 # or filename admission rules. The complete referenced source must match; only
 # comments, formatting and docstrings are ignored. An altered/unknown hook is
@@ -187,8 +195,88 @@ def _literal_references(tree):
                 yield os.path.normpath(unquote(parsed.path))
 
 
+def _direct_url_values(content):
+    """Distinguish installation provenance from an editable runtime source link.
+
+    PyPA direct-url data structure: archive_info and vcs_info record provenance;
+    dir_info.editable defaults to false. Unknown shapes are not a negative
+    consumer observation. The caller binds and revalidates this metadata even
+    when the recognized origin emits no runtime reference.
+    """
+
+    def unique_object(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("Ambiguous direct_url.json contains duplicate fields.")
+            result[key] = value
+        return result
+
+    try:
+        data = json.loads(content, object_pairs_hook=unique_object)
+    except RecursionError as error:
+        raise ValueError("direct_url.json nesting exceeds interpretable metadata.") from error
+    if not isinstance(data, dict) or not isinstance(data.get("url"), str):
+        raise ValueError("direct_url.json must be an object with a URL string.")
+    if set(data) - {"url", "archive_info", "dir_info", "vcs_info", "subdirectory"} or (
+        "subdirectory" in data and not isinstance(data["subdirectory"], str)
+    ):
+        raise ValueError("direct_url.json contains unknown or malformed fields.")
+    url = data["url"]
+    parsed = urlparse(url)
+    if not parsed.scheme or not (parsed.netloc or parsed.path) or any(ord(c) < 32 for c in url):
+        raise ValueError("direct_url.json URL is malformed.")
+    origins = {key for key in ("archive_info", "dir_info", "vcs_info") if key in data}
+    if len(origins) != 1:
+        raise ValueError("direct_url.json origin is missing or ambiguous.")
+    origin = origins.pop()
+    info = data[origin]
+    if not isinstance(info, dict):
+        raise ValueError("direct_url.json origin information must be an object.")
+    if origin == "vcs_info":
+        if (
+            set(info) - {"vcs", "commit_id", "requested_revision", "resolved_revision"}
+            or not isinstance(info.get("vcs"), str)
+            or info.get("vcs") not in {"git", "hg", "bzr", "svn"}
+            or not isinstance(info.get("commit_id"), str)
+            or not info["commit_id"]
+            or any(
+                key in info and not isinstance(info[key], str)
+                for key in ("requested_revision", "resolved_revision")
+            )
+        ):
+            raise ValueError("direct_url.json VCS information is malformed or unknown.")
+        return []
+    if origin == "archive_info":
+        if (
+            set(info) - {"hash", "hashes"}
+            or "hash" in info
+            and not isinstance(info["hash"], str)
+            or "hashes" in info
+            and (
+                not isinstance(info["hashes"], dict)
+                or not all(isinstance(value, str) for value in info["hashes"].values())
+            )
+        ):
+            raise ValueError("direct_url.json archive information is malformed or unknown.")
+        return []
+    editable = info.get("editable", False)
+    if set(info) - {"editable"} or type(editable) is not bool:
+        raise ValueError("direct_url.json editable state is malformed or unknown.")
+    if (
+        parsed.scheme != "file"
+        or parsed.netloc not in ("", "localhost")
+        or not parsed.path.startswith("/")
+    ):
+        raise ValueError("direct_url.json directory URL is not an observable local absolute path.")
+    return [unquote(parsed.path)] if editable else []
+
+
 def _references(path, content):
     """Return static path strings, never execute .pth, shebangs or configuration."""
+    if path.name == "direct_url.json":
+        yield from _direct_url_values(content)
+        return
     if path.suffix == ".plist":
         values = list(_strings(plistlib.loads(content)))
     elif path.suffix == ".json":
@@ -236,8 +324,8 @@ def _metadata_read(path, bindings, observed=None):
     key = str(path)
     if key in bindings:
         return bindings[key]["content"]
-    if len(bindings) >= 20000:
-        raise ValueError("Referenced metadata exceeds bounded coverage.")
+    if len(bindings) >= MAX_CONSUMER_METADATA:
+        raise _MetadataLimit("Referenced metadata exceeds bounded coverage.")
     parent_fd, name, ancestors = _parent(key)
     try:
         before = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
@@ -374,10 +462,65 @@ def _hook_references(path, line, bindings):
         return [], False
 
 
-def _consumer_files(roots, issues, *, maximum_files=20000):
-    """Bound reads explicitly; report every exhausted/unreadable scope."""
-    count = 0
-    for root_text in roots:
+def _removal_scope(snapshot, targets):
+    if snapshot is None:
+        return None
+    anchor = snapshot.get("path")
+    if not snapshot.get("complete") or anchor not in targets:
+        raise ValueError("Removal snapshot must be complete and anchored at an activity target.")
+    names = _removal_names(snapshot)
+    paths = {str(Path(anchor) / name) if name else anchor for name in names}
+    return {"anchor": anchor, "paths": paths, "sorted_paths": sorted(paths)}
+
+
+def _removal_reference(reference, removal):
+    """Match removed objects, including a retained search directory containing them."""
+    if not _related(reference, removal["anchor"]):
+        return False
+    selected = removal["paths"]
+    path = reference
+    while _related(path, removal["anchor"]):
+        if path in selected:
+            return True
+        path = os.path.dirname(path)
+    prefix = reference.rstrip("/") + "/"
+    position = bisect_left(removal["sorted_paths"], prefix)
+    return position < len(removal["sorted_paths"]) and removal["sorted_paths"][position].startswith(
+        prefix
+    )
+
+
+def _consumer_files(roots, issues, *, removal=None, coverage=None):
+    """Stream every real entry; only actual metadata reads have a count bound."""
+    records = []
+    if coverage is not None:
+        coverage.update(requested_roots=list(map(os.fspath, roots)), roots=records)
+    admitted = {}
+    for root_text in sorted(
+        set(map(os.fspath, roots)), key=lambda path: (len(Path(path).parts), path)
+    ):
+        covering = next(
+            (
+                parent
+                for parent, observed in admitted.items()
+                if observed["state"] in {"complete", "selected_removal"}
+                and _related(root_text, parent)
+            ),
+            None,
+        )
+        record = {
+            "path": root_text,
+            "state": "covered" if covering else "complete",
+            "entries_visited": 0,
+            "directories_inspected": 0,
+            "removed_origins_excluded": 0,
+            "metadata_omitted": 0,
+        }
+        records.append(record)
+        if covering:
+            record["covered_by"] = covering
+            continue
+        admitted[root_text] = record
         root = Path(root_text)
         try:
             parent_fd, name, _ = _parent(str(root))
@@ -385,10 +528,16 @@ def _consumer_files(roots, issues, *, maximum_files=20000):
                 initial = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
             finally:
                 os.close(parent_fd)
+            record["entries_visited"] += 1
+            if removal and root_text in removal["paths"]:
+                record["removed_origins_excluded"] += 1
+                record["state"] = "selected_removal"
+                continue
             if stat.S_ISLNK(initial.st_mode) or stat.S_ISREG(initial.st_mode):
-                yield root, initial
+                yield root, initial, record
                 continue
             if not stat.S_ISDIR(initial.st_mode):
+                record["state"] = "incomplete"
                 issues.append(
                     _issue(
                         "consumer_scope_unreadable",
@@ -406,7 +555,9 @@ def _consumer_files(roots, issues, *, maximum_files=20000):
                     os.close(ancestor_fd)
                 try:
                     before = os.fstat(directory_fd)
+                    record["directories_inspected"] += 1
                     if before.st_dev != initial.st_dev:
+                        record["state"] = "incomplete"
                         issues.append(
                             _issue(
                                 "consumer_scope_changed",
@@ -416,34 +567,30 @@ def _consumer_files(roots, issues, *, maximum_files=20000):
                         continue
                     with os.scandir(directory_fd) as children:
                         for child in children:
-                            count += 1
-                            if count > maximum_files:
-                                issues.append(
-                                    _issue(
-                                        "consumer_scope_incomplete",
-                                        "Consumer scope exceeds bounded coverage.",
-                                    )
-                                )
-                                return
+                            record["entries_visited"] += 1
                             entry = child.stat(follow_symlinks=False)
                             candidate = parent / child.name
                             if entry.st_dev != initial.st_dev:
+                                record["state"] = "incomplete"
                                 issues.append(
                                     _issue(
                                         "consumer_device_boundary",
                                         f"Skipped filesystem boundary: {candidate}",
                                     )
                                 )
+                            elif removal and str(candidate) in removal["paths"]:
+                                record["removed_origins_excluded"] += 1
                             elif stat.S_ISDIR(entry.st_mode):
                                 pending.append(candidate)
                             elif stat.S_ISLNK(entry.st_mode) or stat.S_ISREG(entry.st_mode):
-                                yield candidate, entry
+                                yield candidate, entry, record
                     after = os.fstat(directory_fd)
                     if (before.st_dev, before.st_ino, before.st_mtime_ns) != (
                         after.st_dev,
                         after.st_ino,
                         after.st_mtime_ns,
                     ):
+                        record["state"] = "incomplete"
                         issues.append(
                             _issue(
                                 "consumer_scope_changed",
@@ -453,10 +600,31 @@ def _consumer_files(roots, issues, *, maximum_files=20000):
                 finally:
                     os.close(directory_fd)
         except OSError as error:
-            issues.append(_issue("consumer_scope_unreadable", str(error)))
+            record["state"] = "incomplete"
+            issues.append(_issue("consumer_scope_unreadable", f"{root}: {error}"))
 
 
-def _consumers(roots, targets, *, metadata=None):
+def _matching_targets(path, reference, targets, owner_roots, removal):
+    references = {reference, os.path.realpath(reference)}
+    matched = set()
+    for target in targets:
+        if any(
+            _removal_reference(value, removal)
+            if removal and target == removal["anchor"]
+            else _related(value, target)
+            for value in references
+        ):
+            matched.add(target)
+    # A launcher outside this owner may load its source lazily. A normal
+    # in-owner link is not an installed consumer merely because it resolves
+    # elsewhere in that same project. References to actual removal remain above.
+    for owner in owner_roots:
+        if not _related(str(path), owner) and any(_related(value, owner) for value in references):
+            matched.add(owner)
+    return matched
+
+
+def _consumers(roots, targets, *, metadata=None, owner_roots=(), removal=None, coverage=None):
     busy, issues, inspected = [], [], 0
     bindings = {}
     if not roots:
@@ -470,7 +638,8 @@ def _consumers(roots, targets, *, metadata=None):
             ],
             0,
         )
-    for path, observed in _consumer_files(roots, issues):
+    scope = {} if coverage is None else coverage
+    for path, observed, record in _consumer_files(roots, issues, removal=removal, coverage=scope):
         try:
             references = []
             kind = "installed_metadata"
@@ -524,24 +693,44 @@ def _consumers(roots, targets, *, metadata=None):
                 continue
             inspected += 1
             for reference in references:
-                for target in targets:
-                    if _related(reference, target) or _related(os.path.realpath(reference), target):
-                        busy.append(
-                            {
-                                "path": target,
-                                "kind": kind,
-                                "consumer": str(path),
-                                "reference": reference,
-                            }
-                        )
+                for target in sorted(
+                    _matching_targets(path, reference, targets, owner_roots, removal)
+                ):
+                    busy.append(
+                        {
+                            "path": target,
+                            "kind": kind,
+                            "consumer": str(path),
+                            "reference": reference,
+                        }
+                    )
+        except _MetadataLimit:
+            record["state"] = "incomplete"
+            record["metadata_omitted"] += 1
         except (
             OSError,
             ValueError,
             UnicodeError,
             plistlib.InvalidFileException,
         ) as error:
+            record["state"] = "incomplete"
             issues.append(_issue("consumer_metadata_unreadable", f"{path}: {error}"))
+    for record in scope.get("roots", []):
+        if record["metadata_omitted"]:
+            issues.append(
+                _issue(
+                    "consumer_scope_incomplete",
+                    f"Metadata binding limit {MAX_CONSUMER_METADATA} reached; "
+                    f"{record['metadata_omitted']} entries not fully inspected in {record['path']}.",
+                )
+            )
     _verify_metadata(bindings, issues)
+    scope.update(
+        complete=not issues,
+        metadata_binding_limit=MAX_CONSUMER_METADATA,
+        metadata_bindings=len(bindings),
+        metadata_entries_inspected=inspected,
+    )
     if metadata is not None:
         metadata.extend(
             dict(record["evidence"], qualified_hooks=record.get("qualified_hooks", 0))
@@ -631,7 +820,7 @@ def _resolve_census_gaps(missing, targets, busy):
         return [_issue("process_visibility_incomplete", str(error))]
 
 
-def activity(paths: list[str], *, consumer_roots=(), owner_roots=()) -> dict:
+def activity(paths: list[str], *, consumer_roots=(), owner_roots=(), removal_snapshot=None) -> dict:
     targets = list(dict.fromkeys(os.fspath(path) for path in [*paths, *owner_roots]))
     issues, busy = [], []
     if sys.platform != "darwin":
@@ -707,17 +896,34 @@ def activity(paths: list[str], *, consumer_roots=(), owner_roots=()) -> dict:
         )
     process_complete = not issues
     metadata = []
-    consumers, consumer_issues, inspected = _consumers(consumer_roots, targets, metadata=metadata)
+    consumer_coverage = {}
+    removal = None
+    removal_issues = []
+    try:
+        removal = _removal_scope(removal_snapshot, paths)
+    except (KeyError, TypeError, ValueError) as error:
+        removal_issues.append(_issue("invalid_removal_scope", str(error)))
+    consumers, consumer_issues, inspected = _consumers(
+        consumer_roots,
+        paths,
+        metadata=metadata,
+        owner_roots=owner_roots,
+        removal=removal,
+        coverage=consumer_coverage,
+    )
+    consumer_issues.extend(removal_issues)
+    consumer_coverage["complete"] = not consumer_issues
     busy.extend(consumers)
     issues.extend(consumer_issues)
     unique = {json.dumps(row, sort_keys=True): row for row in busy}
     return {
-        "complete": process_complete and not consumer_issues,
+        "complete": not issues,
         "process_complete": process_complete,
         "consumer_complete": not consumer_issues,
         "consumer_scope": list(map(os.fspath, consumer_roots)),
         "consumer_metadata_inspected": inspected,
         "consumer_metadata": metadata,
+        "consumer_coverage": consumer_coverage,
         "process_uid": os.geteuid(),
         "other_uid_open_files_unobserved": len(foreign_pids - visible_pids),
         "busy": list(unique.values()),

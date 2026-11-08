@@ -4,7 +4,7 @@ description: 'Work discovery when a need is hard to articulate: discover the int
   result and scope through adaptive interviewing, evidence and exploration, and carry
   that understanding into the result. Clear requests need ordinary execution.'
 metadata:
-  content_version: charter-work-discovery@2026.10.16.1
+  content_version: charter-work-discovery@2026.11.07.0
 ---
 # Charter · Work Discovery
 
@@ -31,7 +31,10 @@ understanding rather than filling every field before doing useful work.
 ## Begin from what is already known
 
 Recover existing contributions and inspect supplied artifacts; do not make the
-person retell settled context. If little is known, start with an easy invitation:
+person retell settled context. Sessions sent the same request in parallel are
+not the person's contribution to this one, and reading them can spoil a
+comparison the person is running: read them only when the person points you to
+them. If little is known, start with an easy invitation:
 "What is on your mind, even if it is only a messy fragment?" If they already
 supplied that fragment, build on it.
 

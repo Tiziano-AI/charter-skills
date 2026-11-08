@@ -54,6 +54,73 @@ def _action_budget(candidate: dict) -> int:
     )
 
 
+def _orphan_outcome(*, not_submitted: bool = False) -> dict:
+    if not_submitted:
+        return {
+            "state": "blocked",
+            "execution_ended": True,
+            "not_submitted": True,
+            "issues": [
+                {
+                    "code": "not_invoked",
+                    "message": "Writer ended before submission; selected work remains untouched.",
+                }
+            ],
+        }
+    return {
+        "state": "partial",
+        "execution_ended": True,
+        "attribution": "unknown",
+        "issues": [
+            {
+                "code": "writer_ended",
+                "message": "Filesystem writer ended; inspect surviving files before replanning.",
+            }
+        ],
+    }
+
+
+def _diagnostic_text(value, budget: int) -> str:
+    text = str(value)[:budget]
+    low, high = 0, len(text)
+    while low < high:
+        middle = (low + high + 1) // 2
+        if encoded_size(text[:middle]) <= budget:
+            low = middle
+        else:
+            high = middle - 1
+    return text[:low]
+
+
+def _custody_issue(action: dict, phase: str, cause: dict) -> dict:
+    return {
+        "code": "custody_finalize_failed",
+        "message": "Outcome retained but custody finalization failed; use status, never replay.",
+        "candidate_id": action["candidate_id"],
+        "claim_id": action["claim_id"],
+        "phase": phase,
+        "error": {
+            "code": _diagnostic_text(cause["code"], 128),
+            "message": _diagnostic_text(cause["message"], 256),
+        },
+    }
+
+
+def _action_envelope(candidate: dict) -> int:
+    action = {
+        "candidate_id": candidate["id"],
+        "claim_id": "0" * 32,
+        "state": "execution_unresolved",
+        "outcome": None,
+        "caller_reported_outcome": None,
+        "lifecycle": None,
+    }
+    issue = _custody_issue(action, "record_outcome", {"code": "x" * 128, "message": "x" * 256})
+    # Both the action and the aggregate carry this issue. Charge actual identity
+    # bytes and encoded diagnostic caps, including when many native claims remain.
+    return encoded_size({**action, "custody_issue": issue}) + encoded_size(issue)
+
+
 def validate_capacity(plan: dict, operation_path="") -> None:
     """Admit the complete durable journey before creating custody or effects."""
     prospective = {
@@ -70,9 +137,17 @@ def validate_capacity(plan: dict, operation_path="") -> None:
     }
     reserve = 4096
     for candidate in plan["candidates"]:
-        reserve += _action_budget(candidate) + encoded_size({"candidate_id": candidate["id"]})
+        reserve += _action_budget(candidate) + _action_envelope(candidate)
+        # Native recovery can add another full owner readback. Filesystem
+        # recovery either reuses its terminal receipt or adds a fixed orphan
+        # outcome; reserve those actual facts, not a second arbitrary payload.
         if candidate["kind"] == "native":
-            reserve += 4096 + encoded_size(candidate)
+            reserve += _action_budget(candidate) + 4096 + encoded_size(candidate)
+        else:
+            reserve += max(
+                encoded_size(_orphan_outcome(not_submitted=True)),
+                encoded_size(_orphan_outcome()),
+            )
     if reserve >= reports.MAX_REPORT_BYTES:
         raise CleanupError("report_too_large", "Select fewer candidates to retain durable outcomes")
     bounded_json(prospective, reserve_bytes=reserve)
@@ -154,6 +229,26 @@ def _retain_activity(result: dict, observed: dict, budget: int) -> None:
         },
     )
     result["activity"] = summary
+    coverage = observed.get("consumer_coverage")
+    if isinstance(coverage, dict):
+        roots = coverage.get("roots", [])
+        summary["consumer_coverage"] = {
+            key: coverage[key]
+            for key in (
+                "complete",
+                "metadata_binding_limit",
+                "metadata_bindings",
+                "metadata_entries_inspected",
+            )
+            if key in coverage
+        }
+        summary["consumer_coverage"].update(
+            requested_root_count=len(coverage.get("requested_roots", [])),
+            root_count=len(roots),
+            omitted_root_count=len(roots),
+            root_states=dict(Counter(root.get("state") for root in roots)),
+            roots=[],
+        )
     result["diagnostics"]["omitted_fields"].remove("activity")
     result["diagnostics"]["summarized_fields"] = ["activity"]
     # Interleave examples so many busy records cannot erase visibility issues.
@@ -168,6 +263,14 @@ def _retain_activity(result: dict, observed: dict, budget: int) -> None:
             if encoded_size(result) > budget:
                 summary[key].pop()
                 summary["omitted_counts"][key] += 1
+    if isinstance(coverage, dict):
+        retained = summary["consumer_coverage"]
+        for root in roots:
+            retained["roots"].append(root)
+            retained["omitted_root_count"] -= 1
+            if encoded_size(result) > budget:
+                retained["roots"].pop()
+                retained["omitted_root_count"] += 1
 
 
 def _issue(error: BaseException) -> dict:
@@ -367,6 +470,17 @@ def _summary(record: dict) -> dict:
             len(record["plan"]["candidates"]),
         )
     )
+    custody_issues = [
+        action["custody_issue"] for action in record["actions"] if "custody_issue" in action
+    ]
+    record["custody_recovery_required"] = bool(custody_issues)
+    record["issues"] = [
+        issue
+        for issue in record.get("issues", [])
+        if issue.get("code") != "custody_finalize_failed"
+    ] + custody_issues
+    if custody_issues and record["state"] != "execution_unresolved":
+        record.update(state="partial", exit_code=1)
     record["result_scope"] = "selected_plan"
     coverage = _request_coverage(
         record["plan"],
@@ -378,6 +492,42 @@ def _summary(record: dict) -> dict:
     if coverage is not None:
         record["request_coverage"] = coverage
     return record
+
+
+def _save_custody_failure(
+    action: dict, record: dict, path: Path, phase: str, error: BaseException
+) -> bool:
+    # Preserve the known effect separately from unfinished custody. This report
+    # is caller-owned: only durable claim evidence or native readback can settle it.
+    action["custody_issue"] = _custody_issue(action, phase, _issue(error))
+    if not isinstance(error, Exception) or isinstance(error, InterruptedError):
+        record["interrupted"] = True
+    write_json(path, _summary(record))
+    return True
+
+
+def _finish_action(action: dict, record: dict, path: Path, lease) -> bool:
+    """Persist a known outcome even when custody cannot record or release it."""
+    if lease is not None:
+        try:
+            # Report-only evidence must never become the durable termination
+            # outcome that status trusts. action.outcome comes from execution or
+            # the trusted claim/owner readback, never the caller's old receipt.
+            trusted = {
+                key: value
+                for key, value in action.items()
+                if key not in {"caller_reported_outcome", "custody_issue"}
+            }
+            lease.update(state=action["state"], action=trusted)
+        except BaseException as error:
+            return _save_custody_failure(action, record, path, "record_outcome", error)
+    write_json(path, record)
+    if lease is not None and action["outcome"].get("execution_ended") is True:
+        try:
+            lease.release()
+        except BaseException as error:
+            return _save_custody_failure(action, record, path, "release", error)
+    return False
 
 
 def _run_action(
@@ -451,16 +601,11 @@ def _run_action(
     action["state"] = result["state"]
     action["outcome"] = result
     try:
-        if lease is not None:
-            lease.update(state=result["state"], action=action)
-        write_json(path, record)
-        if lease is not None:
-            if result.get("execution_ended") is True:
-                lease.release()
+        custody_failed = _finish_action(action, record, path, lease)
     finally:
         if lease is not None:
             lease.close()
-    return interrupted
+    return interrupted or custody_failed
 
 
 def execute_plan(
@@ -532,29 +677,9 @@ def _settle(lease, readback, operation: dict | None) -> dict | None:
     if recorded.get("execution_ended") is True:
         result = recorded
     elif claim.get("state") in {"admitted", "preparing"}:
-        result = {
-            "state": "blocked",
-            "execution_ended": True,
-            "not_submitted": True,
-            "issues": [
-                {
-                    "code": "not_invoked",
-                    "message": "Writer ended before submission; selected work remains untouched.",
-                }
-            ],
-        }
+        result = _orphan_outcome(not_submitted=True)
     elif claim["candidate"]["kind"] == "filesystem":
-        result = {
-            "state": "partial",
-            "execution_ended": True,
-            "attribution": "unknown",
-            "issues": [
-                {
-                    "code": "writer_ended",
-                    "message": "Filesystem writer ended; inspect surviving files before replanning.",
-                }
-            ],
-        }
+        result = _orphan_outcome()
     elif readback is not None:
         result = readback(claim["candidate"], action)
         if result is None:
@@ -562,6 +687,7 @@ def _settle(lease, readback, operation: dict | None) -> dict | None:
         result = _outcome(result, native=claim["candidate"]["kind"] == "native", invoked=True)
     else:
         return None
+    result = _bounded_outcome(result, claim["candidate"])
     action = dict(
         action,
         candidate_id=claim["candidate"]["id"],
@@ -569,9 +695,6 @@ def _settle(lease, readback, operation: dict | None) -> dict | None:
         state=result["state"],
         outcome=result,
     )
-    # Custody owns termination evidence even if the caller's report cannot be
-    # updated. A later observation can finish reporting without the owner route.
-    lease.update(state=result["state"], action=action)
     if operation is not None:
         actions = operation["actions"]
         index = next(
@@ -585,10 +708,25 @@ def _settle(lease, readback, operation: dict | None) -> dict | None:
         if index is None:
             actions.append(action)
         else:
+            previous = actions[index]
+            if "caller_reported_outcome" in previous:
+                action["caller_reported_outcome"] = previous["caller_reported_outcome"]
+            elif previous.get("outcome") is not None and previous["outcome"] != result:
+                action["caller_reported_outcome"] = previous["outcome"]
             actions[index] = action
-        write_json(Path(claim["operation_path"]), _summary(operation))
-    if result.get("execution_ended") is True:
-        lease.release()
+        _summary(operation)
+        if _finish_action(action, operation, Path(claim["operation_path"]), lease):
+            issue = action["custody_issue"]
+            raise CleanupError(
+                issue["code"],
+                issue["message"],
+                **{key: value for key, value in issue.items() if key not in {"code", "message"}},
+            )
+    else:
+        # Custody owns termination evidence even without a writable caller report.
+        lease.update(state=result["state"], action=action)
+        if result.get("execution_ended") is True:
+            lease.release()
     return result
 
 

@@ -211,6 +211,7 @@ def fit_scan(scan: dict, *, reserve_bytes=0) -> dict:
     previous_omitted = coverage.get("omitted_candidates", 0)
     coverage.update(
         complete=False,
+        root_inventory_complete=False,
         omitted_candidates=previous_omitted + len(candidates),
         narrower_roots=list(coverage.get("narrower_roots", [])),
     )
@@ -218,7 +219,7 @@ def fit_scan(scan: dict, *, reserve_bytes=0) -> dict:
     overflow = issue(
         "inventory_byte_limit",
         roots[0] if roots else "",
-        "inventory incomplete: inspect the listed narrower roots separately; "
+        "inventory incomplete: inspect the listed paths with --only-candidates under their whole owner roots; "
         "split oversized non-environment outputs into qualified child candidates",
     )
     result["issues"].insert(0, overflow)
@@ -261,15 +262,17 @@ class _Discovery:
         candidates: list[str],
         include_caches: bool,
         project_roots: list[str],
+        only_candidates: bool,
     ):
         self.raw_roots = roots
         self.requested = candidates
         self.requested_projects = project_roots
         self.include_caches = include_caches
+        self.only_candidates = only_candidates
         self.roots: list[Path] = []
         self.explicit: set[Path] = set()
         self.seen_explicit: set[Path] = set()
-        self.project_roots: dict[Path, tuple[int, int]] = {}
+        self.project_roots: dict[Path, tuple[int, int] | None] = {}
         self.seen_projects: set[Path] = set()
         self.candidates: list[dict] = []
         self.issues: list[dict] = []
@@ -290,12 +293,28 @@ class _Discovery:
         for raw in self.raw_roots[:MAX_ROOTS]:
             try:
                 root = _absolute(raw)
+                if self.only_candidates and any(
+                    part in EXCLUDED_DIRS or part.endswith(".app") for part in root.parts
+                ):
+                    raise ValueError("repository metadata and installed applications are excluded")
                 if any(_inside(root, existing) for existing in self.roots):
                     continue
                 self.roots = [existing for existing in self.roots if not _inside(existing, root)]
                 self.roots.append(root)
             except (OSError, ValueError) as exc:
                 self.problem("invalid_root", raw, str(exc))
+        for raw in self.requested:
+            try:
+                path = _absolute(raw)
+                if not any(_inside(path, root) and path != root for root in self.roots):
+                    raise ValueError("explicit candidate must be below an inspected root")
+                if any(part in EXCLUDED_DIRS for part in path.parts):
+                    raise ValueError("Git and other repository metadata are excluded")
+                if any(_inside(path, other) or _inside(other, path) for other in self.explicit):
+                    raise ValueError("explicit candidate paths must not overlap")
+                self.explicit.add(path)
+            except (OSError, ValueError) as exc:
+                self.problem("invalid_candidate_path", raw, str(exc))
         for raw in self.requested_projects:
             try:
                 path = _absolute(raw)
@@ -309,10 +328,21 @@ class _Discovery:
                     )
                 if path in self.project_roots:
                     continue
+                if self.only_candidates and not any(
+                    _inside(candidate, path) for candidate in self.explicit
+                ):
+                    raise ValueError(
+                        "declared project root must contain a requested candidate in --only-candidates mode"
+                    )
                 if any(
                     _inside(path, other) or _inside(other, path) for other in self.project_roots
                 ):
                     raise ValueError("distinct declared project roots must not overlap")
+                if self.only_candidates:
+                    # Bind on arrival through the guarded walk, never pre-open
+                    # a declaration behind an as-yet-unobserved boundary.
+                    self.project_roots[path] = None
+                    continue
                 fd = open_directory(path)
                 try:
                     info = os.fstat(fd)
@@ -321,18 +351,6 @@ class _Discovery:
                     os.close(fd)
             except (OSError, ValueError) as exc:
                 self.problem("invalid_project_root", raw, str(exc))
-        for raw in self.requested:
-            try:
-                path = _absolute(raw)
-                if not any(_inside(path, root) and path != root for root in self.roots):
-                    raise ValueError("explicit candidate must be below an inspected root")
-                if any(part in EXCLUDED_DIRS for part in path.parts):
-                    raise ValueError("Git and other repository metadata are excluded")
-                if any(_inside(path, other) or _inside(other, path) for other in self.explicit):
-                    raise ValueError("explicit candidate paths must not overlap")
-                self.explicit.add(path)
-            except (OSError, ValueError) as exc:
-                self.problem("invalid_candidate_path", raw, str(exc))
 
     def project_context(self, path: Path, fd: int, context: dict) -> dict:
         if path not in self.project_roots:
@@ -340,7 +358,10 @@ class _Discovery:
         self.seen_projects.add(path)
         current = os.fstat(fd)
         conflict = None
-        if self.project_roots[path] != (current.st_dev, current.st_ino):
+        observed = self.project_roots[path]
+        if observed is None:
+            self.project_roots[path] = (current.st_dev, current.st_ino)
+        if observed is not None and observed != (current.st_dev, current.st_ino):
             conflict = "declared project directory changed after validation"
         elif context["owner_root"] != str(path) and context["owner_basis"] in {
             "manifest",
@@ -413,7 +434,7 @@ class _Discovery:
                 self.problem(
                     "inventory_byte_limit",
                     path,
-                    "candidate omitted: inspect this root separately; split oversized "
+                    "candidate omitted: inspect this path with --only-candidates under its whole owner root; split oversized "
                     "non-environment outputs into qualified child candidates",
                 )
             else:
@@ -421,6 +442,46 @@ class _Discovery:
                 self.candidate_bytes += size
         except (OSError, ValueError, FilesystemError) as exc:
             self.problem("candidate_unreadable", path, str(exc))
+
+    def take_entry(self, path: Path) -> bool:
+        self.remaining -= 1
+        self.visited += 1
+        if self.remaining < 0:
+            self.problem("discovery_entry_limit", path, "directory is only partially inspected")
+            return False
+        return True
+
+    def entries(self, path: Path, fd: int):
+        if not self.only_candidates:
+            with os.scandir(fd) as scan:
+                for entry in scan:
+                    if not self.take_entry(path):
+                        return
+                    yield entry.name, entry.stat(follow_symlinks=False)
+            return
+        # Ownership requires these fixed names, not an enumeration of siblings.
+        metadata = GUIDES | MANIFESTS | LOCKS | EXCLUDED_DIRS | {"pyvenv.cfg"}
+        requested = {
+            candidate.relative_to(path).parts[0]
+            for candidate in self.explicit
+            if path in candidate.parents
+        }
+        for name in sorted(metadata | requested):
+            try:
+                info = os.stat(name, dir_fd=fd, follow_symlinks=False)
+            except FileNotFoundError:
+                if name in requested:
+                    self.problem("candidate_path_missing", path / name, "requested path is absent")
+                continue
+            except OSError as exc:
+                if name in metadata:
+                    # An unknown owner marker cannot become a smaller owner.
+                    raise
+                self.problem("candidate_path_unreadable", path / name, str(exc))
+                continue
+            if not self.take_entry(path):
+                return
+            yield name, info
 
     def walk(self, path: Path, fd: int, device: int, depth: int, context: dict) -> None:
         if depth > MAX_DEPTH or self.remaining <= 0:
@@ -430,31 +491,35 @@ class _Discovery:
             return
         try:
             before = os.fstat(fd)
-            entries = []
-            with os.scandir(fd) as scan:
-                for entry in scan:
-                    self.remaining -= 1
-                    self.visited += 1
-                    if self.remaining < 0:
-                        self.problem(
-                            "discovery_entry_limit", path, "directory is only partially inspected"
-                        )
-                        break
-                    entries.append((entry.name, entry.stat(follow_symlinks=False)))
+            first_candidate = len(self.candidates)
+            entries = list(self.entries(path, fd))
+            if self.only_candidates and self.remaining < 0:
+                return
             names = {name for name, _ in entries}
             context = _context(path, names, context, self.issues)
             context = self.project_context(path, fd, context)
             if "pyvenv.cfg" in names:
-                self.add_candidate(
-                    path,
-                    "venv_payload",
-                    "distribution inventory only; preserve the environment skeleton and select a synchronization recipe",
-                    context,
-                )
-                self.seen_explicit.add(path)
+                if self.only_candidates:
+                    self.problem(
+                        "venv_boundary",
+                        path,
+                        "requested descendant is inside an environment; inspect the environment payload explicitly",
+                    )
+                else:
+                    self.add_candidate(
+                        path,
+                        "venv_payload",
+                        "distribution inventory only; preserve the environment skeleton and select a synchronization recipe",
+                        context,
+                    )
+                    self.seen_explicit.add(path)
                 return
             for name, info in sorted(entries):
                 child = path / name
+                if self.only_candidates and not any(
+                    _inside(candidate, child) for candidate in self.explicit
+                ):
+                    continue
                 if name in EXCLUDED_DIRS or name.endswith(".app"):
                     self.excluded.append(
                         issue(
@@ -478,9 +543,14 @@ class _Discovery:
                         "mount_boundary", child, "not traversed; select that filesystem explicitly"
                     )
                     continue
-                recognized = _recognize(child, context, names, self.include_caches)
                 explicit = child in self.explicit
                 nested_explicit = any(child in candidate.parents for candidate in self.explicit)
+                if self.only_candidates and nested_explicit and not stat.S_ISDIR(info.st_mode):
+                    self.problem(
+                        "candidate_ancestor_not_directory", child, "requested descendant is unreachable"
+                    )
+                    continue
+                recognized = _recognize(child, context, names, self.include_caches)
                 if explicit or (recognized and not nested_explicit):
                     if not stat.S_ISDIR(info.st_mode) and not stat.S_ISREG(info.st_mode):
                         self.problem(
@@ -495,14 +565,25 @@ class _Discovery:
                     )
                     # Venv roots must be inventoried, never treated as generic subtrees.
                     if stat.S_ISDIR(info.st_mode):
-                        child_fd = os.open(
-                            name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=fd
-                        )
                         try:
-                            if "pyvenv.cfg" in os.listdir(child_fd):
-                                category = "venv_payload"
-                        finally:
-                            os.close(child_fd)
+                            child_fd = os.open(
+                                name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=fd
+                            )
+                            try:
+                                opened = os.fstat(child_fd)
+                                if (opened.st_dev, opened.st_ino) != (info.st_dev, info.st_ino):
+                                    raise ValueError("candidate directory changed while opening")
+                                try:
+                                    os.stat("pyvenv.cfg", dir_fd=child_fd, follow_symlinks=False)
+                                except FileNotFoundError:
+                                    pass
+                                else:
+                                    category = "venv_payload"
+                            finally:
+                                os.close(child_fd)
+                        except (OSError, ValueError) as exc:
+                            self.problem("candidate_unreadable", child, str(exc))
+                            continue
                     self.add_candidate(child, category, hint, context)
                     self.seen_explicit.add(child)
                     continue
@@ -516,27 +597,37 @@ class _Discovery:
                             )
                         )
                         continue
-                    child_fd = os.open(
-                        name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=fd
-                    )
                     try:
-                        opened = os.fstat(child_fd)
-                        if (opened.st_dev, opened.st_ino) != (info.st_dev, info.st_ino):
-                            raise ValueError("directory changed while opening")
-                        self.walk(child, child_fd, device, depth + 1, context)
-                    finally:
-                        os.close(child_fd)
+                        child_fd = os.open(
+                            name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=fd
+                        )
+                        try:
+                            opened = os.fstat(child_fd)
+                            if (opened.st_dev, opened.st_ino) != (info.st_dev, info.st_ino):
+                                raise ValueError("directory changed while opening")
+                            self.walk(child, child_fd, device, depth + 1, context)
+                        finally:
+                            os.close(child_fd)
+                    except (OSError, ValueError) as exc:
+                        self.problem("directory_unreadable", child, str(exc))
             after = os.fstat(fd)
             if (before.st_mtime_ns, before.st_ctime_ns) != (after.st_mtime_ns, after.st_ctime_ns):
                 self.problem(
                     "directory_changed", path, "directory metadata changed during discovery"
                 )
+                if self.only_candidates:
+                    for candidate in self.candidates[first_candidate:]:
+                        candidate["retained_reason"] = (
+                            "ancestor directory changed during discovery; ownership is unconfirmed"
+                        )
         except (OSError, ValueError) as exc:
             self.problem("directory_unreadable", path, str(exc))
 
     def run(self) -> dict:
         self.prepare()
         for root in sorted(self.roots):
+            if self.only_candidates and not any(_inside(path, root) for path in self.explicit):
+                continue
             try:
                 fd = open_directory(root)
                 try:
@@ -574,9 +665,19 @@ class _Discovery:
             {
                 "candidates": sorted(self.candidates, key=lambda row: row["path"]),
                 "coverage": {
+                    "scope": "requested_candidates" if self.only_candidates else "root_inventory",
                     "complete": self.complete and not self.issues,
+                    "root_inventory_complete": not self.only_candidates
+                    and self.complete
+                    and not self.issues,
                     "requested_roots": self.raw_roots,
                     "inspected_roots": self.inspected_roots,
+                    "requested_candidate_paths": self.requested,
+                    "inspected_candidate_paths": [
+                        candidate["path"]
+                        for candidate in sorted(self.candidates, key=lambda row: row["path"])
+                        if Path(candidate["path"]) in self.explicit
+                    ],
                     "requested_project_roots": self.requested_projects,
                     "inspected_project_roots": [str(path) for path in sorted(self.seen_projects)],
                     "metadata_entries": self.visited,
@@ -593,5 +694,11 @@ def discover(
     candidate_paths: list[str] | None = None,
     include_caches: bool = False,
     project_roots: list[str] | None = None,
+    *,
+    only_candidates: bool = False,
 ) -> dict:
-    return _Discovery(roots, candidate_paths or [], include_caches, project_roots or []).run()
+    if only_candidates and (not roots or not candidate_paths):
+        raise ValueError("only_candidates requires roots and candidate_paths")
+    return _Discovery(
+        roots, candidate_paths or [], include_caches, project_roots or [], only_candidates
+    ).run()

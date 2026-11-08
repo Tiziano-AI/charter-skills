@@ -79,9 +79,11 @@ Check the process tree before calling `lms`:
   stronger model-residency evidence.
 
 On the locally observed LM Studio CLI, `lms ps` **wakes LM Studio when its service
-is asleep**. It is therefore not a no-effect status command. Run it only when
-the service is already present or the user authorizes waking it. If already
-running, `lms ps` can distinguish loaded models from an empty service.
+is asleep**. It is therefore not a no-effect status command. Run it only when the
+service is already present or the user authorizes waking it. If already running,
+`lms ps` can distinguish loaded models from an empty service. `lms ls`, with or
+without `--json`, goes through the same client start-up, so listing the models on
+disk is not a no-wake check either.
 
 `lms unload` changes model state, `lms daemon down` changes the daemon lifecycle,
 and quitting LM Studio changes the application lifecycle. Choose the narrowest

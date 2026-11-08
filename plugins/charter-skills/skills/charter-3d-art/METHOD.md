@@ -186,6 +186,13 @@ see the whole of it before the final render.
   nothing proves nothing. Device preferences need not travel with the scene
   file into another process, a stage such as denoising can stay on the CPU
   unless enabled, and one stage on the CPU can multiply the budget.
+  In Blender's Cycles on Metal (checked on 5.2), a headless process that
+  renders must itself call `refresh_devices()` on the add-on's preferences,
+  which startup does not do, keep the Metal entry's `use` on and set
+  `scene.cycles.device = 'GPU'`; final-render denoising stays on the CPU until
+  `scene.cycles.denoising_use_gpu` is on. `-- --cycles-device METAL` moves path
+  tracing only. Confirm with `--debug-cycles`, at the report's "Path tracing
+  on" and "Denoising on" lines.
 - Measure seconds per frame on the hardest shot, at the samples and
   resolution you intend for the final, as soon as it has its final materials
   and light: time several consecutive frames in that same kind of process,
@@ -198,6 +205,12 @@ see the whole of it before the final render.
   `charter-visual-asset-production` describes for derivation. Choose a span
   with the darkest gradient, a fade and the fastest motion. A setting whose
   output is identical with it switched off is doing nothing.
+- A background Blender script that raises still exits 0 unless the run passes
+  `--python-exit-code 1`, so without it shell success says nothing about the
+  script. A first Cycles render on Metal can go quiet while it compiles its
+  kernels, so low renderer CPU and a silent log do not show a hang. Sample the
+  renderer's threads and the system's `MTLCompilerService` before killing the
+  run.
 - Render into durable storage in units a restart can skip once complete. A
   unit counts as complete only when it reads back whole, or was written under
   a temporary name and renamed when finished; the presence of a file does not

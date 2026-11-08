@@ -83,6 +83,11 @@ def parser():
         help="Explicit output below a root; requires agent qualification",
     )
     inspect.add_argument(
+        "--only-candidates",
+        action="store_true",
+        help="Inspect only --candidate-path payloads and ancestor ownership metadata, not a root inventory",
+    )
+    inspect.add_argument(
         "--project-root",
         action="append",
         default=[],
@@ -169,6 +174,7 @@ def _inspect(args):
             or args.candidate_path
             or args.project_root
             or args.include_caches
+            or args.only_candidates
         ):
             raise CleanupError(
                 "invalid_arguments",
@@ -177,6 +183,13 @@ def _inspect(args):
         scan = read_json(args.scan)
         validate_document(scan, "scan")
     else:
+        if args.only_candidates and (
+            not args.root or not args.candidate_path or args.owner or args.target
+        ):
+            raise CleanupError(
+                "invalid_arguments",
+                "--only-candidates requires --root and --candidate-path; do not combine it with --owner or --target",
+            )
         if not args.output or not (args.root or args.owner) or args.candidate:
             raise CleanupError(
                 "invalid_arguments",
@@ -193,9 +206,19 @@ def _inspect(args):
                 "--target requires exactly one owner; --candidate-path and --project-root require --root",
             )
         found = (
-            discover(args.root, args.candidate_path, args.include_caches, args.project_root)
+            discover(
+                args.root,
+                args.candidate_path,
+                args.include_caches,
+                args.project_root,
+                only_candidates=args.only_candidates,
+            )
             if args.root
-            else {"candidates": [], "coverage": {"complete": True}, "issues": []}
+            else {
+                "candidates": [],
+                "coverage": {"complete": True, "scope": "native_owners"},
+                "issues": [],
+            }
         )
         found["native_findings"] = []
         found["coverage"]["native_owners"] = []
@@ -276,6 +299,7 @@ def _preflight(candidate):
         paths,
         consumer_roots=candidate["qualification"]["consumer_roots"],
         owner_roots=[candidate["owner_root"]] if candidate.get("owner_root") else [],
+        removal_snapshot=candidate.get("snapshot") if candidate["kind"] == "filesystem" else None,
     )
     if candidate["kind"] == "native" and candidate["owner"] == "pnpm":
         _pnpm_references(observed)

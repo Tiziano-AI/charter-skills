@@ -4,7 +4,7 @@ description: 'Mac disk cleanup: remove rebuildable caches, dependencies and buil
   outputs without breaking active or source-linked consumers; reclaim already-free
   container storage. Not duplicates, models, histories, installed tools or data retirement.'
 metadata:
-  content_version: charter-macos-cleanup@2026.10.22.0
+  content_version: charter-macos-cleanup@2026.11.08.4
 ---
 # Full specialist method
 

@@ -8,10 +8,14 @@ import json
 import os
 import pwd
 import stat
+import time
 import uuid
 from pathlib import Path
 
 from _cleanup_common import CleanupError
+
+ADMISSION_TIMEOUT_SECONDS = 5.0
+ADMISSION_POLL_SECONDS = 0.05
 
 
 def account_home() -> Path:
@@ -227,13 +231,19 @@ class Custody:
         )
         try:
             _private_file(fd)
-            try:
-                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            except BlockingIOError as exc:
-                raise CleanupError(
-                    "custody_busy",
-                    "Another caller is admitting or recording an action.",
-                ) from exc
+            deadline = time.monotonic() + ADMISSION_TIMEOUT_SECONDS
+            while True:
+                try:
+                    fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    break
+                except BlockingIOError as exc:
+                    remaining = deadline - time.monotonic()
+                    if remaining <= 0:
+                        raise CleanupError(
+                            "custody_busy",
+                            "Another caller is still admitting or recording an action; use status before further work.",
+                        ) from exc
+                    time.sleep(min(ADMISSION_POLL_SECONDS, remaining))
             yield
         finally:
             os.close(fd)

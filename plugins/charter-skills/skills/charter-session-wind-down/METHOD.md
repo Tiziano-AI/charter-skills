@@ -62,9 +62,20 @@ client need not stop remote execution.
 For each candidate, check for a running turn, queued messages, pending input,
 running commands or background work, external operations, and a result that
 must stay resumable. Idle, settled and untouched sessions can be left out
-unless a dependency crosses the stop. Keep separate sessions separate even
-when they share a project. When you could see only part of the population,
-the readiness claim covers only that part.
+unless a dependency crosses the stop. A host restart, including one for an
+operating-system update, also reaches idle sessions that are not settled: it
+can empty temporary folders their later work reads, and it stops containers
+that a separate service runs, so list the containers sessions depend on among
+what needs starting again. An unsettled idle session whose later work, as far
+as its last messages show, needs files in a temporary folder is an item for
+the user. When the user has asked, now or in standing guidance, for such files
+to be kept, ask that session instead to move them somewhere that survives the
+restart, fix paths that point to the old place, commit its own uncommitted work
+where commits are its to make, and do nothing else; unlike the wind-down
+request below, this message starts a turn on purpose, and the session is ready
+only once you have seen the move done. Keep separate sessions separate
+even when they share a project. When you could see only part of the
+population, the readiness claim covers only that part.
 
 ## Wind-down changes what may start, not what already happened
 

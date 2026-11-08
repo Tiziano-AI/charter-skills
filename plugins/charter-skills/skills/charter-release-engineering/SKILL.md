@@ -4,7 +4,7 @@ description: Release, deploy or install an exact change so the installed or host
   consumer actually runs it; resolve artifact and target identity, runtime selection,
   compatibility, cutover and recovery. Source readiness alone is not delivery.
 metadata:
-  content_version: charter-release-engineering@2026.10.16.0
+  content_version: charter-release-engineering@2026.11.07.0
 ---
 # Charter · Release Engineering
 
@@ -62,6 +62,12 @@ repair compatibility. Rebuilding addresses only the first class and can
 introduce new dependency variation while leaving the others intact. Promoting
 an accepted immutable artifact is not rebuilding, and is usually the better
 move.
+
+A security fix is a question about bytes too. A package can ship its own
+bundled copy of a library, which neither an audit of lockfile names nor an
+override of that name reaches. The fix is done when no copy a consumer runs
+still contains the vulnerable code, usually through the parent's release that
+carries a fixed copy.
 
 The same symptom, "the consumer still behaves the old way", has several
 causes: a merged fix that no release contains while the channel still serves

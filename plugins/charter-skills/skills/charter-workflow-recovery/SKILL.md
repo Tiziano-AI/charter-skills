@@ -5,7 +5,7 @@ description: Recover interrupted workflows with uncertain surviving effects; rec
   work. Healthy processes, ordinary waits and broken protocol design need different
   treatment.
 metadata:
-  content_version: charter-workflow-recovery@2026.10.16.0
+  content_version: charter-workflow-recovery@2026.11.07.0
 ---
 # Charter · Workflow Recovery
 
@@ -49,7 +49,9 @@ a job row; a dashboard cannot authorize a new lifecycle state by itself.
 
 Keep status and consequences distinct. A failed run may have committed useful
 items. A successful run may have missing output. A vanished process may have
-left a provider working.
+left a provider working. A unit marked failed after a local error, rather than
+a verdict on its input or on a provider's output, is still recoverable, not
+rejected.
 
 The natural recovery unit is the smallest unit whose identity and effect can
 be reconciled. That may be one message in a batch, one file in an export or an
@@ -65,7 +67,8 @@ Use the workflow's natural identity—item key, input digest, partition, file,
 transaction or provider operation—rather than inventing a parallel ledger.
 
 A checkpoint is meaningful only with its write ordering:
-- checkpoint before effect can skip work after a crash;
+- checkpoint before effect can skip work after a crash, as when a queue item
+  is acknowledged before the verdict on its result is stored;
 - checkpoint after effect can repeat work after a crash;
 - a transactional effect/checkpoint or effective deduplication can close the
   corresponding gap.

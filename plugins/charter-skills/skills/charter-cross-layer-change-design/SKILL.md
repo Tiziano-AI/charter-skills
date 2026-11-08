@@ -5,7 +5,7 @@ description: Design source changes that span schemas, producers and consumers; c
   competing paths while preserving real external compatibility. A clear local edit
   needs no cross-layer design.
 metadata:
-  content_version: charter-cross-layer-change-design@2026.10.16.0
+  content_version: charter-cross-layer-change-design@2026.11.03.0
 ---
 # Charter · Cross-Layer Change Design
 
@@ -49,10 +49,11 @@ clients, other services, stored data and queued work.
 affected consumer, running job and retained state can move together, update
 the owner and every carrier and delete the displaced route, its generator
 input and its fixtures together: no alias, shim, fallback reader or
-deprecation period. "Unreleased" alone does not establish this: pilot users,
-independent processes and valuable records can already depend on the old
-shape. Replace or rebuild state only where that loss is within the change's
-authority; otherwise preserve it through a transition. Edit canonical inputs
+deprecation period. "Unreleased" alone does not establish this: pilot users
+and independent processes can already depend on the old shape. Records still
+needed move with the change, converted once or rebuilt when derived; where
+converting or losing them is outside the change's authority, they are a
+population that cannot move at once. Edit canonical inputs
 before derivatives and make the public path work before deleting what it
 displaced; a compile failure along the way is editing order, not a reason for
 migration machinery.
@@ -69,8 +70,8 @@ writer cannot move a finished operation backwards.
 ## Stage only what cannot move at once
 
 A transition is needed only for a population that cannot move with the change:
-released clients, persisted data, queued work or an independently deployed
-service. For those, use a parallel change (expand, migrate, contract):
+released clients, queued work, an independently deployed service, or
+persisted data that live readers keep using while it converts. For those, use a parallel change (expand, migrate, contract):
 tolerant readers first, then changed writers, then backfill, then removal of
 the old shape. The overlap holds only while every live reader can read what
 every live writer writes. It breaks when a new writer drops information an old

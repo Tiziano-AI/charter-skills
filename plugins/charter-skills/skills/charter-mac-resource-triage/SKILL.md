@@ -7,7 +7,7 @@ description: Diagnose abnormal CPU, GPU or ANE, unified-memory, swap, thermal, e
   and similar runtimes; not for source-level profiling after one application and code
   path are already known.
 metadata:
-  content_version: charter-mac-resource-triage@2026.10.20.0
+  content_version: charter-mac-resource-triage@2026.11.08.0
 ---
 # Full specialist method
 

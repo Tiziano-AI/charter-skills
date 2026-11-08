@@ -11,6 +11,15 @@ versions, endpoints, nodes or owner settings require inspection and planning
 again before new execution. That stale-plan protection is distinct from admitting
 a fresh installation through its supported operation contract.
 
+Regular reconstruction evidence is hashed in streaming chunks, with file
+identity, length and modification checks around the full read. Its size does
+not require an indirect hash note. Metadata parsing has separate limits from
+evidence hashing and discovery. Consumer coverage records the supplied roots,
+overlap deduplication, entries visited and real metadata-binding omissions;
+ordinary source files and directories do not consume that binding allowance.
+Compacted outcomes retain coverage counts and disclose omitted root records,
+not a claim that omitted diagnostics were saved in full.
+
 The helper bounds saved scans, plans and operation growth so emitted reports
 remain readable by their next consumer. A bounded inventory can carry explicit
 incomplete coverage, findings and narrower inspection as the next step;
@@ -40,6 +49,12 @@ never truncated, so links outside the selected tree retain their contents.
 Persistent lock names are retained. There is no quarantine or automatic restore;
 recoverable inputs and the recorded reconstruction recipe are the recovery path.
 
+An existing environment lock is opened read-only and held with nonblocking
+exclusive `flock`; it is never written, recreated or replaced. Full preimage
+and ancestor checks still apply. A `lock_changed` refusal names the changed
+signature fields or ancestors; it does not establish that another process held
+the lock.
+
 ## One attempt, shared resource claims
 
 `clean` and `reclaim` create the requested operation file exclusively. Existing
@@ -53,8 +68,10 @@ also holds a durable resource claim in:
 It resolves the account home through the OS account record, not an overridden
 `HOME`, an agent's configuration root or package location. All installed copies
 in that OS account therefore see overlapping resource claims. The private
-directory is independent of the package's installation state. Short admission
-locking serializes claim decisions; each foreground writer also holds an
+directory is independent of the package's installation state. Admission locking
+serializes claim decisions and outcome recording, waiting within a bounded
+budget for contention on the same persistent lock. A `custody_busy` refusal
+never replaces or steals that lock. Each foreground writer also holds an
 attempt lease. A crash releases the live lease but leaves durable custody.
 A new operation filename cannot evade it. Venv payload attempts claim their
 environment conservatively while selecting only the inventoried files.
@@ -64,6 +81,20 @@ outcomes and reconstruction recipes. The private claim carries enough intent
 and outcome to retain custody if the caller moves or loses the report. Do not
 delete or edit these records to clear a refusal. A changed or unreadable report
 is a recovery problem, not authority to run again.
+
+If custody cannot record or release a known action outcome, the helper still
+attempts to save that outcome in the operation report. It stops the batch and
+returns `custody_recovery_required: true` with `custody_finalize_failed`, the
+failed phase and underlying error. The action's execution outcome remains
+distinct from unfinished custody; even a single completed action leaves the
+batch partial until custody is settled. Use status, not another cleanup call.
+The caller-owned report alone cannot release a native claim: status still
+requires the durable claim's terminal evidence or the original owner's readback.
+If that readback differs from the saved receipt, status keeps the original as
+`caller_reported_outcome` beside the trusted `outcome`. This report-only evidence
+preserves measurements without authorizing claim release or overriding an
+unresolved native result. Repeated status preserves that same receipt rather
+than growing a chain of observations.
 
 `status --operation <path>` reads one attempt. `status` discovers shared claims
 without knowing its filename. Status may settle a dead writer's claim using
@@ -101,7 +132,9 @@ removed.” Detailed reports remain in saved JSON rather than flooding the model
 with every payload filename.
 
 `request_coverage` preserves the requested-family dispositions through planning
-and results, including unselected, retained and refused work.
+and results, including unselected, retained and refused work. Its
+`inspection_scope` distinguishes a root inventory from `requested_candidates`;
+the latter covers only `requested_candidate_paths`, even when inspection is complete.
 `result_scope: selected_plan` limits the execution outcome to selected actions.
 Read status's `observation_state` and `custody_state` separately from the cleanup
 outcome: completing a status read or settling an orphan claim does not turn a

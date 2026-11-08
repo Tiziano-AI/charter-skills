@@ -493,6 +493,28 @@ def _is_lock(path):
     )
 
 
+def _removal_names(expected, preserve=()):
+    """The exact selection shared by removal and consumer-origin observations."""
+    if expected.get("format") == "payload-v1":
+        return {row["relative_path"] for row in expected["entries"]}
+    keep = {_relative(name) for name in preserve}
+    for row in expected["entries"]:
+        relative = row["relative_path"]
+        if _is_lock(relative or expected["path"]):
+            keep.add(relative)
+    return {
+        row["relative_path"]
+        for row in expected["entries"]
+        if not any(
+            row["relative_path"] == saved
+            or saved.startswith(row["relative_path"] + "/")
+            or row["relative_path"].startswith(saved + "/")
+            or row["relative_path"] == ""
+            for saved in keep
+        )
+    }
+
+
 def _result(state="no_change", count=0, issues=None, **extra):
     return {"state": state, "removed_count": count, "issues": issues or [], **extra}
 
@@ -607,23 +629,7 @@ def guard_remove(expected: dict, preserve=(), *, protected_roots=()) -> dict:
         qualification = qualify_guards()
         if not qualification["supported"]:
             return _result("skipped", issues=qualification["issues"])
-        keep = {_relative(name) for name in preserve}
-        selected = set()
-        for row in current["entries"]:
-            relative = row["relative_path"]
-            if _is_lock(relative or current["path"]):
-                keep.add(relative)
-        for row in current["entries"]:
-            relative = row["relative_path"]
-            if any(
-                relative == saved
-                or saved.startswith(relative + "/")
-                or relative.startswith(saved + "/")
-                or relative == ""
-                for saved in keep
-            ):
-                continue
-            selected.add(relative)
+        selected = _removal_names(current, preserve)
         result = _remove(current, selected, protected_roots)
         result["retained_paths"] = sorted(
             row["relative_path"]
@@ -745,9 +751,19 @@ def venv_lock(environment_path: str):
             raise FilesystemError(
                 "lock_invalid", "The persistent environment lock is not a regular file."
             )
-        lock_fd = os.open(name, os.O_RDWR | os.O_NOFOLLOW | os.O_CLOEXEC, dir_fd=parent_fd)
-        if _signature(os.fstat(lock_fd)) != _signature(before):
-            raise FilesystemError("lock_changed", "The environment lock changed while opening.")
+        # flock does not need a writable descriptor on macOS; the persistent
+        # lock is a coordination inode, never a file this helper writes.
+        lock_fd = os.open(name, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC, dir_fd=parent_fd)
+        before_signature = _signature(before)
+        opened_signature = _signature(os.fstat(lock_fd))
+        changed = sorted(
+            key for key in before_signature if opened_signature[key] != before_signature[key]
+        )
+        if changed:
+            raise FilesystemError(
+                "lock_changed",
+                "The environment lock changed while opening: " + ", ".join(changed) + ".",
+            )
         try:
             fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError as error:
@@ -758,10 +774,16 @@ def venv_lock(environment_path: str):
         after = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
         check_fd, _, fresh_ancestors = _parent(path)
         os.close(check_fd)
-        if _signature(after) != _signature(before) or fresh_ancestors != ancestors:
+        after_signature = _signature(after)
+        changed = sorted(
+            key for key in before_signature if after_signature[key] != before_signature[key]
+        )
+        if fresh_ancestors != ancestors:
+            changed.append("ancestors")
+        if changed:
             raise FilesystemError(
                 "lock_changed",
-                "Environment lock identity or ancestors changed during acquisition.",
+                "Environment lock changed during acquisition: " + ", ".join(changed) + ".",
             )
         yielded = True
         yield {
@@ -782,7 +804,12 @@ def venv_lock(environment_path: str):
         os.close(parent_fd)
 
 
-def activity(paths: list[str], *, consumer_roots=(), owner_roots=()) -> dict:
+def activity(paths: list[str], *, consumer_roots=(), owner_roots=(), removal_snapshot=None) -> dict:
     from _cleanup_processes import activity as inspect_activity
 
-    return inspect_activity(paths, consumer_roots=consumer_roots, owner_roots=owner_roots)
+    return inspect_activity(
+        paths,
+        consumer_roots=consumer_roots,
+        owner_roots=owner_roots,
+        removal_snapshot=removal_snapshot,
+    )

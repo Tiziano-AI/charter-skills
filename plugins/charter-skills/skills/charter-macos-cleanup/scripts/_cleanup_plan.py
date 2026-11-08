@@ -30,17 +30,26 @@ def validate_document(document, kind):
 def evidence(path):
     source = Path(path).absolute()
     info = source.lstat()
-    if not stat.S_ISREG(info.st_mode) or info.st_size > 4 * 1024 * 1024:
-        raise CleanupError(
-            "invalid_evidence", "Evidence must be a small regular file", path=str(source)
-        )
+    if not stat.S_ISREG(info.st_mode):
+        raise CleanupError("invalid_evidence", "Evidence must be a regular file", path=str(source))
     # Bind both the resolved ancestor chain and the file read, without executing it.
     resolved = source.resolve(strict=True)
     fd = os.open(source, os.O_RDONLY | os.O_NOFOLLOW)
     try:
         before = os.fstat(fd)
+        digest = hashlib.sha256()
+        length = 0
         with os.fdopen(fd, "rb", closefd=False) as stream:
-            data = stream.read(4 * 1024 * 1024 + 1)
+            # Bind the full input with bounded memory. One extra byte detects
+            # growth without following a file that keeps being appended to.
+            remaining = info.st_size + 1
+            while remaining:
+                block = stream.read(min(1024 * 1024, remaining))
+                if not block:
+                    break
+                digest.update(block)
+                length += len(block)
+                remaining -= len(block)
         after = os.fstat(fd)
     finally:
         os.close(fd)
@@ -48,7 +57,13 @@ def evidence(path):
     def signature(s):
         return s.st_dev, s.st_ino, s.st_size, s.st_mtime_ns, s.st_ctime_ns
 
-    if signature(info) != signature(before) or signature(before) != signature(after):
+    if (
+        signature(info) != signature(before)
+        or signature(before) != signature(after)
+        or length != after.st_size
+        or source.resolve(strict=True) != resolved
+        or signature(source.lstat()) != signature(after)
+    ):
         raise CleanupError(
             "evidence_changed", "Evidence changed during inspection", path=str(source)
         )
@@ -56,7 +71,7 @@ def evidence(path):
         "path": str(source),
         "resolved": str(resolved),
         "signature": list(signature(after)),
-        "sha256": hashlib.sha256(data).hexdigest(),
+        "sha256": digest.hexdigest(),
     }
 
 
@@ -183,6 +198,10 @@ def make_plan(scan, selection, kind="cleanup"):
             "candidates": selected,
             "request_coverage": {
                 "inspection_complete": scan.get("coverage", {}).get("complete", False),
+                "inspection_scope": scan.get("coverage", {}).get("scope"),
+                "requested_candidate_paths": scan.get("coverage", {}).get(
+                    "requested_candidate_paths", []
+                ),
                 "roots": scan.get("roots", []),
                 "native_owners": scan.get("coverage", {}).get("native_owners", []),
                 "issues": scan.get("issues", []),
