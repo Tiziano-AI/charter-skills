@@ -13,9 +13,9 @@ actionable collision.
 
 Stopping new overlapping work keeps the collision from growing. An action
 already in flight can still yield a useful contained result, so letting it
-settle may preserve more than cancelling it. Interrupt when continuing creates
-the collision itself, or cost, destruction, credentialed effects or exposure
-others can see.
+settle may preserve more than cancelling it. Interrupt through an authorized
+route when continuing itself creates the collision or an unauthorized or
+harmful effect.
 
 Keep produced artifacts and complete failure output whichever you choose. A
 session that loses integration ownership has not lost the value of its
@@ -36,9 +36,9 @@ The receiving owner needs enough to integrate correctly:
 
 These are the contents that carry decisions, not a required format. The
 artifact can stay where it is while the receiver gets its exact location. The
-transfer has to reach the session that performs the dependent action;
-acceptance into its queue is not incorporation. Check uptake only as far as
-that next decision requires.
+transfer belongs with the session that performs the dependent action, not an
+intermediary that cannot integrate it. The entrypoint's delivery guidance owns
+how to get a changed direction into current work and establish its uptake.
 
 ## Integration reconciles meaning, not just patches
 
