@@ -5,7 +5,7 @@ description: 'Session coordination when agent sessions or tasks collide or depen
   or contribution handoffs so shared work has one integration owner. Independent parallel
   work and ordinary delegation need none.'
 metadata:
-  content_version: charter-session-coordination@2026.11.10.0
+  content_version: charter-session-coordination@2026.11.10.1
 ---
 # Full specialist method
 

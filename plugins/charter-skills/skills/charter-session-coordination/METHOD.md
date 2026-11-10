@@ -86,27 +86,36 @@ tracker to maintain.
 
 ## Deliver a change while it can still govern the work
 
-A correction to current work, a withdrawn premise or an answer that unblocks
-the active turn belongs in that turn through the runtime's supported steering
-route. An independent later task belongs in its queue. When the recipient is
-idle and continuation is authorized, start the useful next turn rather than
-wait for a reporting tick. A pause or intake-only hold still forbids that
-continuation; coordination does not enlarge anyone's authority.
+Before either steering or queueing, inspect the recipient's fresh activity and
+actual pending backlog: how many messages remain, and the relevant contents,
+senders and dependencies, across all pages. A pending-approval count or the
+latest run's label is not that inventory. This read can reveal that the needed
+direction already exists, has been consumed, or competes with a newer one.
 
-Steering can interrupt tools. Compare the effect of interrupting the action
-already in flight with the effect of delaying the correction. Let a valid,
-contained write reach a supported safe boundary when that preserves the work.
-Do not leave an invalidation behind an action that would now be unauthorized
-or harmful: use an authorized containment route, or bring the missing authority
-to the person who can decide. Neither "always queue" nor "never steer during a
-gate" makes that trade-off. A delivery choice supplies no permission to bypass
-the gate, force-stop a process or restart a session.
+For an active turn, steer by default through the runtime's supported route.
+Queue only when the sender deliberately wants the message to reach the
+recipient after its current work finishes. Routine information, independent
+work and possible tool interruption do not by themselves imply that intent.
+When the recipient is idle and continuation is authorized, start the useful
+next turn rather than wait for a reporting tick. A pause or intake-only hold
+still forbids continuation; delivery supplies no new authority.
+
+Steering and stopping an effect are different decisions. Preserve real
+safe-write gates and supported transaction boundaries; where a valid contained
+write must settle first, deliver into the still-current turn at its supported
+safe boundary, not silently into an after-turn queue. If steering is unavailable
+or a real constraint prevents it, report that constraint and retain the delivery
+intent rather than substitute queueing, cancellation or restart. Do not leave
+an invalidation behind an action that would now be unauthorized or harmful:
+use an authorized containment route, or bring the missing authority to the
+person who can decide. A delivery choice supplies no permission to bypass a
+gate, force-stop a process or restart a session.
 
 Pending directions are separate by contribution or dependency, not merely by
 recipient. Where a later direction replaces an earlier one from the same sender,
 keep one coherent current instruction with its surviving requirements. Use the
 runtime's supported edit, cancellation or promotion of the existing message
-when available, after reading fresh queue state. Replace only wholly owned,
+when available, rechecking state before mutation. Replace only wholly owned,
 still-queued material actually superseded by this change. Preserve independent
 questions, unrelated content, mixed-ownership messages and other senders'
 directions, including the person's. If consumption races an edit, establish

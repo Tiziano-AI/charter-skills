@@ -9,13 +9,18 @@ integrates the result. Then ask: if both continue, what can be overwritten,
 duplicated or made inconsistent? Without that consequence there is not yet an
 actionable collision.
 
-## Choose between settling and interruption
+## Separate message delivery from effect interruption
 
 Stopping new overlapping work keeps the collision from growing. An action
 already in flight can still yield a useful contained result, so letting it
 settle may preserve more than cancelling it. Interrupt through an authorized
 route when continuing itself creates the collision or an unauthorized or
 harmful effect.
+
+This is a decision about the effect, not an alternate message-delivery default.
+The entrypoint owns backlog inspection and steering versus deliberate
+after-current-work queueing. Possible tool interruption alone does not turn a
+message into later work, and steering does not grant cancellation authority.
 
 Keep produced artifacts and complete failure output whichever you choose. A
 session that loses integration ownership has not lost the value of its
