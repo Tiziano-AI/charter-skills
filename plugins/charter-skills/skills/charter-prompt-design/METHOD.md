@@ -7,9 +7,7 @@ choose between complete candidates. In each case the question is which
 complete text makes the receiving model do the intended work in its real
 situation, not which reads as the most elegant, strict or thorough.
 
-A small wording fix with an evident effect needs no method: make it. When the
-person asks for a prompt, the answer is the prompt itself, ready to paste,
-followed by a line or two on the choices that matter.
+A small wording fix with an evident effect needs no method: make it.
 
 ## Reconstruct the intent before writing
 

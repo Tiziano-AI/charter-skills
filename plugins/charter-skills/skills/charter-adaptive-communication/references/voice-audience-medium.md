@@ -52,23 +52,10 @@ and what context they hold, not by nationality, job title or a novice or
 expert label; these vary independently. A senior engineer reading in a second
 language may need plain syntax and stable terms but no primer on the field.
 
-Notes for the writer often leak into a reader's copy. A brief can rightly
-tell its writer “do not ask her to redo the analysis”. If the reader has no
-reason to expect more work, copying it as “Nothing here needs redoing on your
-side” introduces a question the text need not raise. Asking for nothing to
-be redone is enough. If the message could reasonably look like a request for
-another analysis, an explicit exclusion can instead clarify the reader's role.
-
-The same distinction governs purpose and editorial context. “This is for
-information, not approval” is useful when the recipient would otherwise need
-to decide whether to approve it. A reason for an omitted section belongs when
-the omission would change the reader's interpretation, not merely because the
-writer was told to cut it. Keep the sentence when it supplies that meaning;
-leave out reassurance that addresses no plausible reader concern.
-
-A limitation belongs where it changes what the reader does. Screenshots of
-test data that may be forwarded one by one can each carry a short “test data”
-marker; what the test data can and cannot show is explained once.
+A brief can rightly tell its writer “do not ask her to redo the analysis”.
+If the reader has no reason to expect more work, copying it as “Nothing here
+needs redoing on your side” introduces a question the text need not raise;
+asking for nothing to be redone is enough.
 
 ## Voice carries meaning beyond information
 

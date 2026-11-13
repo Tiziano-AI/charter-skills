@@ -220,8 +220,10 @@ see the whole of it before the final render.
   and finish it through the same view transform you judged the look in.
   Written linear, an integer file clips those values; written through the
   display transform, it bakes the tone curve, and at 8 bits its steps too.
-  Only a log encoding lets an integer file carry them, and the grade must
-  decode the same curve.
+  An integer file carries them only through an encoding that maps the range
+  above white into its code values, such as a log curve, PQ or a stated
+  linear scale, at a bit depth whose steps stay invisible after the grade,
+  and the grade must decode that same mapping.
 - Sampling noise moves differently from the scene. With a fixed seed it stays
   put on the screen while the scene slides under it; with an animated seed it
   boils; a per-frame denoiser turns either into shifting blotches. Where the

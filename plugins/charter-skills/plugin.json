@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "charter-skills",
-  "version": "1.0.0-rc.14",
+  "version": "1.0.0-rc.15",
   "description": "Specialist skills for product, design, engineering, research and creative work.",
   "author": {
     "name": "Tiziano AI"

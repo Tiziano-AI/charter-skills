@@ -4,7 +4,7 @@ description: 'Skill package design when creating a SKILL.md skill or fixing one 
   misroutes, goes unused or underperforms: decide what belongs in it, write a truncation-proof
   card, put decisive rules in the body. Native creators scaffold.'
 metadata:
-  content_version: charter-skill-package-design@2026.10.30.0
+  content_version: charter-skill-package-design@2026.11.12.0
 ---
 # Full specialist method
 

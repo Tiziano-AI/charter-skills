@@ -6,7 +6,7 @@ description: '3D art for rendered stills and films or interactive scenes: create
   rules, generated image/video or engine setup. A rendered film also needs visual
   asset production for its finished file.'
 metadata:
-  content_version: charter-3d-art@2026.11.08.0
+  content_version: charter-3d-art@2026.11.12.0
 ---
 # Full specialist method
 

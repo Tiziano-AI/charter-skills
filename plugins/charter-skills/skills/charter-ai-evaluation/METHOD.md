@@ -119,9 +119,6 @@ the decision to the scope the evidence supports. A second model on the same
 cases can test dependence on model choice; it does not cover omitted cases
 or repair sparse item-level evidence.
 
-Another run is worth its cost only when its plausible outcomes would lead to
-different actions.
-
 ## Depth and neighbors
 
 - [Cases, judges and comparisons](references/cases-judges-and-comparisons.md):

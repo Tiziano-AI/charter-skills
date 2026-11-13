@@ -71,7 +71,13 @@ and run records. Choose among its capabilities by what the decision needs:
 - A description comparison needs should-trigger and should-not-trigger
   requests, especially near-misses. Keep some requests outside the set used
   to tune the wording; a score on tuning cases overstates recognition elsewhere.
-- A selection observation needs the actual invocation record. Little change
+  Requests used to pick the winner among candidate wordings are tuning cases
+  too, so the winner's score on them is not a held-out estimate; judge it on
+  requests that took part in neither.
+- A selection observation needs the actual invocation record, including when
+  the skill loaded: at first contact, or only after other work. A check that
+  counts only the first call reports a later load as a miss, and a later load
+  can come after the choice the skill should have informed. Little change
   in output quality does not prove that the skill was selected and ineffective;
   an occurrence that never loaded it cannot isolate its body's contribution.
 - A fresh-agent trial gets a realistic request and the artifacts needed for

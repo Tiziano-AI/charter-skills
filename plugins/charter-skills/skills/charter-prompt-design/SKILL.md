@@ -5,7 +5,7 @@ description: 'Prompt design for a system prompt, task prompt or agent role: writ
   candidates, controlling judge bias and naming the cheapest trial that would settle
   a close call.'
 metadata:
-  content_version: charter-prompt-design@2026.11.07.0
+  content_version: charter-prompt-design@2026.11.13.0
 ---
 # Full specialist method
 

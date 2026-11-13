@@ -4,7 +4,7 @@ description: 'AI evaluation (evals) for model outputs, prompts and agents in pro
   when observed quality decides adoption, repair or a model change: expert-chosen
   hard cases, error analysis before metrics, validated LLM judges, cost.'
 metadata:
-  content_version: charter-ai-evaluation@2026.10.16.0
+  content_version: charter-ai-evaluation@2026.11.13.0
 ---
 # Full specialist method
 

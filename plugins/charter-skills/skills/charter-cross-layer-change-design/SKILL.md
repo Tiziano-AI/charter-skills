@@ -5,7 +5,7 @@ description: Design source changes that span schemas, producers and consumers; c
   competing paths while preserving real external compatibility. A clear local edit
   needs no cross-layer design.
 metadata:
-  content_version: charter-cross-layer-change-design@2026.11.03.0
+  content_version: charter-cross-layer-change-design@2026.11.13.0
 ---
 # Charter · Cross-Layer Change Design
 
@@ -14,9 +14,8 @@ producers and mappers create and transform it, storage keeps it, consumers act
 on it, and generators, fixtures and examples reproduce or teach it; each of
 these is a carrier of the contract.
 
-A local edit whose meaning stays inside one module needs none of this: make
-the edit and run the tests that cover it. An unfamiliar repository needs
-`charter-repository-assessment` first.
+A local edit whose meaning stays inside one module needs none of this. An
+unfamiliar repository needs `charter-repository-assessment` first.
 
 ## Defaults
 
@@ -45,18 +44,16 @@ flag, environment variable), which the compiler cannot see; follow generated
 files back to their inputs; and look outside the repository for released
 clients, other services, stored data and queued work.
 
-**Replace the owner and delete the old path in the same change.** When every
-affected consumer, running job and retained state can move together, update
-the owner and every carrier and delete the displaced route, its generator
-input and its fixtures together: no alias, shim, fallback reader or
-deprecation period. "Unreleased" alone does not establish this: pilot users
-and independent processes can already depend on the old shape. Records still
-needed move with the change, converted once or rebuilt when derived; where
-converting or losing them is outside the change's authority, they are a
-population that cannot move at once. Edit canonical inputs
-before derivatives and make the public path work before deleting what it
-displaced; a compile failure along the way is editing order, not a reason for
-migration machinery.
+**Replace the owner and delete the old path in the same change.** When the
+product is unreleased, or every affected consumer, running job and retained
+state can move together, update the owner and every carrier and delete the
+displaced route, its generator input and its fixtures together: no alias, shim,
+fallback reader or deprecation period. Records still needed move with the
+change, converted once or rebuilt when derived; where converting or losing them
+is outside the change's authority, they are a population that cannot move at
+once. Edit canonical inputs before derivatives and make the public path work
+before deleting what it displaced; a compile failure along the way is editing
+order, not a reason for migration machinery.
 
 **Decide the fact where it is known.** If a result must mean "delivered"
 rather than "accepted," the change belongs where delivery is known, not in the
