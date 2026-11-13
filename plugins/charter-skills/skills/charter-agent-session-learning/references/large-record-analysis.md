@@ -90,7 +90,10 @@ check a random sample of their claims against the originals and report how many
 disagreed. Maps quote the record, secrets included, so keep accepted maps as
 private as the record and outside version control, where later work can find
 them, with a pointer from the assessment rather than a standing session
-registry.
+registry. Once the assessment is written and its maps accepted, release the
+copies of the record the analysis made, such as exports, dumps and slices,
+unless the assessment cites them or work still owed reads them; the original
+stays with its owner, and a later analysis extracts again.
 
 A study across many sessions reads every session's dialogue in full, then reads
 the remaining activity in rounds. When two consecutive rounds change no

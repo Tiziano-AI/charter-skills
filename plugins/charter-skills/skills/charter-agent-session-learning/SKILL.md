@@ -5,7 +5,7 @@ description: 'Learn from recorded agent sessions and transcripts: what went wron
   changes for whoever can make them. Not a recap or catch-up, live recovery or automatic
   instruction rewriting.'
 metadata:
-  content_version: charter-agent-session-learning@2026.10.20.0
+  content_version: charter-agent-session-learning@2026.11.13.0
 ---
 # Charter · Agent Session Learning
 
