@@ -4,7 +4,7 @@ description: Reorganize file collections when retrieval or interpretation breaks
   choose taxonomy and names, plan recoverable moves and keep provenance, bundles and
   versions. Deleting identical copies is a separate job.
 metadata:
-  content_version: charter-archive-reorganization@2026.10.16.0
+  content_version: charter-archive-reorganization@2026.11.15.0
 ---
 # Full specialist method
 

@@ -7,6 +7,8 @@ import argparse
 import pathlib
 import sys
 
+sys.dont_write_bytecode = True  # a run must not leave a bytecode cache in the package
+
 from apple_source_network import check_asset, check_url, check_wwdc_session_title
 from apple_source_scan import (
     WWDC_SESSION_TITLES,

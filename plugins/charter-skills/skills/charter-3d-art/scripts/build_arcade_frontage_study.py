@@ -31,30 +31,36 @@ from mathutils import Vector
 # Python would otherwise write a bytecode cache into the package on import.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.dont_write_bytecode = True
-from arcade_frontage_parts import (  # noqa: E402
-    LED_GLYPHS,
-    box,
-    bulb,
-    bulb_meshes,
-    cabinet_faces,
-    cabinet_mesh,
-    cable,
-    galvanised,
-    gooseneck,
-    gresite,
-    lightbox_face,
-    link,
-    mesh_object,
-    principled,
-    railing,
-    ribbed_shutter,
-    screen_material,
-    stucco,
-    text,
-    wall_with_openings,
-    wet_paving,
-    worn_paint,
-)
+try:
+    from arcade_frontage_parts import (
+        LED_GLYPHS,
+        box,
+        bulb,
+        bulb_meshes,
+        cabinet_faces,
+        cabinet_mesh,
+        cable,
+        galvanised,
+        gooseneck,
+        gresite,
+        lightbox_face,
+        link,
+        mesh_object,
+        principled,
+        railing,
+        ribbed_shutter,
+        screen_material,
+        stucco,
+        text,
+        wall_with_openings,
+        wet_paving,
+        worn_paint,
+    )
+except ImportError as error:
+    raise SystemExit(
+        "This builder needs arcade_frontage_parts.py from the same charter-3d-art package beside it; "
+        f"copy the two scripts together. Python reported: {error}"
+    ) from None
 
 FONTS = Path(__file__).resolve().parent.parent / "assets" / "arcade-frontage-study" / "fonts"
 FONT_FILES = {

@@ -5,7 +5,7 @@ description: 'Design native Apple interfaces when scene, input, platform or look
   drawn from the app''s subject, across Apple platforms and framework seams. Apple-styled
   browser pages remain web-interface work.'
 metadata:
-  content_version: charter-apple-interface-design@2026.11.15.1
+  content_version: charter-apple-interface-design@2026.11.15.2
 ---
 # Full specialist method
 

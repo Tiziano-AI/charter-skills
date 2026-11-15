@@ -5,7 +5,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
+
+sys.dont_write_bytecode = True  # a run must not leave a bytecode cache in the package
 
 from archive_scan import report_path, write_report
 from duplicate_core import duplicate_report
