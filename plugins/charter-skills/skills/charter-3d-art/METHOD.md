@@ -16,16 +16,17 @@ composition, unreadable mechanism or lifeless character in use.
 
 For new work, make the defining visual relationship concrete early: mass
 against space, surface against light, pose against movement. When the look is
-still open, start with a few generated concept takes in distinct directions
-and put them before the person; `charter-visual-asset-production` says when
-they help and how to make them. Then show the chosen direction as a fragment
-in the target renderer: a concept settles a direction without proving its
-realization. A representative fragment can settle the defining relationship;
-it cannot establish the quality of an unseen whole. For an animated piece that
-whole includes timing and camera movement, which need not wait for the look:
-put the complete sequence in motion with stand-in parts and a rough camera
-path while the direction is being chosen, then reframe the shots to the chosen
-take and swap detail in as it lands.
+still open, settle it with the person before construction as
+`charter-visual-asset-production` describes: a few distinct directions can
+help, as generated concept takes or as rough renders in the target renderer
+when its light and material decide the look. Then show the chosen direction as
+a fragment in the target renderer: a concept settles a direction without
+proving its realization. A representative fragment can settle the defining
+relationship; it cannot establish the quality of an unseen whole. For an
+animated piece that whole includes timing and camera movement, which need not
+wait for the look: put the complete sequence in motion with stand-in parts and
+a rough camera path while the direction is being chosen, then reframe the shots
+to the chosen direction and swap detail in as it lands.
 
 ## Direct the eye before adding detail
 

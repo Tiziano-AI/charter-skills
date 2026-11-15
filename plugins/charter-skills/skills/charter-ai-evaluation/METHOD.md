@@ -86,8 +86,13 @@ placement), verbosity (the longer answer wins) and self-preference (a model
 favors text it recognizes as its own).
 Judge pairwise comparisons in both orders using fresh contexts that have seen
 neither the other order nor its verdict, and count a preference only when it
-survives the swap. Keep lengths comparable or report the difference, and never
-let the model that produced a candidate be its only judge. Read the
+survives the swap. Keep lengths comparable or report the difference. Do not
+treat the author model's sole judgment as independent validation. Use expert
+judgment where the criterion requires it. Where an LLM judge is used to supply
+the additional assessment, prefer a different-family collaborator the person
+has configured or named; if none is available, disclose the remaining
+self-preference and limit the claim. A different family can reduce
+self-preference without removing shared-instruction assumptions. Read the
 transcripts of failed cases: a grader that rejects a valid answer is a grader
 defect, not a model defect.
 

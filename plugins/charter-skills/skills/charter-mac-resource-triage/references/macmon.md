@@ -2,8 +2,9 @@
 
 Use macmon for terminal inspection and bounded Apple-silicon machine samples.
 It complements process identity, pressure, stacks, and runtime state; it does
-not replace them. The commands and metric contracts below describe **macmon
-0.10.0** and its [official source](https://github.com/vladkens/macmon/tree/v0.10.0).
+not replace them. Except for the explicitly versioned service-installation
+bullet below, the commands and metric contracts describe **macmon 0.10.0** and
+its [official source](https://github.com/vladkens/macmon/tree/v0.10.0).
 Recheck installed `--version` and subcommand `--help` after an upgrade;
 do not assume current `main` describes the installed release.
 
@@ -119,10 +120,17 @@ Sources: [metrics model](https://github.com/vladkens/macmon/blob/v0.10.0/src/met
 - HTTP `/json` timestamps serialization at request time; sampling errors can
   retain the last good metrics. A recent timestamp alone does not prove fresh
   sampling. Prefer bounded `pipe` for incident evidence.
-- `serve --install` installs and starts
-  `~/Library/LaunchAgents/com.macmon.plist`, with login startup and KeepAlive;
-  `serve --uninstall` stops/removes that service. Both require authority for the
-  persistent service change. The generated plist preserves host/port, not `-i`.
+- In macmon v0.11.0, `serve --install` installs a system LaunchDaemon,
+  `/Library/LaunchDaemons/com.macmon.plist`, that starts at boot with
+  KeepAlive; it needs `sudo` and runs as the invoking non-root user.
+  `serve --install --agent` instead installs a login LaunchAgent,
+  `~/Library/LaunchAgents/com.macmon.plist`, without sudo. Run without root,
+  `serve --uninstall` removes only the user's agent; removing the daemon needs
+  `sudo macmon serve --uninstall`. Each is a persistent service change that
+  needs authority for that exact service, and the daemon route raises an
+  authentication prompt. Confirm with the installed `serve --help`.
+  The generated plist preserves host/port, not `-i`.
+  Source: [v0.11.0 service implementation](https://github.com/vladkens/macmon/blob/v0.11.0/src/app/serve.rs).
 - `stress` generates CPU pulse, CPU, GPU, ANE, or all three loads. The installed
   `stress --help` is more accurate than the tag README's older CPU/GPU-only
   description of `all`. Without `--duration` it continues until interrupted.

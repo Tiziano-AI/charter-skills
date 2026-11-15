@@ -40,6 +40,11 @@ record keeps them; where sessions record no release, the runtime's own version
 report is the nearest evidence. Keep accepted source, the candidate in your
 worktree and the observed runtime distinct.
 
+Read the provider's migration or prompting guidance for the adopted model, as
+documentation or a native skill, to identify documented shifts relevant to this
+instruction system. Treat them as candidates for local investigation, not
+evidence that a local rule is obsolete.
+
 When the trigger is a behavior seen after the upgrade, establish what that
 thread loaded before touching any wording. A thread that ran on built-in
 instructions, or one resumed with instructions it captured before your change,
@@ -47,6 +52,16 @@ says nothing about your current text; only a fresh thread on the adopted
 release shows what the setup now delivers. If the behavior persists once your
 instructions are confirmed loaded, examine it as a separate question against
 the template and binary that actually ran.
+
+When a disputed delivery cannot be resolved through its existing native record,
+retain only the permitted evidence needed to identify that occurrence and
+settle that edge: runtime identity, capture time, relevant injected clauses,
+listing omissions and guide truncation. Use the owner and custody rules for
+that runtime and workplace; prefer locators or typed exports to copied catalogs
+or full prompts, and never retain private payloads in a review merely because
+it is nearby. An instruction to read a linked file does not establish that it
+was read: report that stage as unknown unless an authorized observation
+establishes the actual read.
 
 ## Map the composition before interpreting prose
 
@@ -97,11 +112,10 @@ real contribution. The composition decides which case applies.
 Literal compliance is a useful counterfactual: would obeying this sentence
 improve the intended work, or could it replace the work with procedure? Greater
 model capability makes old scaffolding worth reconsidering; it does not make an
-authority or fidelity constraint obsolete. A vendor's announced tendency, such
-as more literal reading or more eager tool use, is a hypothesis until it shows
-up in real work under your unchanged instructions. Change wording for a
-tendency you have seen, one change at a time, so each change stays
-attributable.
+authority or fidelity constraint obsolete. A vendor's announced tendency is a
+hypothesis about local behavior. A relevant, reversible wording or removal
+probe can test it before a local failure is observed; retain a change only when
+evidence supports it, keeping changes attributable where that matters.
 
 A paragraph may carry several meanings with different owners, and several
 changed sentences may express one unchanged behavior. Compare at that level,

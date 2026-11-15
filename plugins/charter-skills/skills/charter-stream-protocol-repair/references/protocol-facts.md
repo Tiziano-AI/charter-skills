@@ -134,16 +134,20 @@ and the adopted SDK's event dispatch before relying on a particular mapping.
 - **Resumption belongs to an operation mode.** For synchronous OpenAI Responses
   requests, closing the connection cancels the response. Background responses
   instead continue after a dropped stream; cursor-based reattachment requires
-  creation with both `background=true` and `stream=true`. With the stream's `sequence_number`,
-  `GET /v1/responses/{id}?stream=true&starting_after=<n>` is a cursor-based
-  reattachment to the same response, not a new generation. Check the selected
-  operation's retention, gap and connection-close behavior rather than
-  transferring that guarantee to another mode or provider. Anthropic Messages
-  documents recovery by submitting a new continuation request, not by replaying
-  the interrupted stream. This starts another generation with its own cost.
-  Follow the selected model's continuation rules rather than assuming assistant
-  prefilling is supported; incomplete tool-use and thinking blocks cannot be
-  partially recovered.
+  creation with both `background=true` and `stream=true`. Track the
+  `sequence_number` of the last processed stored response event, not every
+  event received on the connection. OpenAI `keepalive` events use connection
+  counters, not stored-event resume positions; do not advance a resume cursor
+  from one. An SDK may filter those transport events, so establish what its
+  iterator exposes. `GET /v1/responses/{id}?stream=true&starting_after=<n>`,
+  using that stored-event cursor, reattaches to the same response, not a new
+  generation. Check the selected operation's retention, gap and
+  connection-close behavior rather than transferring that guarantee to another
+  mode or provider. Anthropic Messages documents recovery by submitting a new
+  continuation request, not by replaying the interrupted stream. This starts
+  another generation with its own cost. Follow the selected model's
+  continuation rules rather than assuming assistant prefilling is supported;
+  incomplete tool-use and thinking blocks cannot be partially recovered.
 
 ## Pseudo-terminals
 

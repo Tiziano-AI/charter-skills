@@ -5,7 +5,7 @@ description: Repair streaming protocols when event semantics corrupt outcomes; f
   competing terminal signals at the responsible seam. Ordinary command waiting and
   recovery of one durable job are separate work.
 metadata:
-  content_version: charter-stream-protocol-repair@2026.10.12.0
+  content_version: charter-stream-protocol-repair@2026.11.15.0
 ---
 # Charter · Stream Protocol Repair
 

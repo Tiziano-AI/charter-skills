@@ -6,7 +6,7 @@ description: Produce image or video assets for a concrete placement, including c
   coherent variants with useful provenance and integration fitness. Whole-interface
   design is separate.
 metadata:
-  content_version: charter-visual-asset-production@2026.10.16.0
+  content_version: charter-visual-asset-production@2026.11.15.1
 ---
 # Full specialist method
 

@@ -28,6 +28,12 @@ them. Take type, colour, imagery and composition from them, not layout
 measurements or copy, and build the chosen one from real components and
 content.
 
+Interface words do work: labels name objects and actions; help, errors and
+empty states explain what the person can do next. Copy that advertises the
+interface's own cleverness can displace that information. Expressive writing
+can still be the subject of an editorial or presentational page; judge it by
+that page's purpose, not by a universal ban on slogans.
+
 ## Give the work a place
 
 Organize around what people need to find, compare, decide and change. The

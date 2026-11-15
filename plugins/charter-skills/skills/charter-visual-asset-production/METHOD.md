@@ -5,24 +5,27 @@ and placement, still image and motion, source and variants. Obtaining a bitmap
 is only one production act. Art direction, selection and derivation determine
 whether it becomes a compelling asset for the intended use.
 
-When a look is still open, a few quick generated takes in genuinely different
-directions are often the cheapest way to settle it. Make them at the delivery
-framing and put them before the person before building anything expensive
-that depends on the look. This holds for a 3D scene or film, a website or an
-app screen as much as for an image asset, and it keeps the first look that
-came to mind from becoming the direction by default. The takes settle look,
-palette, light and mood, and for a picture or a shot its composition; the
-receiving skill says what else carries over. They invent structure, text and
-mechanisms, so construction still follows the real subject. No takes are
-needed for a defect fix, a screen inside an established design system, work
-whose look carries little of the result (such as an internal tool or a
-functional prototype), or a look the person has already set: an image or
-description of the intended look, a brand or a chosen take. A reference for
-what the subject is or how it is built does not set its look, and a broad
-adjective or genre such as real, premium, clean or product photography leaves
-the look open, because several looks satisfy it. For a single image with no
-placement constraints the takes are simply its candidates: choose one and
-deliver.
+When a look is still open, settle it with the person before building anything
+expensive that depends on it, so that the first look that came to mind does not
+become the direction by default. This holds for a 3D scene or film, a website
+or an app screen as much as for an image asset. Put a few genuinely different
+directions before the person, made at the delivery framing. Quick generated
+takes are often the cheapest way to make them. When another route settles the
+look better, take it, such as rough directions made in the target tool where
+the look turns on what only that tool shows: light and material in a renderer,
+timing in an animation tool or behaviour in a working page. Generated takes
+settle look, palette, light and mood, and for a picture or a shot its
+composition; the receiving skill says what else carries over. They invent
+structure, text and mechanisms, so construction still follows the real subject.
+No directions are needed for a defect fix, a screen inside an established
+design system, work whose look carries little of the result (such as an
+internal tool or a functional prototype), or a look the person has already set:
+an image or description of the intended look, a brand, or a chosen take or
+direction. A reference for what the subject is or how it is built does not set
+its look, and a broad adjective or genre such as real, premium, clean or
+product photography leaves the look open, because several looks satisfy it. For
+a single image with no placement constraints the takes are simply its
+candidates: choose one and deliver.
 
 Art direction and production do not replace a generator's operating guidance.
 For image or video generation, concept takes included, and for generative
@@ -182,8 +185,11 @@ image should hold still. Read its frames at their own timestamps, without rate
 conversion, and compare their count and timing with the source sequence,
 because extraction at a fixed rate can turn a dropped frame into a duplicate
 or add duplicates the file lacks. Look at consecutive frames around the
-fastest moments. Call the motion uninspected until a person has watched it,
-and put a short playable clip before them as soon as one exists. A repair to
+fastest moments. Playback, frame measurements and human review are separate
+observations. Report who actually watched the clip and which timing checks were
+performed; under this inspection standard, keep motion uninspected until a
+person has watched it. Put a short playable clip before them as soon as one
+exists. A repair to
 one frame can create a new discontinuity. Choose regeneration or a bounded
 edit according to how much of the temporal relationship is wrong.
 
