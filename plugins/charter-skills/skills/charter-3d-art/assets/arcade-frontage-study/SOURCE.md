@@ -12,8 +12,9 @@ measurements of one.
 The model, procedural materials, builder script, renders and comparison sheet
 were authored for Charter. No photographs, image textures, HDRIs, downloaded
 models or generated imagery are used: every surface is a Blender node material
-built by [the script](../../scripts/build_arcade_frontage_study.py). The only
-third-party material is the typefaces below.
+built by [the script](../../scripts/build_arcade_frontage_study.py) from the
+materials and mesh parts in [the module it imports](../../scripts/arcade_frontage_parts.py).
+The only third-party material is the typefaces below.
 
 ## Typefaces
 
@@ -32,7 +33,7 @@ shortened here to `TiltNeon-XROT-YROT.ttf`; its bytes are unchanged.
 | Neonderthaw | `fonts/neonderthaw/Neonderthaw-Regular.ttf` | Copyright 2014-2021 The Neonderthaw Project Authors | Bar tube |
 | Bebas Neue | `fonts/bebasneue/BebasNeue-Regular.ttf` | Copyright © 2010 by Dharma Type | SE ALQUILA bill |
 
-The 2015 ABIERTO sign uses 5 × 7 dot glyphs drawn in the script, not a font.
+The 2015 ABIERTO sign uses 5 × 7 dot glyphs drawn in the parts module, not a font.
 The sheet's labels use Inter as shipped inside Blender (SIL Open Font License
 1.1, Copyright 2020 The Inter Project Authors); it is loaded from the Blender
 installation and not bundled here.
@@ -114,6 +115,8 @@ blender --background --factory-startup --python-exit-code 1 \
   --output /absolute/path/to/new-frontage --renders
 ```
 
+The builder imports `scripts/arcade_frontage_parts.py`, so the two files stay
+together, and it saves both into the native file as its `BUILD SOURCE` texts.
 It writes `arcade-frontage-study.blend`, `directed.jpg`, `default.jpg` and
 `directed-and-default.jpg`. `--preview` renders both scenes at half size with
 fewer samples and skips the sheet.

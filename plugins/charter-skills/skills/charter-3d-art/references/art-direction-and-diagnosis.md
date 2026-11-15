@@ -74,7 +74,8 @@ directed and once in the arrangement Blender offers before anyone decides.
 [Directed render](../assets/arcade-frontage-study/directed.jpg) ·
 [default render](../assets/arcade-frontage-study/default.jpg) ·
 [native scenes](../assets/arcade-frontage-study/arcade-frontage-study.blend) ·
-[build script](../scripts/build_arcade_frontage_study.py) ·
+[build script](../scripts/build_arcade_frontage_study.py) and
+[the parts module it imports](../scripts/arcade_frontage_parts.py) ·
 [sources, licences and render settings](../assets/arcade-frontage-study/SOURCE.md)
 
 What was collected from the kind of place: sign bands added over decades and
