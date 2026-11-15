@@ -27,8 +27,10 @@ locate the first upstream stage where a failing case goes wrong.
 Before spending runs, write in a few lines which outcome leads to which
 action: "if the new extractor loses any table the incumbent kept on the hard
 cases, keep the incumbent; if it keeps them all and costs half, adopt it."
-Left vague, either outcome can later be narrated as support for the same
-choice. Keep cases, labels and criteria with their product owner; private inputs
+When the bar is absolute rather than relative to the incumbent, say also what
+follows if the incumbent fails it too. Left vague, either outcome can later be
+narrated as support for the same choice. Keep cases, labels and criteria with
+their product owner; private inputs
 can stay at their authorized source behind usable pointers rather than being
 copied into a code repository. The evaluation leaves a decision. Retain reusable
 cases or a regression suite when later changes need the same check, rather than
