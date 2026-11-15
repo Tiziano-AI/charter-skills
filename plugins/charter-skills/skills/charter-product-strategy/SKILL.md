@@ -5,7 +5,7 @@ description: Choose product strategy when market, advantage or growth bets are o
   direction and sequence of bets. Improving an already-chosen user journey is product-experience
   work.
 metadata:
-  content_version: charter-product-strategy@2026.09.30.0
+  content_version: charter-product-strategy@2026.11.15.0
 ---
 # Charter · Product Strategy
 
@@ -53,6 +53,17 @@ feedback into better results determine whether data creates advantage or
 expense. Network growth helps only if an additional participant improves value
 for the relevant others; growth can also increase moderation or coordination
 cost.
+
+When a strategic direction is open, start from the customer's existing
+workaround and this business's access, capabilities and cost structure. A free
+tier, a service-led entry or a data advantage is a candidate, not a reason to
+choose it. Follow the deciding fact into whom to serve, what to deliver, how
+to reach them or how to charge, and what attractive move that choice excludes.
+If only the positioning sentence changes, the operational choice remains
+unresolved. A familiar playbook is right when these facts favor it;
+distinctive wording, or a belief no rival shares, is not required. Within a
+settled strategy, test the proposed change against its logic and do not
+invent a new thesis.
 
 Connect the channel to the service model and economics. Low-priced self-serve
 software cannot casually promise bespoke onboarding. Enterprise trust may

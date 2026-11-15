@@ -2,17 +2,23 @@
 
 Run with Blender --background --factory-startup --python-exit-code 1
 --python this_file -- --output /new/output.
-The output directory must be absent or empty. --renders adds Cycles stills.
-The saved .blend retains editable profile/handle source and evaluated meshes.
+The output directory must be absent or empty. --renders adds Cycles stills:
+the four comparison PNGs and, in reflection-plate/, the plate's seven frames
+and labelled contact sheet as JPEG. The lossless plate renders the sheet is
+composed from live in a temporary folder and are not kept.
+The saved .blend retains editable profile/handle source, evaluated meshes and
+one named scene per plate frame.
 """
 
 import argparse
 import json
 import math
 import sys
+import tempfile
 from pathlib import Path
 
 import bpy
+import OpenImageIO as oiio
 from mathutils import Vector
 
 
@@ -278,6 +284,262 @@ def area(name, location, energy, size, color=(1, 1, 1)):
     return obj
 
 
+# Reflection-placement plate on the low-bellied form. The orthographic camera,
+# geometry, glaze roughness, exposure and view transform stay fixed; only the
+# one neutral white source (or a dark card, or the roughness for the matte
+# counterpart) changes. Sources sit 14 units from the vessel, behind the
+# camera plane, so a card between source and vessel stays out of frame.
+PLATE_SOURCE = {"distance": 14.0, "elevation": 35.0, "power": 5200.0, "aspect": 2.0}
+PLATE_FRAMES = [
+    # file stem, scene name, azimuth (deg), source width, roughness, dark card
+    ("source-left", "Plate · source left", -125, 3.0, 0.20, False),
+    ("source-middle", "Plate · source middle", -72, 3.0, 0.20, False),
+    ("source-handle-side", "Plate · source handle side", -25, 3.0, 0.20, False),
+    ("source-small", "Plate · small source", -72, 0.6, 0.20, False),
+    ("source-broad", "Plate · broad source", -72, 9.0, 0.20, False),
+    ("broad-dark-card", "Plate · broad source and dark card", -72, 9.0, 0.20, True),
+    ("matte-middle", "Plate · matte, middle source", -72, 3.0, 0.90, False),
+]
+PLATE_CENTER = Vector((0.2, 0, 1.1))
+SHEET_GROUND = (0.25, 0.25, 0.25)  # linear; a neutral mid-grey on screen
+# The plate is bundled as JPEG at this quality with full-resolution colour.
+# Below it, inspected at 4x, halos form around the contact sheet's labels; at
+# this quality the reflection edges and the smooth grey grounds show nothing.
+JPEG_QUALITY = 85
+SHEET_INK = (0.006, 0.006, 0.006)
+
+
+def use_gpu(scene):
+    """Ask Cycles for a GPU itself; a headless process does not do it at start-up."""
+    prefs = bpy.context.preferences.addons["cycles"].preferences
+    prefs.refresh_devices()
+    for kind in ("METAL", "OPTIX", "CUDA", "HIP", "ONEAPI"):
+        try:
+            prefs.compute_device_type = kind
+        except TypeError:
+            continue
+        prefs.refresh_devices()
+        gpus = [d for d in prefs.devices if d.type == kind]
+        if gpus:
+            for device in gpus:
+                device.use = True
+            scene.cycles.device = "GPU"
+            scene.cycles.denoising_use_gpu = True
+            return
+    print("No GPU device available; Cycles renders on the CPU.")
+
+
+def direction(azimuth, elevation):
+    a, e = math.radians(azimuth), math.radians(elevation)
+    return Vector((math.cos(a) * math.cos(e), math.sin(a) * math.cos(e), math.sin(e)))
+
+
+def plate_scenes(vessel, camera):
+    """One named scene per plate frame, sharing camera, stage and world."""
+    common = bpy.data.collections.new("PLATE · camera and neutral stage")
+    common.objects.link(camera)
+    bpy.ops.mesh.primitive_plane_add(size=200, location=(0, 0, 0.02))
+    stage = bpy.context.object
+    for collection in list(stage.users_collection):
+        collection.objects.unlink(stage)
+    common.objects.link(stage)
+    stage.name = "Plate stage — neutral grey"
+    stage.data.materials.append(material("Plate stage • neutral grey", (0.16,) * 3, 0.9))
+    world = bpy.data.worlds.new("Plate world — dark neutral")
+    world.use_nodes = True
+    world.node_tree.nodes["Background"].inputs[0].default_value = (1, 1, 1, 1)
+    world.node_tree.nodes["Background"].inputs[1].default_value = 0.02
+    subjects = {}
+    for roughness in sorted({frame[4] for frame in PLATE_FRAMES}):
+        collection = bpy.data.collections.new(f"PLATE · low-bellied, roughness {roughness:.2f}")
+        obj = vessel.copy()  # linked duplicate: the delivery mesh itself
+        obj.name = f"Plate vessel • roughness {roughness:.2f}"
+        obj.hide_render = False
+        collection.objects.link(obj)
+        obj.material_slots[0].link = "OBJECT"
+        obj.material_slots[0].material = material(
+            f"Plate glaze • neutral dark • roughness {roughness:.2f}", (0.02,) * 3, roughness
+        )
+        subjects[roughness] = collection
+    scenes = {}
+    for stem, name, azimuth, width, roughness, card in PLATE_FRAMES:
+        scene = bpy.data.scenes.new(name)
+        scene.collection.children.link(common)
+        scene.collection.children.link(subjects[roughness])
+        scene.camera = camera
+        scene.world = world
+        data = bpy.data.lights.new(f"Source • neutral white • {width:g} × {width * 2:g}", "AREA")
+        data.shape = "RECTANGLE"
+        data.size, data.size_y = width, width * PLATE_SOURCE["aspect"]
+        data.energy, data.color = PLATE_SOURCE["power"], (1, 1, 1)
+        light = bpy.data.objects.new(data.name, data)
+        scene.collection.objects.link(light)
+        light.location = PLATE_CENTER + PLATE_SOURCE["distance"] * direction(
+            azimuth, PLATE_SOURCE["elevation"]
+        )
+        aim(light, PLATE_CENTER)
+        light["azimuth_deg"] = azimuth
+        if card:
+            mesh = bpy.data.meshes.new("Dark card")
+            mesh.from_pydata(
+                [(-0.65, -9, 0), (0.65, -9, 0), (0.65, 9, 0), (-0.65, 9, 0)], [], [(0, 1, 2, 3)]
+            )
+            obj = bpy.data.objects.new("Dark card — between source and vessel, out of frame", mesh)
+            scene.collection.objects.link(obj)
+            obj.location = PLATE_CENTER + 11.8 * direction(azimuth, PLATE_SOURCE["elevation"])
+            obj.rotation_euler = (PLATE_CENTER - obj.location).to_track_quat("Z", "Y").to_euler()
+            mesh.materials.append(material("Dark card • matte black", (0.01,) * 3, 0.9))
+        render_settings(scene, samples=128)
+        scenes[stem] = scene
+    return scenes
+
+
+def render_settings(scene, samples):
+    scene.render.engine = "CYCLES"
+    use_gpu(scene)
+    scene.cycles.samples = samples
+    scene.cycles.use_denoising = True
+    scene.render.resolution_x = 1080
+    scene.render.resolution_y = 1080
+    scene.render.resolution_percentage = 100
+    scene.view_settings.view_transform = "AgX"
+    scene.view_settings.look = "None"
+    scene.view_settings.exposure = 0
+    # Render metadata must not disclose the author's native-project location.
+    scene.render.use_stamp_filename = False
+    scene.render.use_stamp_hostname = False
+
+
+def contact_sheet(folder, renders):
+    """Lay the unblended plate renders out with plain sentence-case labels;
+    written into folder as contact-sheet.png."""
+    tile, gap, margin, head, foot = 540, 24, 40, 64, 70
+    rows = [
+        (
+            "One source moved; same size, distance and power",
+            [
+                ("source-left", "Left"),
+                ("source-middle", "Middle"),
+                ("source-handle-side", "Handle side: at the lower inner return\nthe reflection pinches to a tight spot"),
+            ],
+        ),
+        (
+            "One position, three sizes; same power",
+            [
+                ("source-small", "Small, 0.6 × 1.2"),
+                ("source-middle", "Medium, 3 × 6 (the middle render above)"),
+                ("source-broad", "Broad, 9 × 18"),
+            ],
+        ),
+        (
+            "Dark card in the reflection; matte counterpart",
+            [
+                ("broad-dark-card", "Broad source with a dark card\nbetween it and the vessel"),
+                ("matte-middle", "Matte, roughness 0.90,\nmiddle source"),
+            ],
+        ),
+    ]
+    width = 2 * margin + 3 * tile + 2 * gap
+    height = 2 * margin + 3 * (head + tile + foot)
+    scene = bpy.data.scenes.new("Plate · contact sheet")
+    render_settings(scene, samples=64)
+    scene.cycles.use_denoising = False
+    scene.cycles.filter_width = 1.0
+    scene.render.resolution_x, scene.render.resolution_y = width, height
+    scene.view_settings.view_transform = "Standard"
+    scene.render.dither_intensity = 0
+    scene.world = bpy.data.worlds.new("Sheet ground")
+    scene.world.use_nodes = True
+    scene.world.node_tree.nodes["Background"].inputs[0].default_value = (*SHEET_GROUND, 1)
+    camera = bpy.data.objects.new("Sheet camera", bpy.data.cameras.new("Sheet camera"))
+    scene.collection.objects.link(camera)
+    camera.data.type, camera.data.ortho_scale = "ORTHO", width / 100
+    camera.data.sensor_fit = "HORIZONTAL"
+    camera.location = (width / 200, -height / 200, 10)
+    scene.camera = camera
+    ink = bpy.data.materials.new("Sheet ink")
+    ink.use_nodes = True
+    ink.node_tree.nodes.clear()
+    emission = ink.node_tree.nodes.new("ShaderNodeEmission")
+    emission.inputs["Color"].default_value = (*SHEET_INK, 1)
+    ink.node_tree.links.new(
+        emission.outputs[0], ink.node_tree.nodes.new("ShaderNodeOutputMaterial").inputs[0]
+    )
+
+    # Inter, the plain sans Blender ships for its interface (SIL OFL 1.1).
+    inter = Path(bpy.utils.system_resource("DATAFILES")) / "fonts" / "Inter.woff2"
+    font = bpy.data.fonts.load(str(inter)) if inter.is_file() else None
+
+    def label(text, x, y, size):
+        data = bpy.data.curves.new("label", "FONT")
+        data.body, data.size, data.align_y = text, size / 100, "TOP"
+        if font:
+            data.font = font
+        data.materials.append(ink)
+        obj = bpy.data.objects.new("label", data)
+        scene.collection.objects.link(obj)
+        obj.location = (x / 100, -y / 100, 0)
+
+    for row, (title, cells) in enumerate(rows):
+        top = margin + row * (head + tile + foot)
+        label(title, margin, top + 18, 26)
+        for column, (stem, caption) in enumerate(cells):
+            left = margin + column * (tile + gap)
+            image = bpy.data.images.load(str(renders[stem]), check_existing=False)
+            mat = bpy.data.materials.new(stem)
+            mat.use_nodes = True
+            nodes = mat.node_tree.nodes
+            nodes.clear()
+            texture = nodes.new("ShaderNodeTexImage")
+            texture.image = image
+            emission = nodes.new("ShaderNodeEmission")
+            mat.node_tree.links.new(texture.outputs[0], emission.inputs["Color"])
+            mat.node_tree.links.new(
+                emission.outputs[0], nodes.new("ShaderNodeOutputMaterial").inputs[0]
+            )
+            x0, y0 = left / 100, -(top + head) / 100
+            x1, y1 = (left + tile) / 100, -(top + head + tile) / 100
+            mesh = bpy.data.meshes.new(stem)
+            mesh.from_pydata([(x0, y1, 0), (x1, y1, 0), (x1, y0, 0), (x0, y0, 0)], [], [(0, 1, 2, 3)])
+            mesh.uv_layers.new().data.foreach_set("uv", [0, 0, 1, 0, 1, 1, 0, 1])
+            mesh.materials.append(mat)
+            scene.collection.objects.link(bpy.data.objects.new(stem, mesh))
+            label(caption, left, top + head + tile + 14, 21)
+    held = (
+        "Held in every frame: orthographic camera,\nlow-bellied geometry, neutral dark glaze,\n"
+        "exposure 0, AgX view transform.\n\nSource: one neutral white rectangle, 1:2,\n"
+        "14 units from the vessel at 35° elevation,\n5200 W in every frame."
+    )
+    top = margin + 2 * (head + tile + foot)
+    label(held, margin + 2 * (tile + gap), top + head + 20, 21)
+    scene.render.filepath = str(folder / "contact-sheet.png")
+    bpy.ops.render.render(write_still=True, scene=scene.name)
+
+
+def scrub_file_browsers():
+    """Blender's default Shading workspace keeps a file browser opened on the
+    author's home folder, and the native file saves that fixed-size field
+    whole: fill it before pointing it at the file's own folder, so no tail of
+    the earlier path survives the save."""
+    for screen in bpy.data.screens:
+        for area in screen.areas:
+            for space in area.spaces:
+                if space.type == "FILE_BROWSER" and space.params:
+                    space.params.directory = b"/" * 4096
+                    space.params.directory = b"//"
+
+
+def write_jpeg(lossless, target):
+    """Encode a lossless render as a bundled JPEG with the OpenImageIO that ships
+    inside Blender, keeping full-resolution colour: Blender's own JPEG output
+    halves it (4:2:0), which smears small saturated detail."""
+    rgb = oiio.ImageBufAlgo.channels(oiio.ImageBuf(str(lossless)), (0, 1, 2))
+    rgb.specmod().attribute("Compression", f"jpeg:{JPEG_QUALITY}")
+    rgb.specmod().attribute("jpeg:subsampling", "4:4:4")
+    if not rgb.write(str(target), "uint8"):
+        raise RuntimeError(f"{target}: {rgb.geterror()}")
+
+
 def main():
     if not bpy.app.background:
         raise SystemExit(
@@ -368,19 +630,13 @@ def main():
         1,
     )
     scene.world.node_tree.nodes["Background"].inputs[1].default_value = 0.35
-    scene.render.engine = "CYCLES"
-    scene.cycles.samples = 48
-    scene.cycles.use_denoising = True
-    scene.render.resolution_x = 1080
-    scene.render.resolution_y = 1080
-    scene.render.resolution_percentage = 100
-    scene.view_settings.view_transform = "AgX"
-    # Render metadata must not disclose the author's native-project location.
-    scene.render.use_stamp_filename = False
-    scene.render.use_stamp_hostname = False
+    render_settings(scene, samples=48)
+    plates = plate_scenes(meshes[1], camera)
+    bpy.context.window.scene = scene
     # Text block keeps the rebuilding source reachable inside the native file.
     text = bpy.data.texts.new("BUILD SOURCE — edit the external script to regenerate")
     text.write(Path(__file__).read_text())
+    scrub_file_browsers()
     bpy.ops.wm.save_as_mainfile(
         filepath=str(dest / "vessel-study.blend"), compress=True
     )
@@ -413,6 +669,18 @@ def main():
             obj.data.materials[0] = glaze
             scene.render.filepath = str(dest / (obj.name + "-glaze.png"))
             bpy.ops.render.render(write_still=True)
+        plate_dir = dest / "reflection-plate"
+        plate_dir.mkdir()
+        with tempfile.TemporaryDirectory(prefix="vessel-plate-") as temporary:
+            lossless = Path(temporary)
+            renders = {}
+            for stem, plate in plates.items():
+                renders[stem] = lossless / f"{stem}.png"
+                plate.render.filepath = str(renders[stem])
+                bpy.ops.render.render(write_still=True, scene=plate.name)
+            contact_sheet(lossless, renders)
+            for png in sorted(lossless.glob("*.png")):
+                write_jpeg(png, plate_dir / f"{png.stem}.jpg")
 
 
 if __name__ == "__main__":

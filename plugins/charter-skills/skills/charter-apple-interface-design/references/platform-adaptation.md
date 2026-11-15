@@ -22,6 +22,9 @@ Use this file when the task spans multiple Apple platforms or specifically targe
 Carry recognizable identity and task meaning across platforms. Density,
 navigation and input should change when viewing distance, precision, reach or
 available attention changes. Pixel parity can create interaction disparity.
+Identity travels in the content, accent, icon and words; type sizes, hit
+targets and row density come from each platform's own scale, which
+[native craft](native-craft.md) tabulates.
 
 ## watchOS
 

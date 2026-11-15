@@ -117,6 +117,13 @@ hypothesis about local behavior. A relevant, reversible wording or removal
 probe can test it before a local failure is observed; retain a change only when
 evidence supports it, keeping changes attributable where that matters.
 
+Some skills describe the model's own first answers, the looks, structures and
+phrasings it produces when nothing steers it, so that the model can recognize
+them in its plan. Those descriptions are observations of one model
+generation. Observe the adopted model on a few unsteered runs before carrying
+them forward: a list that describes the previous model's habits misses the
+new one's, and steering away from the old ones is how the new ones arrive.
+
 A paragraph may carry several meanings with different owners, and several
 changed sentences may express one unchanged behavior. Compare at that level,
 not by headings, line count or diff volume.

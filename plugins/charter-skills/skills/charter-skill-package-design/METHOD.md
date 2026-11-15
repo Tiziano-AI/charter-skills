@@ -100,6 +100,24 @@ moves out of the body, redesigning a package that already has resources, and
 scripts, templates and visual assets; open it before splitting or
 restructuring a package.
 
+A package that teaches a craft (visual design, a writing voice, naming, a
+game's feel, a strategy's framing) can produce correct but interchangeable
+work even when its technical guidance is sound. Where the brief leaves
+expressive or strategic choices open, teach where particulars come from: the
+subject's materials, vocabulary, real content and working practice. Put a
+plausible unsteered answer beside the decision it displaces, the facts that
+favor another choice, and the condition under which the familiar answer is
+right. A list of forbidden forms does not teach that choice: a banned form
+tends to give way to the next most likely one, and a brief that asks for it
+must still get it. Treat an inferred default as a hypothesis; describe one as
+observed only when a run supports it, and keep the model and date with that
+evidence. Examples and assets teach patterns nobody intended as well as the
+method: when they share a palette, a layout or a voice, that look can become
+the house style whatever the text says. Vary their subjects, moods and
+incidental forms where those choices are open, and say what each
+demonstrates; keep the shared features that teach an exact standard or an
+established identity.
+
 ## When a package misses
 
 Start with the requested result and the observed miss, then distinguish what
@@ -125,7 +143,11 @@ Check a package when the result would change what you do with it:
   application; it cannot count as spontaneous selection.
 - When deciding whether a package earns its place, or which of two cards to
   keep, compare runs with and without the skill on a few realistic tasks and
-  near-miss requests.
+  near-miss requests. For a craft package, choose briefs different enough
+  that a repeated answer would be visible: a generic result looks fine alone
+  and appears as the same answer to unrelated briefs. Judge sameness only in
+  choices the briefs leave open; a shared required convention is not a
+  failure.
 
 Use the native creator or evaluator available in the target harness for the
 checks it actually supports: with-skill and baseline runs, selection on

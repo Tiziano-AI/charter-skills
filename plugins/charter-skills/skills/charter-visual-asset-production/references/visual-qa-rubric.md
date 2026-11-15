@@ -7,7 +7,8 @@ subject, the named action, no logo, the exact wording, the safe area clear. Ask 
 question only when its premise holds; there is no point checking the hand's pose on a candidate
 with the wrong subject. Judge the whole at its intended display size and background. Use zoomed
 crops to inspect suspected defects in faces, hands, text or edges, then return to the whole;
-a corrected detail does not settle the asset's fitness for its role.
+a corrected detail does not settle the asset's fitness for its role. These checks screen
+candidates; they do not choose among those that pass. Choose those for character and fit.
 
 ## Creative fitness
 
@@ -15,6 +16,13 @@ a corrected detail does not settle the asset's fitness for its role.
 - Composition and negative space accommodate crop, text, controls, or neighboring content.
 - Palette, material, lighting, texture, and detail level match the intended register.
 - The image has a deliberate focal point rather than uniform generated detail.
+- The medium and manner suit the role: a capture where the viewer must trust that the thing
+  exists, a diagram where the point is a mechanism, a manner whose behaviour carries the subject.
+- The strongest choice (light, viewpoint, moment, manner or palette) serves the subject and role
+  and keeps the distinctions this commission needs. A shared system's convention, or faithful
+  neutrality for evidence, documentation or a specimen, is that choice where the job asks for it.
+- Roughness, asymmetry or an unidealised face that carries the subject is kept; noise that only
+  obscures it is repaired.
 - Unwanted text, logos, watermarks, props, limbs, panels, shadows, or background subjects are absent.
 
 ## Identity and family coherence
@@ -55,6 +63,10 @@ marketing decoration.
 
 ## Motion
 
+- The principal action or relationship reads at the intended pace, and what holds still or moves
+  in support lets it read.
+- Camera movement has a reason in the action or a reveal; screen direction holds across cuts
+  unless a reversal is intended.
 - Movement has coherent timing, continuity, weight, easing, and camera behavior.
 - Loops do not pop, drift, or duplicate frames unless intentional.
 - Subject identity and geometry remain stable across frames.

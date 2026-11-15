@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="2304" height="1568" viewBox="0 0 2304 1568" role="img" aria-labelledby="title desc">
+<title id="title">Three pictures, and one picture tinted three ways</title>
+<desc id="desc">AI-generated concepts for a fictional bell-foundry feature. The upper row contrasts a night pour, a relief print of a mould and strickle, and close daylight tuning. The lower row repeats a bare-prompt foundry scene with blue, gold and teal colour mappings.</desc>
+<defs><style>
+@font-face{font-family:"IBM Plex Sans";src:url("fonts/IBMPlexSans-Regular.ttf") format("truetype");font-weight:400;font-style:normal;}
+.sans{font-family:"IBM Plex Sans",sans-serif;font-weight:400;fill:#1c282d}.muted{fill:#405158}
+</style></defs>
+<rect width="2304" height="1568" fill="#e2e6e7"/>
+<text x="48" y="78" font-size="54" class="sans" text-anchor="start">Bell foundry</text>
+<text x="2256" y="52" font-size="24" class="sans muted" text-anchor="end">Cover image, 3:2</text>
+<text x="2256" y="94" font-size="24" class="sans muted" text-anchor="end">AI-generated concepts for a fictional commission</text>
+<path d="M48 132H2256" stroke="#b3bfc3" stroke-width="2"/>
+<text x="48" y="207" font-size="36" class="sans" text-anchor="start">Three directions</text>
+<text x="2256" y="205" font-size="26" class="sans muted" text-anchor="end">Different pictures: making, form, sound</text>
+<image x="48" y="242" width="720" height="480" href="pour.jpg" xlink:href="pour.jpg" preserveAspectRatio="xMidYMid meet"/>
+<text x="48" y="770" font-size="33" class="sans" text-anchor="start">The metal is the light</text>
+<text x="48" y="810" font-size="24" class="sans muted" text-anchor="start">The pour, at night. Photograph.</text>
+<image x="792" y="242" width="720" height="480" href="form.jpg" xlink:href="form.jpg" preserveAspectRatio="xMidYMid meet"/>
+<text x="792" y="770" font-size="33" class="sans" text-anchor="start">The curve makes the bell</text>
+<text x="792" y="810" font-size="24" class="sans muted" text-anchor="start">The mould, in daylight. Relief print.</text>
+<image x="1536" y="242" width="720" height="480" href="sound.jpg" xlink:href="sound.jpg" preserveAspectRatio="xMidYMid meet"/>
+<text x="1536" y="770" font-size="33" class="sans" text-anchor="start">A note is cut away</text>
+<text x="1536" y="810" font-size="24" class="sans muted" text-anchor="start">Tuning, at noon. Photograph.</text>
+<image x="48" y="922" width="720" height="480" href="expected-blue.jpg" xlink:href="expected-blue.jpg" preserveAspectRatio="xMidYMid meet"/>
+<text x="48" y="1450" font-size="33" class="sans" text-anchor="start">Foundry as spectacle</text>
+<text x="48" y="1490" font-size="24" class="sans muted" text-anchor="start">Blue grade of the same picture</text>
+<image x="792" y="922" width="720" height="480" href="expected-gold.jpg" xlink:href="expected-gold.jpg" preserveAspectRatio="xMidYMid meet"/>
+<text x="792" y="1450" font-size="33" class="sans" text-anchor="start">Foundry as spectacle</text>
+<text x="792" y="1490" font-size="24" class="sans muted" text-anchor="start">Gold grade of the same picture</text>
+<image x="1536" y="922" width="720" height="480" href="expected-teal.jpg" xlink:href="expected-teal.jpg" preserveAspectRatio="xMidYMid meet"/>
+<text x="1536" y="1450" font-size="33" class="sans" text-anchor="start">Foundry as spectacle</text>
+<text x="1536" y="1490" font-size="24" class="sans muted" text-anchor="start">Teal grade of the same picture</text>
+<path d="M48 838H2256" stroke="#b3bfc3" stroke-width="2"/>
+<text x="48" y="887" font-size="36" class="sans" text-anchor="start">One direction, three grades</text>
+<text x="2256" y="885" font-size="26" class="sans muted" text-anchor="end">One composition; only colour changes</text>
+<path d="M48 1518H2256" stroke="#b3bfc3" stroke-width="2"/>
+<text x="48" y="1550" font-size="23" class="sans muted" text-anchor="start">Every image is concept work, not a record of a foundry.</text>
+</svg>

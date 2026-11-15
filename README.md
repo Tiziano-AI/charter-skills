@@ -7,7 +7,7 @@ in Codex and Claude Code. Charter is an opinionated, Mac-first library: call
 on the expertise a task needs while keeping your agent's native model,
 permissions and settings.
 
-**Version 1.0.0-rc.19**
+**Version 1.0.0-rc.20**
 
 > **Release candidate.**
 
@@ -47,10 +47,11 @@ need both CLIs, a Charter account or Charter's deployment engine. Public
 repository access needs no private token. Follow your organization's
 installation and plugin policies.
 
-**Compatibility:** installation, update and removal have been exercised with
-Codex CLI 0.163.0 and Claude Code 2.1.304. The desktop instructions follow the
-host documentation; desktop use and first-time setup on a colleague's Mac
-remain untested for this release candidate.
+**Compatibility:** for this release, installation, update from the previous
+release and removal were exercised with Codex CLI 0.169.0 and Claude Code
+2.1.325. The desktop instructions follow the host documentation; desktop use
+and first-time setup on a colleague's Mac remain untested for this release
+candidate.
 
 ### Codex: macOS app and CLI
 

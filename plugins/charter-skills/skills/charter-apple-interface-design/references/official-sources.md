@@ -52,6 +52,10 @@ Check a symbol against the selected SDK before depending on it:
   <https://developer.apple.com/videos/play/wwdc2026/278/>
 - What's new in SwiftUI:
   <https://developer.apple.com/videos/play/wwdc2026/269/>
+- Communicate your brand identity on iOS:
+  <https://developer.apple.com/videos/play/wwdc2026/251/>
+- Add personality to your app through UX writing:
+  <https://developer.apple.com/videos/play/wwdc2024/10140/>
 
 Conference sessions explain a particular design or implementation context.
 Use the one relevant to the decision, and resolve API availability against the
@@ -69,6 +73,18 @@ project's SDK rather than treating its conference year as authority.
   <https://developer.apple.com/design/human-interface-guidelines/materials>
 - HIG Toolbars:
   <https://developer.apple.com/design/human-interface-guidelines/toolbars>
+- HIG Branding:
+  <https://developer.apple.com/design/human-interface-guidelines/branding>
+- HIG Typography:
+  <https://developer.apple.com/design/human-interface-guidelines/typography>
+- HIG Color:
+  <https://developer.apple.com/design/human-interface-guidelines/color>
+- HIG Writing:
+  <https://developer.apple.com/design/human-interface-guidelines/writing>
+- HIG Undo and redo:
+  <https://developer.apple.com/design/human-interface-guidelines/undo-and-redo>
+- HIG Lists and tables:
+  <https://developer.apple.com/design/human-interface-guidelines/lists-and-tables>
 - HIG Designing for macOS:
   <https://developer.apple.com/design/human-interface-guidelines/designing-for-macos>
 - HIG The menu bar:

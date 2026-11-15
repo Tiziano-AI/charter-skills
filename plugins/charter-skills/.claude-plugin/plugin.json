@@ -1,11 +1,11 @@
 {
   "name": "charter-skills",
-  "version": "1.0.0-rc.19",
+  "version": "1.0.0-rc.20",
   "description": "Specialist skills for product, design, engineering, research and creative work.",
   "author": {
     "name": "Tiziano AI"
   },
   "repository": "https://github.com/Tiziano-AI/charter-skills",
-  "license": "MIT",
+  "license": "MIT AND OFL-1.1 AND CC-BY-4.0 AND CC0-1.0",
   "icon": "./assets/charter-skills.png"
 }

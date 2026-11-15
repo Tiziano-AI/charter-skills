@@ -6,6 +6,12 @@ standard of vessel design. The upright version can suit a different intention;
 the broader revision serves this study's chosen low mass. Neither is a
 manufacturing, grip-ergonomics or fluid-pouring design.
 
+The centred orthographic view, seamless ground and controlled studio treatments
+isolate construction and finish changes. They are inspection arrangements,
+not a final setting or camera direction for every object. A subject-specific
+finished piece also needs the making, use or invented-world evidence that
+this deliberately abstract form comparison leaves open.
+
 ## Open the thing that answers the question
 
 - [Interactive comparison](../assets/vessel-study/viewer.html): the actual GLBs
@@ -14,12 +20,20 @@ manufacturing, grip-ergonomics or fluid-pouring design.
   package over localhost as described below.
 - [Blender source](../assets/vessel-study/vessel-study.blend): editable
   construction meshes, Bezier handles and cavity cutters, evaluated delivery
-  meshes, neutral stage and camera, and the embedded build script.
+  meshes, neutral stage and camera. The external build script below owns the
+  reproducible parameters.
 - [Build script](../scripts/build_vessel_study.py): the profile, handle
-  controls, two parameter sets, root blending, export and two lighting setups.
+  controls, two parameter sets, root blending, export, two lighting setups and
+  the reflection-placement plate.
+- [Reflection-placement plate](../assets/vessel-study/reflection-plate/contact-sheet.jpg):
+  one neutral source moved, resized and cut by a dark card on the glossy
+  low-bellied form, with a matte counterpart; described
+  [below](#move-the-reflection-not-the-form).
 - [Upright GLB](../assets/vessel-study/upright.glb) and
-  [low-bellied GLB](../assets/vessel-study/low-bellied.glb): neutral materials,
-  geometry and parameter metadata; no Blender node graph or live modifiers.
+  [low-bellied GLB](../assets/vessel-study/low-bellied.glb): geometry and
+  parameter metadata, without embedded material definitions. The viewer
+  supplies controlled inspection materials; no Blender node graph or live
+  modifiers travel in these files.
 
 ![Upright form in neutral light](../assets/vessel-study/upright-neutral.png)
 
@@ -60,14 +74,17 @@ surfaces, not good deformation topology.
 The lower inner return still compresses its highlight more tightly than the
 outer handle. A single connected mesh and a broader root blend do not guarantee
 uniform curvature continuity; a finish built around an uninterrupted sharp
-reflection would warrant explicit surface control at that junction.
+reflection would warrant explicit surface control at that junction. The
+[reflection plate](#move-the-reflection-not-the-form) moves a source until
+its reflection reaches that junction.
 
 The native file has two collections. `EDITABLE CONSTRUCTION` is disabled in
 the viewport and render; enable it and hide `DELIVERY` to inspect or edit the
 section meshes and handle control points without overlapping derivatives.
 The wireframe cavity objects show the negative volume used by the subtraction.
 `DELIVERY` holds both evaluated meshes; only the low-bellied mesh is visible
-initially. The script's `variants` dictionary is the reproducible parameter
+initially. The `Plate ·` scenes link that same mesh, with object-level
+glaze materials, into the reflection plate's frames. The script's `variants` dictionary is the reproducible parameter
 owner. Object custom properties record the parameters used; changing those
 properties alone does not rebuild the mesh. Direct source-mesh edits also need
 a new evaluation/export rather than pretending the baked derivative updates.
@@ -100,13 +117,57 @@ The lower roughness makes reflected source shapes narrower. The smaller key
 reveals curvature through a moving highlight and darkens the opposing planes.
 Neither change widens the upright body, thins its lip or alters its handle
 opening. The paired intervention illustrates surface and light together; the
-viewer separates their controls when the contribution of each matters.
+viewer separates their controls when the contribution of each matters. The
+warm rear key and cool fill are a familiar studio arrangement held fixed so the
+two forms compare cleanly, not the light this vessel's own use or setting would
+choose.
 
 Use the interior view to inspect the lip, cavity and closed floor, the front
 view for the inner/outer handle contours, and the handle-edge view for the
 bridge's depth and root continuity. The opposite elevated inner-wall view
 reveals the cavity behind the upper attachment. A three-quarter view alone can
 hide an unresolved junction.
+
+## Move the reflection, not the form
+
+![Reflection-placement plate: position, size, dark card and matte counterpart](../assets/vessel-study/reflection-plate/contact-sheet.jpg)
+
+The plate holds the orthographic camera, the low-bellied mesh, one neutral
+dark glaze at roughness 0.20, exposure 0 and the AgX view transform. Only one
+neutral white rectangular source changes, always 14 units from the vessel at
+35° elevation and always 5200 W. Each frame is a separate unblended render
+and a named scene (`Plate · source left` and so on) in the native file.
+
+- **Position.** The 3 × 6 source moves from left of the camera
+  ([left](../assets/vessel-study/reflection-plate/source-left.jpg),
+  [middle](../assets/vessel-study/reflection-plate/source-middle.jpg)) to the
+  handle side
+  ([handle side](../assets/vessel-study/reflection-plate/source-handle-side.jpg)).
+  Its reflected strip travels across the belly, bending with it. On the handle
+  side a second reflection pinches to a tight spot at the lower inner return:
+  the curvature changes abruptly at that junction. More roughness would blur
+  the spot without changing the junction.
+- **Size.** At the middle position the source is
+  [0.6 × 1.2](../assets/vessel-study/reflection-plate/source-small.jpg),
+  3 × 6 or [9 × 18](../assets/vessel-study/reflection-plate/source-broad.jpg)
+  at the same power. The small source gives a small, bright, sharp reflection
+  and a hard shadow; the broad one spreads into a dim sheet that describes the
+  whole belly with fewer events and softens the shadow. It is not brighter,
+  only larger.
+- **Dark card.** With the broad source, a matte black strip standing between
+  it and the vessel, outside the frame, draws a
+  [dark band down the reflection](../assets/vessel-study/reflection-plate/broad-dark-card.jpg).
+  The band bends over the shoulder and the foot, so the curvature the broad
+  sheet flattened reads again, and the glaze colour is untouched.
+- **Matte counterpart.** The same glaze at roughness 0.90 under the middle
+  source has [no reflected shape](../assets/vessel-study/reflection-plate/matte-middle.jpg);
+  the turn from lit to shadow side and the cast shadow carry the form.
+
+The sources sit behind the camera plane, which lets the card block part of the
+broad source without entering the orthographic frame. A perspective shot would
+place the card just outside its frame instead. The plate is an inspection
+arrangement like the glaze pair: it shows what each change of source does to
+this surface, not which light this vessel's use or setting would choose.
 
 The browser's neutral setup combines an area light and environment fill with
 screen-space ambient occlusion for recesses and ground contact. That occlusion
@@ -159,11 +220,15 @@ blender --background --factory-startup --python-exit-code 1 \
   --output /absolute/path/to/new-study --renders
 ```
 
-The command writes a native scene, two GLBs, geometry statistics and four PNGs.
-It refuses a nonempty destination or an interactive Blender process; it does
-not alter the bundled study, install software or fetch assets. Omit
-`--renders` for scene and geometry only. A
-failed run may leave partial output in its chosen directory.
+The command writes a native scene, two GLBs, geometry statistics, four
+comparison PNGs and, in `reflection-plate/`, seven plate frames and their
+contact sheet as JPEG at quality 85 with full-resolution colour; the lossless
+plate renders the sheet is composed from are not kept. It renders on a GPU when
+Cycles finds one; run it with `--debug-cycles` to see the device each render
+used. It refuses a nonempty destination or an interactive Blender process; it
+does not alter the bundled study, install software or fetch assets. Omit
+`--renders` for scene and geometry only. A failed run may leave partial output
+in its chosen directory.
 
 For the browser resource, from the package directory:
 

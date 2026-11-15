@@ -12,53 +12,110 @@
 <body>
   <a class="skip" href="#essay">Skip to the essay</a>
   <header class="mast" id="top">
-    <a class="wordmark" href="#top" aria-label="Common Ground, top of page"><span class="mark" aria-hidden="true">✳</span> Common Ground</a>
+    <a class="wordmark" href="#top" aria-label="Common Ground, top of page">Common Ground</a>
     <span class="mast-note">A journal of small landscapes</span>
-    <a href="#contents">In this issue <span aria-hidden="true">↗</span></a>
+    <a href="#contents">In this issue</a>
   </header>
   <main>
     <article>
       <header class="opening">
-        <div class="issue-line"><span>Field essay / 03</span><span>Water &amp; the city</span><span>Words &amp; drawings: Common Ground</span></div>
         <!-- Adapted two-line opposing alignment from Codrops data-effect3.
              New type, wording, scale, content, drawing and responsive composition. -->
         <h1 class="split-title" data-effect3 aria-label="After the rain."><span data-line aria-hidden="true">After</span><span data-line aria-hidden="true">the rain.</span></h1>
         <div class="opening-grid">
-          <div class="opening-note"><span class="section-number">01 / Observe</span><p>A wet street is a map.<br>Follow the water and the city begins to tell you what it is made of.</p><a class="reading-link" href="#essay">Read the field essay <span aria-hidden="true">↓</span></a></div>
+          <div class="opening-note"><p>A wet street is a map. Follow the water and the city begins to tell you what it is made of.</p><a class="reading-link" href="#essay">Read the essay<svg class="arrow" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M6 1v9.5M2 6.5l4 4 4-4"/></svg></a></div>
           <figure class="rain-figure">
             <svg viewBox="0 0 900 390" role="img" aria-labelledby="rain-title rain-desc">
               <title id="rain-title">A street becomes a catchment</title>
-              <desc id="rain-desc">Blue rain channels cross a pale paved slope and collect in a deep blue planted hollow. The section reveals permeable layers beneath the surface.</desc>
-              <defs><pattern id="rain-lines" width="45" height="45" patternUnits="userSpaceOnUse" patternTransform="rotate(20)"><path d="M0 0V25" stroke="#3156c5" stroke-width="1.5"/></pattern><pattern id="soil" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="3" cy="4" r="1" fill="#8b302f"/></pattern></defs>
-              <rect width="900" height="390" fill="#f7cabe"/>
-              <rect width="900" height="230" fill="url(#rain-lines)"/>
-              <path d="M0 162L490 254Q650 315 900 166V390H0Z" fill="#d49a88"/>
-              <path d="M0 205L490 289Q650 350 900 214V390H0Z" fill="url(#soil)"/>
-              <path d="M0 162L490 254Q650 315 900 166" fill="none" stroke="#722e36" stroke-width="7"/>
-              <path d="M375 231Q611 278 748 226Q693 313 553 285Z" fill="#244ac2"/>
-              <path d="M0 119L359 207M0 82L442 190M77 67L528 177M230 45L598 147" stroke="#fff5e6" stroke-width="22"/>
-              <path d="M0 132L360 219M0 95L444 202M81 81L532 190M234 59L602 160" stroke="#244ac2" stroke-width="3"/>
-              <g fill="none" stroke="#722e36" stroke-width="3"><path d="M705 231Q672 173 694 144M706 223Q746 177 738 158M739 218Q743 163 773 145M794 191Q769 144 797 119M823 183Q849 133 841 104"/></g>
-              <g fill="#722e36"><ellipse cx="690" cy="160" rx="7" ry="18" transform="rotate(-20 690 160)"/><ellipse cx="739" cy="176" rx="6" ry="15" transform="rotate(20 739 176)"/><ellipse cx="790" cy="141" rx="7" ry="18" transform="rotate(-15 790 141)"/><ellipse cx="842" cy="123" rx="6" ry="17" transform="rotate(10 842 123)"/></g>
-              <path d="M517 259Q580 282 638 271M560 264Q617 279 664 258" fill="none" stroke="#bdcaff" stroke-width="2"/>
-            </svg>
-            <figcaption><span>Fig. 01 — From runoff to a place to pause.</span><span>Conceptual section / not to scale</span></figcaption>
+              <desc id="rain-desc">A section through a street after rain. Runoff crosses the road to a gully that sends it onward, while water on the pavement runs into a planted hollow below the path and stands there in a blue pool. Gravel and soil layers beneath the hollow let it soak away, and a street tree grows from its far bank.</desc>
+              <defs>
+                <pattern id="rain" width="38" height="38" patternUnits="userSpaceOnUse" patternTransform="rotate(18)"><path d="M0 0V18" stroke="#f1f0eb" stroke-opacity=".32" stroke-width="1.4"/></pattern>
+                <pattern id="earth" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V12" stroke="#f1f0eb" stroke-opacity=".13" stroke-width="1.2"/></pattern>
+                <pattern id="gravel" width="16" height="12" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="2.1" fill="none" stroke="#f1f0eb" stroke-opacity=".55" stroke-width="1.1"/><circle cx="12" cy="9" r="1.6" fill="none" stroke="#f1f0eb" stroke-opacity=".55" stroke-width="1.1"/></pattern>
+                <pattern id="soil" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="3" cy="4" r="1.1" fill="#f1f0eb" fill-opacity=".45"/><circle cx="10" cy="11" r=".9" fill="#f1f0eb" fill-opacity=".35"/></pattern>
+                <clipPath id="sky"><path d="M0 0H900V150L868 168 820 205Q760 300 700 296 640 292 594 206L346 158H318L0 116Z"/></clipPath>
+              </defs>
+              <!-- Rain falls only above the ground line. -->
+              <rect width="900" height="390" fill="url(#rain)" clip-path="url(#sky)"/>
+              <!-- Natural ground under everything. -->
+              <path d="M0 116L318 158H346L594 206Q640 292 700 296 760 300 820 205L868 168 900 150V390H0Z" fill="url(#earth)"/>
+              <!-- Road: asphalt course and gravel sub-base, cut at the left edge. -->
+              <path d="M0 116L318 158V196L0 154Z" fill="#4b5965"/>
+              <path d="M0 154L318 196V226L0 184Z" fill="url(#gravel)"/>
+              <!-- Gully and the pipe that sends water onward. -->
+              <path d="M292 155V214H316V159" fill="#33404a" stroke="#f1f0eb" stroke-width="2"/>
+              <path d="M292 206H210Q196 206 196 220V390M316 214V226" fill="none" stroke="#f1f0eb" stroke-width="2"/>
+              <path d="M210 216Q206 216 206 222V390" fill="none" stroke="#f1f0eb" stroke-width="2"/>
+              <path d="M292 155L316 158" stroke="#f1f0eb" stroke-width="4" stroke-dasharray="3 3"/>
+              <!-- Kerb. -->
+              <path d="M318 158H346V214H318Z" fill="#9aa4a8"/>
+              <!-- Pavement slabs on bedding, falling towards the hollow. -->
+              <path d="M346 158L594 206V224L346 176Z" fill="#d8dbda"/>
+              <g stroke="#33404a" stroke-width="2"><path d="M408 170V188M470 182V200M532 194V212"/></g>
+              <path d="M346 176L594 224V240L346 192Z" fill="url(#gravel)"/>
+              <!-- Planted hollow: growing soil over a drainage layer. -->
+              <path d="M594 206Q640 292 700 296 760 300 820 205L868 168 900 150V200L868 214 838 236Q770 330 700 330 626 330 594 240Z" fill="url(#soil)"/>
+              <path d="M612 270Q650 330 700 332 754 334 810 262Q780 352 700 354 630 354 612 270Z" fill="url(#gravel)"/>
+              <!-- The only saturated field: water held in the hollow. -->
+              <path d="M616 246H787Q756 296 700 296 646 296 616 246Z" fill="#2457d6"/>
+              <path d="M640 260Q690 268 742 258M666 276Q702 281 730 274" fill="none" stroke="#f1f0eb" stroke-opacity=".6" stroke-width="1.6"/>
+              <g stroke="#2457d6" stroke-width="2" stroke-dasharray="4 6"><path d="M660 304V340M700 308V352M740 304V340"/></g>
+              <!-- Ground line drawn over the cut. -->
+              <path d="M0 116L318 158M346 158L594 206Q640 292 700 296 760 300 820 205L868 168 900 150" fill="none" stroke="#f1f0eb" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M318 158H346" stroke="#f1f0eb" stroke-width="4"/>
+              <!-- Runoff: onward into the gully on the road, into the hollow on the pavement. -->
+              <path d="M-4 110L288 149" stroke="#2457d6" stroke-width="3"/>
+              <path d="M352 152L590 198Q604 214 616 240" fill="none" stroke="#2457d6" stroke-width="3"/>
+              <!-- Planting at the edges and the street tree on the far bank. -->
+              <g fill="none" stroke="#f1f0eb" stroke-width="2" stroke-linecap="round"><path d="M606 224Q598 200 590 178M608 224Q606 196 604 166M610 226Q616 198 620 172M612 228Q624 206 634 188M802 226Q794 200 786 184M806 222Q806 194 802 170M808 220Q816 192 822 168M810 218Q826 200 836 182"/></g>
+              <path d="M845 178L851 -2H861L866 172Z" fill="#f1f0eb"/>
+              <path d="M853 92Q834 52 808 -2M858 52Q870 26 888 -2" fill="none" stroke="#f1f0eb" stroke-width="4" stroke-linecap="round"/>
+              <path d="M848 182Q824 204 796 214M856 184Q852 220 836 246M864 178Q884 196 900 200" fill="none" stroke="#f1f0eb" stroke-opacity=".7" stroke-width="1.6"/>
+              <!-- Annotation, shown where the drawing is large enough to read it. -->
+              <g class="labels" fill="#f1f0eb" fill-opacity=".72" font-size="13">
+                <text x="22" y="92">road</text>
+                <text x="262" y="276">gully, water sent onward</text>
+                <text x="380" y="128">pavement</text>
+                <text x="626" y="372">planted hollow, water held</text>
+                <text x="760" y="64" text-anchor="end">street tree</text>
+              </g>
+              <g class="labels" fill="none" stroke="#f1f0eb" stroke-opacity=".5" stroke-width="1"><path d="M280 262L300 222M412 134L420 166M688 360L692 336M766 60H846"/></g>
+                </svg>
+            <figcaption><span>From runoff to a place to pause.</span><span>Conceptual section, not to scale</span></figcaption>
           </figure>
         </div>
+        <!-- The kerb: double yellow lines with the gutter's standing water over them. -->
+        <svg class="kerb" viewBox="0 0 1600 64" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="sky-in-water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfd8dc"/><stop offset="1" stop-color="#94a3ad"/></linearGradient>
+            <clipPath id="gutter-water"><path id="gutter" d="M300 52C328 51 342 38 370 31 394 25 412 18 452 15 520 11 588 18 650 13 716 9 772 16 812 13 834 12 846 21 855 29 866 39 872 47 884 52ZM940 52C962 50 974 38 996 30 1016 22 1030 19 1066 17 1130 14 1176 20 1236 16 1286 13 1318 19 1340 18 1362 17 1372 30 1382 40 1390 47 1394 50 1398 52ZM40 52C62 51 72 40 92 34 108 30 128 31 150 29 176 27 196 34 206 44 210 48 211 50 212 52Z"/></clipPath>
+          </defs>
+          <path d="M-10 16H1610V20H-10ZM-10 26H1610V30H-10Z" fill="#f2c41b"/>
+          <use href="#gutter" fill="url(#sky-in-water)"/>
+          <path d="M-10 16H1610V20H-10ZM-10 26H1610V30H-10Z" fill="#f2c41b" fill-opacity=".38" clip-path="url(#gutter-water)"/>
+          <path d="M412 18C452 15 520 11 588 18 650 13 716 9 772 16 812 13M1030 19C1066 17 1130 14 1176 20 1236 16 1286 13 1318 19 1340 18M108 30C128 31 150 29 176 27" fill="none" stroke="#f1f4f5" stroke-width="1.2"/>
+          <path d="M-10 52H1610V64H-10Z" fill="#8e989d"/>
+          <path d="M-10 52.5H1610" stroke="#b9c1c4"/>
+        </svg>
       </header>
-      <div class="essay-grid" id="essay">
-        <nav class="contents" id="contents" aria-label="Essay contents"><p class="eyebrow">In this essay</p><a href="#look">01 &nbsp; Read the ground</a><a href="#hold">02 &nbsp; Leave a hollow</a><a href="#return">03 &nbsp; Make room to return</a></nav>
-        <section class="prose" id="look"><p class="eyebrow">A field note</p><h2>Read the ground.</h2><p class="lede">The rain has stopped, but the street is still moving. Water follows the joint between two paving stones, slips beneath a gate and gathers at the foot of a tree.</p><p>We tend to draw a city from above: blocks, boundaries, clean lines. A puddle offers another drawing. It shows the small depressions, the compacted earth and the places where a surface changes its mind.</p><p>At the corner, a strip of planting interrupts the pavement. Its edge is lower than the path. The difference is slight, but it gives the water somewhere to go other than onward. For a moment, the street has a pocket.</p><aside class="margin-note">Look for the line of leaves left behind. It records a journey the water has already finished.</aside></section>
+      <div class="pavement">
+        <div class="essay-grid" id="essay">
+          <nav class="contents" id="contents" aria-label="Essay contents"><h2 class="contents-heading">In this essay</h2><a href="#look">Read the ground</a><a href="#hold">Leave a hollow</a><a href="#return">Make room to return</a></nav>
+          <section class="prose" id="look"><h2>Read the ground.</h2><p class="lede">The rain has stopped, but the street is still moving. Water follows the joint between two paving stones, slips beneath a gate and gathers at the foot of a tree.</p><p>We tend to draw a city from above: blocks, boundaries, clean lines. A puddle offers another drawing. It shows the small depressions, the compacted earth and the places where a surface changes its mind.</p><p>At the corner, a strip of planting interrupts the pavement. Its edge is lower than the path. The difference is slight, but it gives the water somewhere to go other than onward. For a moment, the street has a pocket.</p><aside class="margin-note">Look for the line of leaves left behind. It records a journey the water has already finished.</aside></section>
+        </div>
+        <section class="hold-section" id="hold" aria-labelledby="hold-title">
+          <p class="hold-intro">Leave a hollow. A small change in level makes a different relationship with the rain.</p>
+          <!-- Three lines in three faces and sizes adapt Codrops data-effect10. -->
+          <h2 class="hold-title" id="hold-title" data-effect10 aria-label="Hold the water here."><span data-line aria-hidden="true">Hold</span><span data-line aria-hidden="true">the water</span><span data-line aria-hidden="true">here.</span></h2>
+          <p class="hold-outro">The hollow is the useful part. The planting gives it a living edge.</p>
+        </section>
+        <div class="closing-grid" id="return">
+          <section class="prose"><h2>Leave something open.</h2><p>After the surface dries, the little garden still has a job. It breaks the hard edge of the street. It gives the tree room, the eye a resting place and the next shower somewhere to begin.</p><p>This is a way of looking before it is a design. Notice where water collects. Notice what interrupts it. Then ask whether the ground could hold a little more of what already arrives.</p></section>
+          <aside class="closing-note"><p>The most revealing drawing may already be on the ground.</p></aside>
+        </div>
       </div>
-      <section class="hold-section" id="hold" aria-labelledby="hold-title">
-        <div><p class="eyebrow">02 / Leave a hollow</p><p class="hold-intro">A small change in level.<br>A different relationship with the rain.</p></div>
-        <!-- Mixed roman / italic / smaller third line adapts Codrops data-effect10. -->
-        <h2 class="hold-title" id="hold-title" data-effect10 aria-label="Hold the water here."><span data-line aria-hidden="true">Hold</span><em data-line aria-hidden="true">the water</em><span data-line aria-hidden="true">here.</span></h2>
-        <p class="hold-outro">The hollow is the useful part.<br>The planting gives it a living edge.</p>
-      </section>
-      <div class="closing-grid" id="return"><p class="section-number">03 / Make room to return</p><section class="prose"><h2>Leave something open.</h2><p>After the surface dries, the little garden still has a job. It breaks the hard edge of the street. It gives the tree room, the eye a resting place and the next shower somewhere to begin.</p><p>This is a way of looking before it is a design. Notice where water collects. Notice what interrupts it. Then ask whether the ground could hold a little more of what already arrives.</p><p class="end-mark" aria-label="End of essay">✳</p></section><aside class="closing-note"><span class="eyebrow">Take a second look</span><p>The most revealing drawing may already be on the ground.</p></aside></div>
     </article>
   </main>
-  <footer class="colophon"><div><strong>Common Ground</strong><p>Fictional journal. Original essay &amp; illustration.<br>Typography constructions adapted from Codrops.</p></div><div class="colophon-actions"><button class="action" id="replay" type="button">Replay typography</button><a href="comparison.html">Open the comparison study ↗</a><a href="../../references/authored-compositions.md">Construction &amp; credits ↗</a></div><p class="sr-only" id="motion-status" role="status"></p></footer>
+  <footer class="colophon"><div><strong>Common Ground</strong><p>A fictional journal. Words and drawings by Common Ground.<br>Typography constructions adapted from Codrops.</p></div><div class="colophon-actions"><button class="action" id="replay" type="button" hidden>Replay title</button><a href="comparison.html">Open the comparison study<svg class="arrow" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M2.5 9.5l7-7M3.5 2.5h6v6"/></svg></a><a href="../../references/authored-compositions.md">Construction and credits<svg class="arrow" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M2.5 9.5l7-7M3.5 2.5h6v6"/></svg></a></div><p class="sr-only" id="motion-status" role="status"></p></footer>
 </body>
 </html>

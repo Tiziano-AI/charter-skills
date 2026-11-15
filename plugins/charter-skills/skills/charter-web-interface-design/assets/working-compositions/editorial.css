@@ -1,62 +1,89 @@
-:root { --paper: #f8ede3; --ink: #742f38; --line: #b98582; --action-fill: #742f38; --focus: #1546e2; }
-body { background: var(--paper); color: var(--ink); }
+@font-face { font-family: 'Allerta Stencil'; src: url('fonts/AllertaStencil-Regular.ttf') format('truetype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: Besley; src: url('fonts/Besley.ttf') format('truetype'); font-weight: 400 900; font-display: swap; }
+/* The page is a street in section after rain. Wet blue-grey asphalt for the
+   opening, lighter where the far road gives back the sky; road-paint white
+   for what is painted on it; yellow only as the kerb's painted lines; cool
+   pavement concrete for the long read; the water's blue as the one saturated
+   field. Stencil capitals for what the street would paint, cast-iron
+   Clarendon for everything read. */
+:root { --wet: #33404a; --wet-far: #46545f; --paint: #f1f0eb; --paint-2: #c3cbd0; --yellow: #f2c41b; --concrete: #d8dbda; --ink: #1f2830; --ink-2: #44505a; --rule: #9ca5aa; --water: #2457d6; --action-hover: #1f28300f; }
+body { overflow-x: clip; background: linear-gradient(var(--wet-far), var(--wet) 760px) no-repeat, var(--wet); color: var(--paint); font-family: Besley, Rockwell, Georgia, serif; --focus: var(--paint); }
 p, h1, h2, figure { margin: 0; }
-.mast, .opening, .essay-grid, .closing-grid, .colophon { width: min(1320px, calc(100% - 80px)); margin-inline: auto; }
-.mast { display: flex; align-items: center; gap: 32px; justify-content: space-between; padding: 24px 0; border-bottom: 1px solid var(--ink); font-size: .8rem; }
-.wordmark { display: flex; gap: 12px; align-items: center; font-weight: 800; font-size: 1.4rem; letter-spacing: -.05em; text-decoration: none; }
-.mark { font-size: 2rem; line-height: 1; }
-.mast-note { margin-right: auto; }
-.issue-line { display: flex; gap: 20px; justify-content: space-between; margin: 28px 0 16px; font-size: .69rem; letter-spacing: .06em; text-transform: uppercase; }
+.mast, .opening, .essay-grid, .closing-grid { width: min(1320px, calc(100% - 80px)); margin-inline: auto; }
+.mast { display: flex; align-items: baseline; gap: 32px; padding: 24px 0 20px; border-bottom: 1px solid #f1f0eb3d; font-size: .9rem; }
+.wordmark { font-weight: 650; font-size: 1.25rem; text-decoration: none; }
+.mast-note { margin-right: auto; color: var(--paint-2); }
 /* Codrops effect3's two opposed lines become the page's diagonal: title,
-   channel drawing, then a left-hand reading rail. Scale is capped, not 12vw. */
-.split-title { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; font-family: Fraunces, Georgia, serif; font-weight: 480; font-size: clamp(5rem, 12vw, 10.5rem); line-height: .96; letter-spacing: -.065em; font-variation-settings: 'SOFT' 25, 'WONK' 1; padding-bottom: .12em; }
-.split-title > span:last-child { justify-self: end; padding-right: .035em; font-style: italic; }
+   section drawing, then a left-hand note. The title is lettered as a kerb
+   stencil is cut: capitals with bridges, signage proportions, normal weight.
+   Display lines are sized by the viewport alone, so a larger text setting
+   enlarges what is read without breaking a display word across lines. */
+.split-title { display: grid; grid-template-columns: minmax(0, 1fr); padding-top: 44px; font: 400 min(11.6vw, 176px)/.98 'Allerta Stencil', 'Arial', sans-serif; text-transform: uppercase; letter-spacing: .015em; }
+.split-title > span:last-child { justify-self: end; margin-right: -.03em; }
 [data-line] { overflow-wrap: anywhere; max-width: 100%; }
 .word { display: inline-block; max-width: 100%; overflow-wrap: anywhere; }
-.word + .word { margin-left: .1em; }
+.word + .word { margin-left: .02em; }
 .char { display: inline-block; transform-origin: 50% 0%; }
-.opening-grid { display: grid; grid-template-columns: 1fr 2.5fr; gap: 64px; align-items: end; margin-top: 16px; }
-.section-number, .eyebrow { font-size: .69rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }
-.opening-note p { font-family: Fraunces, Georgia, serif; font-size: 1.25rem; line-height: 1.4; margin: 28px 0; max-width: 22ch; }
-.reading-link { font-size: .85rem; display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--ink); text-decoration: none; gap: 16px; }
-.rain-figure svg { display: block; width: 100%; height: auto; }
-figcaption { display: flex; justify-content: space-between; gap: 18px; font-size: .64rem; line-height: 1.5; margin-top: 10px; }
-.essay-grid { display: grid; grid-template-columns: 1fr 2.5fr; gap: 64px; padding-block: 96px; border-bottom: 1px solid var(--line); }
-.contents { align-self: start; display: grid; gap: 16px; font-size: .8rem; }
-.contents .eyebrow { margin-bottom: 12px; }
-.contents a { text-decoration-color: var(--line); }
-.prose { max-width: 65ch; }
-.prose h2 { font: 460 clamp(2rem, 3.5vw, 3.3rem)/1.12 Fraunces, Georgia, serif; letter-spacing: -.035em; margin-block: 14px 24px; }
-.prose p { font-size: 1rem; line-height: 1.85; margin-top: 20px; }
-.prose .lede { font: 400 clamp(1.25rem, 2vw, 1.6rem)/1.5 Fraunces, Georgia, serif; }
-.margin-note { border-left: 2px solid var(--ink); padding-left: 20px; max-width: 44ch; margin-top: 30px; font-size: .85rem; line-height: 1.7; }
-.hold-section { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; gap: 32px; background: #223e96; color: #f8e5db; margin: 0; padding: 64px max(40px, calc((100vw - 1320px) / 2)); }
-.hold-intro, .hold-outro { font-size: .8rem; line-height: 1.8; margin-top: 24px; }
-.hold-outro { align-self: end; text-align: right; }
-/* Codrops effect10's mixed faces and three-line rhythm are retained; the
-   final line is quiet and open, not a second equally loud headline. */
-.hold-title { display: grid; gap: .12em; text-align: center; font-size: clamp(3.2rem, 6.5vw, 6rem); line-height: 1.05; font-weight: 550; letter-spacing: -.05em; }
-.hold-title em { font-family: Fraunces, Georgia, serif; font-weight: 420; }
-.hold-title > span:last-child { font: 390 .7em/1.2 Fraunces, Georgia, serif; letter-spacing: -.03em; }
-.closing-grid { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 48px; padding-block: 80px; align-items: start; }
-.closing-grid .section-number { margin-top: 26px; }
-.closing-note { align-self: end; border-top: 1px solid var(--line); padding-top: 20px; }
-.closing-note p { font: 400 1.45rem/1.35 Fraunces, Georgia, serif; margin-top: 20px; }
-.prose .end-mark { font-size: 2rem; }
-.colophon { border-top: 1px solid var(--ink); display: flex; justify-content: space-between; gap: 32px; padding-block: 28px 40px; }
-.colophon p { font-size: .72rem; line-height: 1.7; margin-top: 10px; }
-.colophon-actions { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; font-size: .72rem; }
+.opening-grid { display: grid; grid-template-columns: 1fr 2.5fr; gap: 64px; align-items: end; margin-top: 36px; }
+.opening-note p { font-weight: 500; font-size: 1.3rem; line-height: 1.45; max-width: 21ch; margin-bottom: 32px; text-wrap: pretty; }
+.reading-link { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 2px solid var(--paint); font-weight: 600; text-decoration: none; }
+/* Besley has no arrows, so the two kinds the page needs are drawn in the
+   section drawing's line: down to the essay, and out of the page. */
+.arrow { display: inline-block; flex: none; width: .72em; height: .72em; margin-left: .4em; vertical-align: -.04em; fill: none; stroke: currentColor; stroke-width: 1.7; }
+.rain-figure svg { display: block; width: 100%; height: auto; overflow: visible; }
+.rain-figure .labels text { font-family: Besley, serif; font-weight: 500; }
+figcaption { display: flex; justify-content: space-between; gap: 18px; margin-top: 12px; color: var(--paint-2); font-size: .8rem; line-height: 1.5; }
+/* The kerb runs the full width: painted lines, and the gutter's standing
+   water giving back the sky. It marks the change from street to pavement. */
+.kerb { display: block; width: 100vw; height: 64px; margin: 64px 0 0 calc(50% - 50vw); }
+.pavement { background: var(--concrete); color: var(--ink); --focus: var(--water); }
+.essay-grid { display: grid; grid-template-columns: 1fr 2.5fr; gap: 64px; padding-block: 96px; }
+.contents { align-self: start; display: grid; gap: 12px; font-size: 1rem; }
+.contents-heading { font-size: 1rem; font-weight: 650; color: var(--ink-2); margin-bottom: 6px; }
+.contents a { text-decoration-color: var(--rule); text-decoration-thickness: 1px; }
+.prose { max-width: 62ch; }
+.prose h2 { font-weight: 650; font-size: clamp(min(2rem, 12vw), 3.2vw, 2.9rem); line-height: 1.1; letter-spacing: -.012em; margin-bottom: 26px; }
+.prose p { font-size: 1.0625rem; line-height: 1.72; margin-top: 20px; text-wrap: pretty; }
+.prose .lede { font-weight: 500; font-size: clamp(1.25rem, 1.9vw, 1.5rem); line-height: 1.45; margin-top: 0; }
+.margin-note { border-left: 3px solid var(--ink); padding-left: 18px; max-width: 42ch; margin-top: 34px; font-size: .95rem; line-height: 1.6; color: var(--ink-2); }
+.hold-section { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; gap: 32px; background: var(--water); color: var(--paint); padding: 84px max(40px, calc((100vw - 1320px) / 2)); }
+.hold-intro, .hold-outro { font-size: 1rem; line-height: 1.6; max-width: 24ch; text-wrap: pretty; }
+.hold-intro { align-self: start; }
+.hold-outro { align-self: end; justify-self: end; text-align: right; }
+/* Codrops effect10's three lines in three roles: the instruction stencilled,
+   the object in the cast face, a quiet landing. */
+.hold-title { display: grid; justify-items: center; text-align: center; font-weight: 400; }
+.hold-title > span:nth-child(1) { font: 400 clamp(min(4.4rem, 15vw), 9.4vw, 138px)/.95 'Allerta Stencil', sans-serif; text-transform: uppercase; letter-spacing: .02em; }
+.hold-title > span:nth-child(2) { font-weight: 400; font-size: clamp(min(3.2rem, 11vw), 6.6vw, 96px); line-height: 1.05; letter-spacing: -.025em; margin-top: .06em; }
+.hold-title > span:nth-child(3) { font-weight: 650; font-size: clamp(1.4rem, 2.2vw, 2rem); line-height: 1.2; margin-top: .55em; }
+.closing-grid { display: grid; grid-template-columns: 1fr 2.5fr; gap: 64px; padding-block: 88px; align-items: end; }
+.closing-grid .prose { grid-column: 2; grid-row: 1; }
+.closing-note { grid-column: 1; grid-row: 1; border-top: 3px solid var(--ink); padding-top: 18px; max-width: 20ch; }
+.closing-note p { font-weight: 500; font-size: 1.25rem; line-height: 1.4; }
+.colophon { display: flex; justify-content: space-between; gap: 32px; padding: 28px max(40px, calc((100% - 1320px) / 2)) 44px; background: linear-gradient(var(--rule), var(--rule)) top center / min(1320px, calc(100% - 80px)) 1px no-repeat, var(--concrete); color: var(--ink); --focus: var(--water); }
+.colophon strong { font-weight: 650; }
+.colophon p { font-size: .85rem; line-height: 1.6; margin-top: 8px; color: var(--ink-2); }
+.colophon-actions { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; font-size: .9rem; }
 [id] { scroll-margin-top: 24px; }
-@media (max-width: 850px) { .mast-note { display: none; } .opening-grid, .essay-grid { gap: 32px; grid-template-columns: 1fr 2fr; } .hold-section { grid-template-columns: 1fr 2fr; } .hold-outro { grid-column: 2; } .closing-grid { grid-template-columns: 1fr 2fr; gap: 32px; } .closing-note { grid-column: 2; } .colophon { display: grid; } }
-@media (max-width: 580px) {
-  .mast, .opening, .essay-grid, .closing-grid, .colophon { width: calc(100% - 36px); }
-  .mast { padding-block: 18px; gap: 14px; } .wordmark { font-size: 1.05rem; gap: 6px; } .mast > a:last-child { font-size: .7rem; }
-  .issue-line { flex-wrap: wrap; justify-content: flex-start; gap: 10px 26px; margin-top: 22px; } .issue-line span:last-child { flex-basis: 100%; }
-  .split-title { font-size: clamp(3.8rem, 17vw, 6.2rem); margin-top: 24px; }
+/* Breakpoints in em follow the reader's text size as well as the window. */
+@media (max-width: 53.125em) {
+  .mast-note { display: none; }
+  .opening-grid, .essay-grid, .closing-grid { gap: 32px; grid-template-columns: 1fr 2fr; }
+  .hold-section { grid-template-columns: 1fr 2fr; } .hold-outro { grid-column: 2; }
+  .colophon { display: grid; }
+}
+@media (max-width: 43.75em) { .rain-figure .labels { display: none; } }
+@media (max-width: 36.25em) {
+  .mast, .opening, .essay-grid, .closing-grid { width: calc(100% - 36px); }
+  .mast { padding-block: 18px 16px; justify-content: space-between; } .wordmark { font-size: 1.1rem; }
+  .split-title { font-size: min(17.4vw, 96px); padding-top: 30px; }
   .opening-grid, .essay-grid, .closing-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
-  .opening-grid { margin-top: 22px; } .opening-note p { max-width: 32ch; margin: 16px 0; font-size: 1.13rem; }
-  .rain-figure { margin-top: 6px; } figcaption { display: grid; gap: 3px; }
-  .essay-grid { padding-block: 48px; } .contents { gap: 14px; border-bottom: 1px solid var(--line); padding-bottom: 28px; }
-  .hold-section { grid-template-columns: minmax(0, 1fr); padding: 36px 18px; gap: 28px; } .hold-intro { margin-top: 12px; } .hold-title { font-size: clamp(3rem, 13vw, 4.5rem); } .hold-outro { grid-column: auto; text-align: left; margin: 0; }
-  .closing-grid { padding-block: 40px; } .closing-note { grid-column: auto; } .closing-grid .section-number { margin: 0; }
+  .opening-grid { margin-top: 26px; } .opening-note p { max-width: 30ch; font-size: 1.15rem; margin-bottom: 20px; }
+  figcaption { display: grid; gap: 2px; }
+  .kerb { margin-top: 48px; }
+  .essay-grid { padding-block: 48px; } .contents { gap: 12px; border-bottom: 1px solid var(--rule); padding-bottom: 28px; }
+  .hold-section { grid-template-columns: minmax(0, 1fr); padding: 48px 18px; gap: 28px; } .hold-outro { grid-column: auto; justify-self: start; text-align: left; }
+  .hold-title > span:nth-child(1) { font-size: min(21vw, 86px); } .hold-title > span:nth-child(2) { font-size: min(14vw, 61px); }
+  .closing-grid { padding-block: 48px; } .closing-grid .prose, .closing-note { grid-column: auto; grid-row: auto; }
+  .colophon { padding-inline: 18px; background-size: calc(100% - 36px) 1px, auto; }
 }

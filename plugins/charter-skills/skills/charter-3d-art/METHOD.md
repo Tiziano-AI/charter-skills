@@ -14,19 +14,69 @@ survive. For existing work, look at the actual scene at its ordinary viewing
 size before selecting a repair. A beautiful close-up can conceal a confused
 composition, unreadable mechanism or lifeless character in use.
 
-For new work, make the defining visual relationship concrete early: mass
-against space, surface against light, pose against movement. When the look is
-still open, settle it with the person before construction as
-`charter-visual-asset-production` describes: a few distinct directions can
-help, as generated concept takes or as rough renders in the target renderer
-when its light and material decide the look. Then show the chosen direction as
-a fragment in the target renderer: a concept settles a direction without
-proving its realization. A representative fragment can settle the defining
-relationship; it cannot establish the quality of an unseen whole. For an
-animated piece that whole includes timing and camera movement, which need not
-wait for the look: put the complete sequence in motion with stand-in parts and
-a rough camera path while the direction is being chosen, then reframe the shots
-to the chosen direction and swap detail in as it lands.
+## Choose from the subject's world
+
+For a new model or scene, look beyond the category to real examples and supplied
+content: how the thing is made, what it is used for, where and when it belongs,
+how it is handled and ages. Read those causes into proportions, joints,
+markings, material scale and arrangements. If the brief supplies no references,
+seek examples of that actual kind of object, place or performance: makers'
+drawings and patents, museum and collection photographs, process or performance
+footage, field photographs of the place in use. Pictures with the desired mood
+alone supply only the mood. A pristine casting and a dented, re-riveted
+sheet-metal casing differ in edge and assembly logic before either needs
+decorative detail; a carnival float built over a truck chassis shows plywood,
+staples and fast paint where a carved temple bracket shows grain and joinery; a
+sumo wrestler's settled stance and a capoeira player's swaying ginga put weight
+in different places. A replica keeps its identifying relationships; an invented
+world chooses which making, spatial or performance rules it follows. Age and
+wear need evidence or an intended history, not an obligation to look realistic.
+
+Defaults change with the model, tools and year. One to recognize in current 3D
+work is the unchosen showroom: a studio sweep, the hero centred at eye level or
+an elevated three-quarter view, an unexamined normal lens, a broad warm key
+with cool fill, uniformly clean materials and identical rounded edges. A scene
+scripted from Blender's factory file starts close to it: a 50 mm lens on a
+36 mm sensor looking down from an elevated three-quarter position, one point
+light, every new Principled BSDF at roughness 0.5, and new keys whose automatic
+Bézier handles ease every start and stop. When such a scene still looks
+unfinished, the next reach is for bloom, shallow focus, fog and grime over
+everything. A stable centred view and sweep help inspection or catalogue
+consistency; clean uniform finishes can be exactly right for an as-made
+product; warm/cool light can belong to a selected palette or contrasting
+sources; atmosphere is right where what it hides or separates is the subject.
+A place, encounter or performance needs its own reasons for borrowing that
+whole arrangement. The same applies to the automatic orbit or identical easing
+on every part: useful for inspection or coordinated machinery, not evidence
+that an action is chosen. Keep a default because it serves the idea, not
+because it escaped a decision.
+
+When the look is open, settle it with the person before construction, as
+`charter-visual-asset-production` describes: put a few genuinely different
+directions before them, as generated concept takes or, when the target's light
+or material decides the look, as rough renders in the target renderer. Make
+each direction a set of decisions concrete enough to be wrong: the defining
+silhouette or interval, camera distance and height, field of view and crop,
+light/dark grouping, material family and the movement that matters. Would the
+same direction serve the same kind of commission for an unrelated subject? If
+so, find the choice that ignores what makes this subject particular. Where the
+person, a brand or an established visual language already sets the look, work
+within it and put that question only to what it leaves free, such as a new
+prop's silhouette, role and wear; a catalogue may rightly hold camera and light
+constant. A local repair keeps the existing direction rather than reopening it.
+The [art-direction reference](references/art-direction-and-diagnosis.md) works
+through evidence-to-choice translations across different kinds of scene, and
+renders one invented frontage twice, directed and in that default arrangement.
+
+Then show the chosen direction as an early fragment in the target renderer, at
+the actual viewing size, and put the same question to what is visible, not
+just to what the plan says. A concept settles a direction without proving its
+realization. A representative fragment can settle the defining relationship;
+it cannot establish the quality of an unseen whole. For an animated piece that
+whole includes timing and camera movement, which need not wait for the look:
+put the complete sequence in motion with stand-in parts and a rough camera path
+while the direction is being chosen, then reframe the shots to the chosen
+direction and swap detail in as it lands.
 
 ## Direct the eye before adding detail
 
@@ -55,13 +105,19 @@ single-view construction. A mood reference does not bind every contour, and
 interactive work needs the relationship to survive its permitted views, not
 just match one picture.
 
-Give the scene a hierarchy of large forms, supporting forms and accents.
-Proportion, silhouette, negative space and grouped light/dark areas establish
-the reading that texture elaborates. If every edge is bright and every surface
-is busy, attention has nowhere to settle. Repair an undistinguished primary
-shape in the model or composition rather than covering it with scratches,
-bloom or expensive materials. Conversely, ornament can be the subject: organize
-its richness instead of stripping away its identity.
+Give the scene a hierarchy of large forms, supporting forms and accents: the
+defining relationship at full strength, supporting forms exact without
+competing for the same emphasis. Proportion, silhouette, negative space and
+grouped light/dark areas establish the reading that texture elaborates. If
+every edge is bright and every surface is busy, attention has nowhere to
+settle. Repair an undistinguished primary shape in the model or composition
+rather than covering it with scratches, bloom or expensive materials.
+Conversely, ornament can be the subject: its density and rhythm can carry the
+identity, with quieter intervals making that richness legible. A film can have
+related moments of emphasis, and an interactive scene can reveal them from
+different views; neither needs one permanent bright accent. In a measured
+replica, expression may belong in camera and light while the geometry stays
+exact.
 
 Coherence does not mean sameness. Related objects can share a construction
 logic, palette or rhythm while differing in age, role and emphasis. Deliberate
@@ -130,27 +186,61 @@ painted illumination can define a graphic treatment even under a moving camera;
 choose a shader that preserves that treatment rather than decomposing it into
 physical channels and expecting the style to return.
 
-Light also composes: it can separate depth, reveal gesture, guide attention or
-withhold information. Exposure, atmosphere and tone mapping change that
-composition. Neutral inspection light helps diagnose a surface; it is not
+Choose material variation by cause and scale. A broad coating response, smaller
+fabrication marks and isolated contact wear describe different things; uniform
+procedural noise does not supply their locations. Roughness changes the spread
+and sharpness of reflections, not the object's status as cheap or expensive.
+An as-made coating may need a consistent sheen; a handled region changes only
+where the observed or chosen use explains it. Edge quality follows the same
+logic: a cast junction, a machined break and a drawn graphic contour call for
+different transitions, not one bevel radius throughout.
+
+Light also composes. Decide which large areas stay light or dark before adding
+lamps. Place the key relative to the camera to reveal the required planes,
+gesture or reflection boundary; side or rear light can shape a volume, while
+frontal light can preserve a flat graphic reading. The source's apparent size
+at the subject controls shadow softness; more energy does not make it softer.
+On a polished form, design the reflected source and dark regions as shapes.
+Fill can recover needed information or erase the separation; a dark card that
+blocks bounce can deepen a selected shadow without darkening the material.
+
+Where the palette is still open, derive it from the subject's pigments,
+emitting sources, environment and chosen graphic world. Check how much of the
+frame each colour group covers and how saturated it reads after the view
+transform, not only the lamp colours; a warm key and cool fill are one possible
+relationship, not automatic depth. Exposure, atmosphere and tone mapping change
+those groups. Neutral inspection light helps diagnose a surface; it is not
 necessarily the final art direction. Neither physical accuracy nor dramatic
-contrast excuses losing something the viewer must read.
+contrast excuses losing something the viewer must read. Open
+[light, motion and runtime cost](references/light-motion-and-runtime.md) when
+camera, reflection placement or value separation will decide the look.
 
 ## Make the idea survive movement and scale
 
-The camera participates in the design. Eye height, field of view, distance and
-framing change apparent proportion and intimacy. In interactive work, establish
-them with the intended interaction; do not save a weak asset with a beauty-shot
-camera the user never gets. User-controlled views require a range of
-successful compositions, not one frozen frame. In a rendered film the authored
-camera path is the composition, and every frame of it is seen.
+The camera participates in the design. Moving close exaggerates near/far size
+differences; moving back reduces them, with focal length then choosing the
+frame. At a fixed camera position a lens change alters field of view, not
+perspective. A low eye can give mass authority; a higher eye can expose a top
+surface, layout or fragile connection that the low view hides. Choose distance,
+height and crop for that reading rather than keeping the starting lens. In
+interactive work, establish them with the intended interaction; do not save a
+weak asset with a beauty-shot camera the user never gets. User-controlled views
+require a range of successful compositions, not one frozen frame. In a rendered
+film the authored camera path is the composition, and every frame of it is seen.
 
-Movement reveals substance. Timing, contact, flex and settling can communicate
-weight or temperament; connected parts need not respond identically. A rigid
-instrument should not wobble like a creature, and an expressive character need
-not obey literal mechanics. Visual follow-through should enrich the action
-without delaying the response or falsifying a measurement that the experience
-depends on.
+Movement reveals substance. Read positions at equal time intervals: close
+spacing slows an action, wider spacing quickens it, and a hold changes what the
+viewer anticipates. Choose where force starts, which part leads, what follows
+and what settles last. Identical ease-in/ease-out on every channel can make
+unlike masses float together. Equal displacement can instead be right for a
+constant-speed traverse; a graphic pose may need a clean hold rather than
+elastic settling. A graphic world can step its motion, holding each pose for
+two or more frames as drawn animation does; decide whether the camera steps
+with it, since a smooth camera over stepped characters reads differently from a
+stepped one. A rigid instrument should not wobble like a creature, and an
+expressive character need not obey literal mechanics. Visual follow-through
+should enrich the action without delaying the response or falsifying a
+measurement that the experience depends on.
 
 Fine detail has to survive projection into pixels. Thin bright edges, tight
 patterns and sharp specular highlights can sparkle or disappear in motion even
@@ -178,103 +268,56 @@ fast hero-object scene establish the budget of its populated environment.
 ## Rendered stills and films
 
 Render time is the budget of a rendered piece: it sets how many times you can
-see the whole of it before the final render.
+see the whole of it before the final render. Before the first render in the
+kind of process the final will use, open the
+[rendered-piece protocol](references/rendered-stills-and-films.md). Confirm
+the device for every stage, denoising included, from the renderer's own
+report: a default log may name no device, and saved preferences or shell
+success do not establish what ran. In Blender's Cycles on Metal, a headless
+render calls `refresh_devices()` on the Cycles add-on preferences itself, sets
+`scene.cycles.device = 'GPU'` and `scene.cycles.denoising_use_gpu = True`,
+and runs with `--debug-cycles` and `--python-exit-code 1`; a first render that
+goes quiet may be compiling its kernels, so sample it before killing it.
 
-- From the first render in the kind of process the final will use, make the
-  renderer report the device each stage ran on, denoising included. Fallbacks
-  can be silent and a default log may name no device, so raise its logging
-  and confirm that the device lines actually appear; a filter that matches
-  nothing proves nothing. Device preferences need not travel with the scene
-  file into another process, a stage such as denoising can stay on the CPU
-  unless enabled, and one stage on the CPU can multiply the budget.
-  In Blender's Cycles on Metal (checked on 5.2), a headless process that
-  renders must itself call `refresh_devices()` on the add-on's preferences,
-  which startup does not do, keep the Metal entry's `use` on and set
-  `scene.cycles.device = 'GPU'`; final-render denoising stays on the CPU until
-  `scene.cycles.denoising_use_gpu` is on. `-- --cycles-device METAL` moves path
-  tracing only. Confirm with `--debug-cycles`, at the report's "Path tracing
-  on" and "Denoising on" lines.
-- Measure seconds per frame on the hardest shot, at the samples and
-  resolution you intend for the final, as soon as it has its final materials
-  and light: time several consecutive frames in that same kind of process,
-  apart from one-off start-up. Do this before
-  committing samples and resolution and before promising frame rate and
-  length; when the person's own numbers do not fit, show them the
-  measurement.
-- Before the long render, push a short span through the whole chain (render,
-  master, grade, encode) and check the decoded file as
-  `charter-visual-asset-production` describes for derivation. Choose a span
-  with the darkest gradient, a fade and the fastest motion. A setting whose
-  output is identical with it switched off is doing nothing.
-- A background Blender script that raises still exits 0 unless the run passes
-  `--python-exit-code 1`, so without it shell success says nothing about the
-  script. A first Cycles render on Metal can go quiet while it compiles its
-  kernels, so low renderer CPU and a silent log do not show a hang. Sample the
-  renderer's threads and the system's `MTLCompilerService` before killing the
-  run.
-- Render into durable storage in units a restart can skip once complete. A
-  unit counts as complete only when it reads back whole, or was written under
-  a temporary name and renamed when finished; the presence of a file does not
-  prove it, and a renderer's own skip-existing option may not check.
-- When exposure or grade may still change after rendering, keep a scene-linear
-  master in a floating-point format, so values above display white survive,
-  and finish it through the same view transform you judged the look in.
-  Written linear, an integer file clips those values; written through the
-  display transform, it bakes the tone curve, and at 8 bits its steps too.
-  An integer file carries them only through an encoding that maps the range
-  above white into its code values, such as a log curve, PQ or a stated
-  linear scale, at a bit depth whose steps stay invisible after the grade,
-  and the grade must decode that same mapping.
-- Sampling noise moves differently from the scene. With a fixed seed it stays
-  put on the screen while the scene slides under it; with an animated seed it
-  boils; a per-frame denoiser turns either into shifting blotches. Where the
-  camera is locked, a fixed seed keeps still areas that see no moving part
-  identical before denoising, though a denoiser or adaptive sampler that looks
-  at neighbouring pixels can still carry change in from a nearby moving part.
-  Render one frame with two seeds, denoised as the final will be: the
-  difference shows how much the noise will change wherever the image under it
-  changes, which with an animated seed or a moving camera is everywhere.
-  Where it shows at playback size, the remedy is
-  more samples or a lower noise threshold, the same every frame, which a time
-  cap does not keep.
-- A repeated feature such as gear teeth, spokes or a hex socket that moves more
-  than half its spacing per frame appears to stand still, run slow or reverse,
-  and it judders well before that. Motion blur hides this only once the
-  shutter smears each feature across a full repeat; between those rates it
-  strobes even when blurred; a high-contrast feature keeps a faint drift
-  beyond a full repeat, fading only slowly as the smear lengthens; and an
-  eased spin-up or stop passes through that band.
-  Check peak rates, not averages.
-- When you cannot watch the motion, measure the scene as the renderer
-  evaluates it, frame by frame, rather than the curves you authored: the
-  on-screen speed in pixels per frame of each moving part, and of the subject
-  and background as the camera move sweeps them across the frame (too fast
-  reads as debris, too slow as nothing); each repeated feature's peak step
-  against its spacing; and evaluated positions against their intended values,
-  which exposes jitter a still hides. The motion section of
-  `charter-visual-asset-production` covers the decoded file and when motion
-  counts as watched.
+Measure the hardest shot at intended samples and resolution before committing
+the render settings or the piece's frame rate and length. Carry a short,
+difficult span through render, master, grade and encode before the long run.
+Judge noise and repeated moving detail in motion, not from a clean still; when
+playback cannot be watched, the protocol gives the evaluated-motion checks.
+
+Render to durable, restartable units whose completeness can be established.
+If exposure or grade remains open, retain a scene-linear floating-point master
+and the view transform used to judge the look. The protocol keeps the device
+setup, timing method, failure signals, master encodings, noise and strobing
+details together.
 
 ## Find the first wrong relationship
 
 Before calling the work finished, compare it with the intended reference at
-comparable view, scale and motion. Renderer and authoring defaults are not an
-art direction: anonymous primitives, one roughness everywhere, an empty
-reflection environment or unexamined tone mapping can produce a generic look
-even when every feature is present. Keep a default because it serves the idea,
-not because it escaped a decision. Find the first visual relationship that is
-wrong. A proportion problem, a material response problem and a
-colour-management problem can all be described as “plastic”; they need
-different interventions. Isolate a suspected cause with a useful temporary
-view or material, then return to the intended scene. Diagnostic wireframes
-and neutral renders are instruments for making the art, not substitutes for
-delivering it.
+comparable view, scale and motion. “Generic” starts a diagnosis rather than
+finishing one. An interchangeable scene may lack subject evidence, leave its
+staging unchosen, or lose a committed feature in construction or runtime
+translation. Name what the viewer actually sees: anonymous primitive junctions,
+identical highlights on unlike substances, a place reduced to a showroom, an
+action with no change of intent. Find the first relationship that is wrong, and
+its cause, before adding detail or effects.
+
+A proportion problem, a material response problem and a colour-management
+problem can all be described as “plastic”; they need different interventions.
+An empty reflection environment can make a sound material unreadable;
+unexamined tone mapping can erase chosen value groups. Isolate a suspected
+cause with a useful temporary view or material, then return to the intended
+scene. If the construction route cannot make the required contour or motion,
+change that route rather than accumulating cosmetic repairs. Diagnostic
+wireframes and neutral renders are instruments for making the art, not
+substitutes for delivering it.
 
 ## Depth and neighbouring work
 
 - [Art direction and visual diagnosis](references/art-direction-and-diagnosis.md):
-  open when a scene is generic, incoherent, noisy or merely technically
-  correct, or when translating a reference into a different medium.
+  open when finding a subject-specific direction, translating a reference into
+  a different medium, or diagnosing a scene that is generic, incoherent, noisy
+  or merely technically correct.
 - [Construction, materials and interchange](references/construction-and-materials.md):
   open when choosing geometry versus surface treatment, turning a CAD
   solid into render meshes, authoring texture channels, preparing moving
@@ -286,6 +329,9 @@ delivering it.
 - [Light, motion and runtime cost](references/light-motion-and-runtime.md):
   open when lighting obscures the subject, detail fails in movement, or
   appearance and performance seem to demand incompatible choices.
+- [Rendered stills and films](references/rendered-stills-and-films.md): open
+  before the first render in the final kind of process, before committing
+  samples, frame rate or length, and when motion cannot be watched.
 
 `charter-visual-asset-production` directs and finishes image/video sources,
 including concepts and texture imagery; this skill owns their interpretation

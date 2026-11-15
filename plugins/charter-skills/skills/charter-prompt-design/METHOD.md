@@ -50,6 +50,20 @@ control while avoiding needless interruption. If the task has no inspection
 access and hinges on a personal preference, asking directly is exactly right.
 The contrast, not a general preference for autonomy, supports the choice.
 
+A prompt's own formatting and tone can reappear in the output; use that
+influence where it helps, and keep numbered steps or rigid syntax when order,
+completeness or parsing depends on them. Where the output's voice is open,
+adjectives such as warm, premium, witty or professional do not settle it. Say
+what the quality consists of for this subject: who speaks to whom, what the
+voice notices and leaves out, one sentence in it beside the generic sentence
+it replaces, and the occasions where it gives way to plain information, such
+as an error or anything the user must act on. Keep an established voice
+unless the requested change concerns it. For a visual look, the craft comes
+from that domain's specialist and the prompt carries the decisions it
+reaches. In extraction, classification and compaction, required fields and
+fidelity to the source govern expression, including its tone where tone
+carries meaning.
+
 Read the draft as a literal reader would and follow each sentence fully. If
 full compliance with a passage harms the intended result, the passage
 optimizes the wrong proxy.

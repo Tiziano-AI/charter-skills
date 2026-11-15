@@ -4,7 +4,7 @@ description: 'Work discovery when a need is hard to articulate: discover the int
   result and scope through adaptive interviewing, evidence and exploration, and carry
   that understanding into the result. Clear requests need ordinary execution.'
 metadata:
-  content_version: charter-work-discovery@2026.11.07.0
+  content_version: charter-work-discovery@2026.11.15.0
 ---
 # Charter · Work Discovery
 
@@ -71,7 +71,15 @@ Choose the next move from the uncertainty, rather than a fixed intake form:
   you can discover yourself.
 - **Offer a contrast or sketch** when a preference is hard to name. A scenario,
   sample passage, diagram, visual or prototype gives them something to react
-  to. Say what it explores; polish only when the reaction depends on it.
+  to. Say what it explores; polish only when the reaction depends on it. A
+  word such as clean, warm, premium or robust is a range rather than an
+  answer: very different results satisfy it. Contrast versions that differ on
+  the axis the word leaves open (one paragraph in two voices, name sets built
+  on different ideas, two directions for a page), finished to the same degree
+  so polish does not cast the vote. Something they admire and something they
+  would hate to be mistaken for often locate a taste faster than a
+  description. When they leave the choice to you, or a brand or convention
+  already settles it, decide rather than ask.
 
 Purpose, audience, attempts, constraints and preferences matter through the
 work, not as mandatory questions in order. Reflect emerging understanding when

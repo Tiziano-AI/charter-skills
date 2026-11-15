@@ -4,7 +4,7 @@ description: 'Design the substantive work of a new or incomplete product: turn i
   into usable findings, decisions or actions and assign each transformation. Not ordinary
   implementation of a clear function, market strategy or the journey through the product.'
 metadata:
-  content_version: charter-functional-design@2026.10.24.0
+  content_version: charter-functional-design@2026.11.15.0
 ---
 # Charter · Functional Design
 
@@ -33,6 +33,16 @@ result. An example reveals omissions that component diagrams conceal: which
 criterion applies, how conflicting sources affect a conclusion, what a missing
 answer means, or who can authorize a change. The result should contain the
 substance the real recipient needs, not just the shape of a response object.
+
+When the kind of result is open, a summary, a score and a list of
+recommendations can look complete while leaving the recipient without the
+object they need next. Look instead at what a practitioner who does this work
+well hands over and what the recipient does with it next: an editor returns the
+marked-up draft, a coach sets the next drill on the movement that keeps
+breaking down, a building inspector issues a list of defects keyed to rooms.
+Design the transformation that produces that object, with that practitioner's
+criteria. A summary or a score is the right result when the recipient's next
+step is a decision that needs one, such as a panel ranking grant proposals.
 
 Separate three kinds of incompleteness. **Missing information** needs retrieval,
 acquisition or a useful question. **Missing transformation** needs a method for

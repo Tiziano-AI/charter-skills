@@ -1,18 +1,18 @@
 // Adapted from Apple's Food Truck sample. See ../LICENSE.txt and README.md.
 import SwiftUI
 
-struct ReadyCommand {
+struct StatusCommand {
     let title: String
     let perform: () -> Void
 }
 
-struct ReadyCommandKey: FocusedValueKey { typealias Value = ReadyCommand }
+struct StatusCommandKey: FocusedValueKey { typealias Value = StatusCommand }
 struct LargerTextKey: FocusedValueKey { typealias Value = Binding<Bool> }
 
 extension FocusedValues {
-    var readyCommand: ReadyCommand? {
-        get { self[ReadyCommandKey.self] }
-        set { self[ReadyCommandKey.self] = newValue }
+    var statusCommand: StatusCommand? {
+        get { self[StatusCommandKey.self] }
+        set { self[StatusCommandKey.self] = newValue }
     }
     var largerText: Binding<Bool>? {
         get { self[LargerTextKey.self] }
@@ -20,194 +20,179 @@ extension FocusedValues {
     }
 }
 
+/// Wide windows show the queue and the ticket together; under this width the
+/// same content becomes a stack. The threshold suits this queue, not a device.
+let compactWidth: CGFloat = 720
+
 struct CounterView: View {
     @Bindable var store: OrderStore
     @Bindable var navigation: CounterNavigation
-    var textScale = 1.0
+    @Environment(\.undoManager) private var undoManager
 
     var body: some View {
         GeometryReader { geometry in
-            let compact = geometry.size.width < 720
+            let compact = geometry.size.width < compactWidth
             Group {
                 if compact {
                     NavigationStack(path: $navigation.path) {
-                        orders(compact: true)
-                            .navigationDestination(for: String.self) { id in detail(id) }
+                        QueueList(store: store, navigation: navigation, compact: true)
+                            .navigationDestination(for: Int.self) { id in detail(id) }
                     }
                 } else {
                     NavigationSplitView {
-                        orders(compact: false)
-                            .navigationSplitViewColumnWidth(min: 260, ideal: 300, max: 360)
+                        QueueList(store: store, navigation: navigation, compact: false)
+                            .navigationSplitViewColumnWidth(min: 250, ideal: 290, max: 380)
                     } detail: {
                         detail(navigation.selection)
                     }
-                    .navigationSplitViewStyle(.balanced)
                 }
             }
             .onChange(of: compact) { _, value in navigation.adapt(toCompact: value) }
-            .focusedSceneValue(\.readyCommand, selectedCommand)
+            .focusedSceneValue(\.statusCommand, command)
         }
-        .font(.system(size: 14 * textScale))
-        .tint(.orange)
-        .background(Color(nsColor: .windowBackgroundColor))
+        .navigationTitle("Pickup Counter")
+        .navigationSubtitle("Sample orders, not live")
     }
 
-    private var selectedCommand: ReadyCommand? {
+    private var command: StatusCommand? {
         guard let order = store.order(navigation.selection) else { return nil }
-        return ReadyCommand(title: order.action) { store.toggleReady(order.id) }
+        return StatusCommand(title: order.statusCommand) { toggle(order.id) }
     }
 
-    private func orders(compact: Bool) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            VStack(alignment: .leading, spacing: 7) {
-                Label("SUNRISE DONUTS", systemImage: "sun.max.fill")
-                    .font(.system(size: 11 * textScale, weight: .bold))
-                    .foregroundStyle(.secondary)
-                Text("Pickup counter")
-                    .font(.system(size: 26 * textScale, weight: .bold, design: .rounded))
-                Text("\(store.orders.count - store.readyCount) preparing · \(store.readyCount) ready")
-                    .foregroundStyle(.secondary)
-                    .accessibilityIdentifier("queue-summary")
-            }
-            .padding(20)
-
-            List(selection: $navigation.selection) {
-                ForEach(store.orders) { order in
-                    Button {
-                        navigation.select(order.id, compact: compact)
-                    } label: {
-                        OrderRow(order: order, textScale: textScale)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier("order-\(order.id)")
-                    .tag(order.id)
-                }
-            }
-            .listStyle(.sidebar)
-            .navigationTitle("Orders")
-            Text("Local sample · Changes reset when you quit")
-                .font(.system(size: 11 * textScale))
-                .foregroundStyle(.secondary)
-                .padding(20)
-        }
+    private func toggle(_ id: Int) {
+        guard let order = store.order(id) else { return }
+        store.setReady(!order.isReady, for: id, undoManager: undoManager)
     }
 
-    @ViewBuilder private func detail(_ id: String?) -> some View {
+    @ViewBuilder private func detail(_ id: Int?) -> some View {
         if let order = store.order(id) {
-            OrderDetail(order: order, textScale: textScale) { store.toggleReady(order.id) }
+            OrderDetail(order: order) { toggle(order.id) }
         } else {
-            ContentUnavailableView("Choose an order", systemImage: "takeoutbag.and.cup.and.straw",
-                                   description: Text("Review the items, then mark the order ready for pickup."))
+            ContentUnavailableView("No Order Selected", systemImage: "ticket",
+                                   description: Text("Choose an order in the queue to see its ticket."))
         }
     }
 }
 
-struct OrderRow: View {
-    let order: Order
-    let textScale: Double
+struct QueueList: View {
+    @Bindable var store: OrderStore
+    @Bindable var navigation: CounterNavigation
+    let compact: Bool
+    // The queue takes the keyboard at launch, so the arrow keys move through it.
+    @FocusState private var focused: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(alignment: .firstTextBaseline) {
-                Text("#\(order.id)").fontWeight(.bold).monospacedDigit()
-                Spacer(minLength: 8)
-                Text(price(order.total)).foregroundStyle(.secondary)
+        Group {
+            if compact {
+                // In the stack a row opens the ticket; arrow keys must not push it.
+                List {
+                    sections { order in NavigationLink(value: order.id) { QueueRow(order: order) } }
+                }
+            } else {
+                List(selection: Binding(get: { navigation.selection },
+                                        set: { navigation.select($0, compact: false) })) {
+                    sections { order in QueueRow(order: order).tag(order.id) }
+                }
+                .focused($focused)
+                .task { focused = true }
             }
-            Text(order.customer).fontWeight(.medium)
-            Text("\(order.itemCount) donuts")
-                .foregroundStyle(.secondary)
-            StatusLabel(isReady: order.isReady, textScale: textScale)
         }
-        .padding(.vertical, 10)
-        .accessibilityElement(children: .combine)
+        .listStyle(.sidebar)
+    }
+
+    @ViewBuilder
+    private func sections<Row: View>(@ViewBuilder row: @escaping (Order) -> Row) -> some View {
+        if !store.preparing.isEmpty {
+            Section("Preparing") { ForEach(store.preparing) { row($0) } }
+        }
+        if !store.ready.isEmpty {
+            Section("Ready") { ForEach(store.ready) { row($0) } }
+        }
     }
 }
 
-struct StatusLabel: View {
-    let isReady: Bool
-    let textScale: Double
+/// Number, name, count and state at Mac density. The section names the state;
+/// the symbol's shape repeats it on every row.
+struct QueueRow: View {
+    let order: Order
 
     var body: some View {
-        Label {
-            Text(isReady ? "Ready for pickup" : "Preparing")
-                .foregroundStyle(isReady ? Color.primary : Color.secondary)
-        } icon: {
-            Image(systemName: isReady ? "checkmark.circle.fill" : "circle.dotted")
-                .foregroundStyle(isReady ? Color.green : Color.secondary)
+        HStack(spacing: 8) {
+            StatusSymbol(isReady: order.isReady)
+            Text(order.id, format: .number.grouping(.never))
+                .fontWeight(.semibold)
+                .monospacedDigit()
+            Text(order.name)
+                .lineLimit(1)
+                .truncationMode(.tail)
+            Spacer(minLength: 6)
+            Text(order.count, format: .number)
+                .monospacedDigit()
+                .foregroundStyle(.secondary)
         }
-        .font(.system(size: 12 * textScale, weight: .semibold))
+        .textStyle(.body)
+        .help("\(order.name), \(order.count) doughnuts")
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Order \(order.id), \(order.name)")
+        .accessibilityValue("\(order.count) doughnuts, \(order.status)")
     }
 }
 
 struct OrderDetail: View {
     let order: Order
-    let textScale: Double
     let changeStatus: () -> Void
+    @Environment(\.contentTextScale) private var scale
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 28) {
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("ORDER #\(order.id)")
-                        .font(.system(size: 12 * textScale, weight: .bold))
-                        .foregroundStyle(.secondary)
-                    Text(order.customer)
-                        .font(.system(size: 32 * textScale, weight: .bold, design: .rounded))
-                        .fixedSize(horizontal: false, vertical: true)
-                    StatusLabel(isReady: order.isReady, textScale: textScale)
-                        .accessibilityIdentifier("detail-status")
-                }
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("In the box").font(.system(size: 18 * textScale, weight: .semibold))
-                    ForEach(order.items) { item in
-                        HStack(alignment: .firstTextBaseline, spacing: 12) {
-                            Text("\(item.quantity)×").foregroundStyle(.secondary).monospacedDigit()
-                            Text(item.id).fixedSize(horizontal: false, vertical: true)
-                            Spacer(minLength: 4)
-                            Text(price(item.quantity * item.unitPrice)).monospacedDigit()
-                                .fixedSize()
-                        }
-                    }
-                    Divider()
-                    HStack {
-                        Text("Total").fontWeight(.semibold)
-                        Spacer()
-                        Text(price(order.total)).fontWeight(.semibold).monospacedDigit()
-                    }
-                }
-                if !order.note.isEmpty {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Label("Packing note", systemImage: "shippingbox")
-                            .fontWeight(.semibold)
-                        Text(order.note).fixedSize(horizontal: false, vertical: true)
-                    }
-                    .padding(16)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(.quaternary.opacity(0.5), in: .rect(cornerRadius: 12))
-                }
-                VStack(alignment: .leading, spacing: 12) {
-                    Button(action: changeStatus) {
-                        Label(order.action, systemImage: order.isReady ? "arrow.uturn.backward" : "checkmark")
-                            .fixedSize(horizontal: false, vertical: true)
-                            .padding(.vertical, 4)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .accessibilityIdentifier("change-status")
-                    Text(order.isReady ? "The order stays in the queue so the counter can find it."
-                         : "Mark ready after every item is packed. You can change it back.")
-                        .font(.system(size: 12 * textScale))
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-            .padding(28)
-            .frame(maxWidth: 640, alignment: .leading)
-            .frame(maxWidth: .infinity, alignment: .leading)
+            TicketOnRail(order: order)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 28)
+                .frame(maxWidth: .infinity)
         }
-        .navigationTitle("Order #\(order.id)")
-        .textSelection(.enabled)
+        // The action stays in view however long the ticket is, at the ticket's
+        // trailing edge, where the eye ends after reading it.
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            VStack(spacing: 0) {
+                Divider()
+                HStack {
+                    Spacer()
+                    StatusButton(order: order, action: changeStatus)
+                }
+                .frame(maxWidth: 440 * scale)
+                .padding(.horizontal, 42)
+                .padding(.vertical, 14)
+                .frame(maxWidth: .infinity)
+            }
+            .background(.bar)
+        }
+    }
+}
+
+/// Marking ready is the primary action; taking it back is a correction, so it
+/// steps down to a plain button. Its label carries it where no tint is drawn.
+struct StatusButton: View {
+    let order: Order
+    let action: () -> Void
+
+    var body: some View {
+        Group { buttons }
+            .controlSize(.large)
+            .textStyle(.body, weight: .semibold)
+    }
+
+    @ViewBuilder private var buttons: some View {
+        if order.isReady {
+            Button(action: action) {
+                Label(order.statusCommand, systemImage: "arrow.uturn.backward")
+            }
+            .help("Return this order to Preparing")
+        } else {
+            Button(action: action) {
+                Label(order.statusCommand, systemImage: "checkmark")
+            }
+            .buttonStyle(.borderedProminent)
+            .help("Mark this order as Ready once it is boxed")
+        }
     }
 }

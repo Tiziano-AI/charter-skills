@@ -1,7 +1,8 @@
 # When a useful product still lacks pull
 
 Usability explains whether people can use a product. It does not by itself
-explain why they choose it, return to it or feel it is worth keeping.
+explain why they choose it, return to it or feel it is worth keeping, or how
+its first use, return and ending should be shaped for the occasion.
 
 ## Occasion and payoff
 
@@ -21,14 +22,63 @@ feel capable, express taste or identity, or trust an important result.
 Investigate which of these belongs to the actual user rather than adding
 generic delight.
 
-Craft can give a mundane activity a satisfying rhythm: clear state changes,
-precise direct manipulation, appropriate motion, consistent sound or tactile
-feedback, and an ending that leaves useful work in hand. Surprise should not
-make important behavior unpredictable.
+Craft gives a mundane activity a satisfying rhythm through the way the material
+is handled. In a queue, a stable position and a sensible next item make
+repeated work fluent. In a creative instrument, an immediate response to a
+small adjustment, with the material kept in view, makes the result easier to
+judge. When an item moves between meaningful groups, keeping its identity
+through the move lets people follow it, while a routine save needs only a quiet
+acknowledgement that leaves attention on the material. Frequent celebratory
+feedback can belong to play or performance when it is part of the activity's
+value. Surprise should not make important effects unpredictable. Where a
+product spends its emphasis, and how that follows from the practice, is in
+[Character sources](character-sources.md).
+
+When eyes are occupied elsewhere, a recognizable sound or tactile
+acknowledgement can help someone follow an action; keep its meaning consistent
+and the resulting state available to inspect. Choose the channels and their
+accessibility alternatives with the platform specialist.
 
 Autonomy matters alongside ease. Assistance that saves steps but removes
 understanding or editability may feel less valuable than a slightly slower
 tool the person controls.
+
+## First use, return and ending
+
+First use is where people learn what the product will ask of them and what it
+gives back. Decide what must be known before they invest and what can wait
+until after the first result. A choir member learning their part can hear
+their own line of this week's piece, the other voices quieter, before setting
+up a profile; a pet adoption service states the shelter's home-visit
+requirement before the long questionnaire, because that constraint decides
+whether the rest is worth filling in. A small, reversible trial with real
+material can come before organising everything. Sample content can teach the
+interaction but must stay distinguishable from the person's own.
+
+Return differs with the rhythm of the occasion:
+
+- A daily queue resumes at the next item, with filters, selection and scope
+  kept; reorientation there is repeated overhead.
+- A weekly practice opens on what changed since last time: the choir's piece
+  for Thursday and the director's new markings.
+- A yearly task reconstructs forgotten context. A returning family's school
+  enrolment carries last year's answers forward, marked as last year's until
+  confirmed, and highlights what changed, such as a new class or a new fee.
+- An interrupted case, such as an insurance claim after a burst pipe, shows
+  where it stands, what it waits on and what the person must still send.
+
+Remembering everything is not the same as helping someone resume. Stale
+material needs to look stale next to current facts.
+
+An ending is shaped around what happens next. A concert ticket purchase ends
+with the ticket where the person will look for it, the door time and the bag
+rules, not a prompt to share. A translator's hand-off leaves the client able
+to identify and use the right work: the subtitle file named for its episode
+and language, with the open questions listed. A change of address ends with a
+list of where it was sent and where it still has to go. When the job is
+finished, a stable record can be better than another prompt. A celebration
+fits an achievement the person values, such as a submitted thesis; it cannot
+stand in for the result or imply that an unresolved commitment is settled.
 
 ## Accumulated value without captivity
 

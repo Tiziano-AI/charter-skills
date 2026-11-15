@@ -87,6 +87,28 @@ not a reconstruction of the original painting layers. For a commission that
 must keep a single continuous scene, another source or a creative redraw
 would be needed instead.
 
+## The type follows the invitation
+
+The three layouts share one editorial wrapper: a pale paper field or a dark
+green ground, a serif headline whose last words turn italic, a spaced capital
+line of three verbs, a short rule and a credit line joined by middle dots. It
+invites reading as discovery rather than retelling the episode, and literary
+type on quiet paper gives the copy room without covering the art: a
+reading-led direction, chosen for that invitation. An episode-led invitation
+would start from what the panels show (the hand-drawn map with its red cross,
+the door with the eye, the witch's hat, the cat at a run), with copy that
+follows the map, a ground from the canopy green or the paper of the map, and
+lettering from the comic's own font, once that font's current file and licence
+are confirmed at the author's repository. Neither is
+the more authentic wrapper; they make different invitations. What carries to
+another job is the panel logic, and the wrapper is chosen again for that job.
+
+The SVGs name Georgia and Arial with fallbacks. Which fonts a machine has, and
+how its renderer sets them, can change glyphs and line fit, so inspect the
+rendered output; where the display lettering must be identical everywhere,
+keep the editable source with its licensed font and deliver an outlined
+derivative.
+
 ## What can be carried to another job
 
 The reusable part is the separation between source pixels, visible panel,

@@ -56,6 +56,19 @@ Rules:
 - Verify the deployment target and symbol availability before depending on a
   new symbol or effect; current tool availability is not OS availability.
 
+## Symbols As Part Of The Identity
+
+Choose symbol rendering and weight by role within a coherent app vocabulary.
+Monochrome suits dense controls; hierarchical rendering uses opacity to
+distinguish layers of one color, such as the accent; palette assigns colors to
+layers when that distinction helps; multicolor retains intrinsic colors where
+they carry meaning, such as a green leaf or the red of a slashed trash can.
+Match weight and scale to surrounding text and use the same symbol for the
+same action. A custom set is useful when the standard vocabulary cannot
+express the content clearly, while common actions retain familiar metaphors.
+[Native identity](native-identity.md) relates these choices to the rest of the
+app.
+
 ## Menus And Toolbars
 
 - Put symbols where recognition speed matters.

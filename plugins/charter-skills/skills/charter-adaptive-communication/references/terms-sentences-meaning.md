@@ -112,6 +112,38 @@ adds an irrelevant person and may change elapsed time into a promise about
 an individual's action. Choose the grammatical subject that sustains the
 passage's focus without obscuring a relevant responsibility.
 
+## Let a paragraph develop its point
+
+In English explanatory prose, a sentence opening can carry a familiar subject
+forward; its ending often gives weight to the new point. Link to what the
+reader already holds, then place the intended emphasis where the clause
+comes to rest. A warning may need its new consequence first.
+
+Consider these invented facts about a score: a manuscript has pencilled
+corrections in its margins, and a digital edition places them beside the
+printed score for comparison. This version leaves the reader to link the
+two sentences:
+
+> Pencilled corrections appear in the manuscript's margins. A side-by-side
+> comparison with the printed score is available in the digital edition.
+
+The paragraph can open its second sentence on the corrections the first one
+ends with, and close on what the edition lets readers do:
+
+> The manuscript's margins carry pencilled corrections. Those corrections sit
+> beside the printed score in the digital edition, so readers can compare the
+> two.
+
+Emphasis can also change while the facts stay the same. “At the station, Lena
+met her brother” closes on the person; “Lena met her brother at the station”
+closes on the place. Choose from what this moment turns on: who she met or
+where they met. In dialogue or verse, rhythm and the speaker's habits may
+carry that emphasis another way.
+
+[Gopen and Swan, *The Science of Scientific Writing*](https://georgegopen.com/wp-content/uploads/2026/04/the-science-of-scientific-writing-1.pdf)
+develop this for English scientific prose and call it a principle, not a
+rule.
+
 ## Compression has a semantic cost
 
 An edit can remove words while multiplying possible interpretations.
@@ -128,8 +160,9 @@ meaning, not the shortest grammatical string.
 
 ## Worked contrasts
 
-- Concrete verbs reveal what stacked nouns conceal: "The editor approves the
-  draft" reads more easily than "draft approval execution by editorial."
+- “We reviewed the returns and found two missing dates” carries the action in
+  its verbs; “Our review of the returns identified two missing dates” turns
+  it into a noun, which suits a passage whose subject is the review itself.
 - Active voice is not worth inventing an actor: "The file was removed; the log
   does not identify who removed it" is more faithful than an unsupported "The
   administrator removed the file."

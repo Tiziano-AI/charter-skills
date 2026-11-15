@@ -42,6 +42,16 @@ leave. A checklist that reveals optional work as unfinished can instead create
 an obligation the product never needed. Avoid making completion pressure the
 source of engagement.
 
+Repeated work makes small discontinuities expensive. After an action, decide
+what stays under the person's hand: keep selection, focus, scope and
+comparison context when the action changed only part of the work. Advance to
+the next item when disposition is the job, as in a queue of flagged posts
+awaiting moderation; leave the changed item in view when inspection is the job,
+as after adjusting a photograph's crop. A routine operation can acknowledge
+where it happened, while a result that needs a decision deserves a visible
+stopping point. A faster transition is worse if it repeatedly makes people find
+their place again.
+
 ## Input and recovery
 
 Prevent predictable slips through constraints, sensible grouping, separation

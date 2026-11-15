@@ -4,7 +4,7 @@ description: 'Decision design for consequential choices involving uncertainty, c
   preferences or shared commitments: integrate existing contributions, compare feasible
   options and recommend an actionable choice. Market bets are product strategy.'
 metadata:
-  content_version: charter-decision-design@2026.10.16.0
+  content_version: charter-decision-design@2026.11.15.0
 ---
 # Charter · Decision Design
 
@@ -53,6 +53,14 @@ Options need to be feasible and materially different. Status quo, delay and a
 staged commitment are real alternatives only when their consequences are
 credible. A fictional "do nothing" that ignores an expiring contract biases
 the comparison as surely as a fictional perfect replacement.
+
+When the first list is only keep things as they are, change a little or
+change a lot, it can hide other ways to satisfy what matters. A better option
+often comes from what the owner values: what would they choose if none of the
+listed options existed, which part of each carries its advantage, and can
+compatible parts be combined into a feasible alternative? When the commission
+is to compare final approved bids without reopening procurement, work within
+that set.
 
 Dominance is a strong simplifier when one option is no worse on every material
 concern and better on at least one. Most consequential choices are not

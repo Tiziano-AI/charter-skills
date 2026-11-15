@@ -61,10 +61,15 @@ sizes can fail as windows, text and control families change. Preserve desktop
 comparison density rather than converting every Mac control into a large
 capsule.
 
-Typography and alignment carry hierarchy even without color. Use dynamic
-colors and materials where they fit the system; do not make a brand treatment
-obscure state or legibility. Symbols are compact when their meaning is known;
-text is better when the action would be guessed.
+Typography and alignment carry hierarchy even without color: the system text
+styles give the scale, and a role's design and width say what kind of
+information it carries. Use dynamic colors and materials where they fit the
+system. A brand treatment can shape content, accent, icon and words while
+keeping states legible and familiar controls recognizable;
+[native identity](native-identity.md) says where identity goes, and
+[native craft](native-craft.md) gives the type, color, density and copy
+particulars. Symbols are compact when their meaning is known; text is better
+when the action would be guessed.
 
 Motion should explain continuity or state. A source-anchored transition can
 help orientation, but motion is not required to prove that two objects relate.
@@ -87,6 +92,8 @@ comfort or command routing between windows.
 
 - <https://developer.apple.com/design/human-interface-guidelines/>
 - <https://developer.apple.com/design/human-interface-guidelines/toolbars>
+- <https://developer.apple.com/design/human-interface-guidelines/typography>
+- <https://developer.apple.com/design/human-interface-guidelines/branding>
 - <https://developer.apple.com/design/human-interface-guidelines/designing-for-visionos>
 - <https://developer.apple.com/videos/play/wwdc2026/250/>
 - <https://developer.apple.com/videos/play/wwdc2026/292/>

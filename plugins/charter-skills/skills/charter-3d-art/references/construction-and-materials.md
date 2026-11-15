@@ -50,6 +50,15 @@ another contour and shadow. Repeated incisions preserve the body's continuity
 through the material left between them. Repeated detached panels express an
 assembly, even when their overall envelope matches the original mass.
 
+Choose edge character by the operation or graphic language it expresses. A
+cast junction can carry a broad fillet into its wall while a machined lip has a
+small crisp break. A cut-paper contour and a soft inflated character need
+different treatment again. Read the resulting highlight width at the closest
+and ordinary views: a radius that is invisible at one distance can dominate
+the silhouette at another. If dimensions are binding, change light, framing or
+sampling before changing the measured edge to make it catch light. A rounded
+graphic world can consistently exaggerate edges when that is its chosen logic.
+
 The [vessel construction study](form-construction-study.md) makes these
 relationships editable: two profiles, variable-radius handle controls,
 localized root blending, exported meshes and the same forms under different
@@ -109,6 +118,23 @@ not share one response merely because they occupy one object. Roughness
 controls the distribution of reflected light; normal detail changes surface
 orientation; colour specifies a different property. Use the material model's
 actual semantics rather than treating each channel as a contrast slider.
+
+Separate the scales and locations of variation. The broad finish establishes
+the material family; smaller fabrication texture explains how a surface is
+made; individual handling marks explain use. Set their size against the object
+and their visibility in the intended frame before increasing amplitude.
+Enlarging a fine casting texture until it reads from far away can make the
+whole object seem miniature or eroded. A graphic treatment may instead omit
+that texture and preserve the broad value and reflection groups.
+
+Where a reference shows polished contact, change the response at that contact;
+where it shows deposits in sheltered areas, locate them there. A printed mark
+can change pigment without changing roughness. A worn coating that exposes a
+different substrate can change several properties together. A pristine coating
+may need no local variation at all. Lower roughness sharpens the reflected
+source image and higher roughness spreads it; choose against the actual
+reflection environment, not a generic “premium” setting. Colour, roughness and
+normal detail can share feature locations without using the same noise values.
 
 A photograph or generated image mixes these properties with illumination,
 perspective and processing. Ask for a source suited to the intended channel,
@@ -183,6 +209,11 @@ constraints, not with a claim that export validation makes the art correct.
 
 ## Sources for deeper work
 
+- [Academy Software Foundation, OpenPBR Surface specification](https://academysoftwarefoundation.github.io/OpenPBR/):
+  `specular_roughness` sets the microfacet distribution's roughness, which
+  spreads or sharpens the reflected source independently of base colour. Each
+  renderer maps it to its own controls; the specification's defaults are not a
+  cross-material recipe.
 - [Sébastien Lagarde, Feeding a physically based shading model](https://seblagarde.wordpress.com/2011/08/17/feeding-a-physical-based-lighting-mode/):
   useful causal discussion of material/light compensation and judging surface
   response in-engine. Its encodings and numerical advice depend on the

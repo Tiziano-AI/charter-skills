@@ -50,6 +50,15 @@ first read is part of defining the criteria. When the decision already names
 the failure class, as in the extractor example, a short read that confirms no
 other class matters is enough.
 
+Some failures show only across outputs. Where the product is meant to answer
+the particulars of its input, as a design, a piece of writing or a
+recommendation is, lay the outputs for unlike inputs side by side: one that
+could be exchanged for another's without anyone noticing is generic, and each
+of them passes when read alone. Whether a reader can match unlabelled outputs
+to their inputs makes the class measurable. It is a failure only where being
+particular is part of what the product promises; a standard clause or a status
+code is meant to be the same every time.
+
 ## Hard cases chosen by an expert
 
 A case is useful when it contains the mechanism the decision turns on. Choose

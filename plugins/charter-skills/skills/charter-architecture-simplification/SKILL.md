@@ -4,7 +4,7 @@ description: 'Architecture simplification before building or refactoring: use su
   native, standard or upstream primitives to remove unnecessary responsibilities and
   custom layers while preserving required capability.'
 metadata:
-  content_version: charter-architecture-simplification@2026.10.12.0
+  content_version: charter-architecture-simplification@2026.11.15.0
 ---
 # Charter · Architecture Simplification
 
@@ -53,6 +53,19 @@ result into a product concept. It need not reimplement ordinary transport,
 stream parsing or retry behavior that an existing library already owns. A thin
 wrapper can still be expensive if it creates a second state machine or erases
 information every caller later needs.
+
+Where simplification leaves the decomposition open, take names from the
+work's own objects and decisions, and place boundaries around the rules or
+contracts that need to change independently: the transition that must not
+happen twice, the rule only this product applies, the translation into its
+own concepts. A controller, service and repository for every entity can
+merely repeat the storage model; the arrangement earns its place when those
+parts carry different responsibilities, and a framework's conventional layout
+can be right in a rich domain too, because the next reader already knows it.
+Ask whether a plausible change to one product rule would force unrelated
+rules or callers to move with it. If the existing structure already keeps
+those changes separate, a local removal or repair need not rename or
+reorganize it.
 
 Keep a layer when it earns its responsibility: a stable external contract,
 meaningful provider differences, a security boundary or independent release

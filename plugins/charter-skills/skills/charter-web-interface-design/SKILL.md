@@ -5,7 +5,7 @@ description: 'Design or repair websites and web apps: landing pages, portfolios,
   navigation, accessible controls and coherent asynchronous state. Native Apple interaction
   and standalone visual assets are separate jobs.'
 metadata:
-  content_version: charter-web-interface-design@2026.11.15.0
+  content_version: charter-web-interface-design@2026.11.15.1
 ---
 # Full specialist method
 

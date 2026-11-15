@@ -1,9 +1,9 @@
-@font-face { font-family: Manrope; src: url('fonts/Manrope.ttf') format('truetype'); font-weight: 200 800; font-display: swap; }
-@font-face { font-family: Fraunces; src: url('fonts/Fraunces.ttf') format('truetype'); font-weight: 100 900; font-display: swap; }
-@font-face { font-family: Fraunces; src: url('fonts/Fraunces-Italic.ttf') format('truetype'); font-weight: 100 900; font-style: italic; font-display: swap; }
+/* Shared by both compositions: box model, focus and skip treatment, and the
+   geometry of ordinary text-labelled actions. Each composition declares its
+   own faces, palette and focus colour. */
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; font-family: Manrope, sans-serif; }
+body { margin: 0; }
 button, input, select { font: inherit; }
 a { color: inherit; text-underline-offset: .25em; }
 button, select, input[type=checkbox] { cursor: pointer; }

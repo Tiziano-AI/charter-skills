@@ -4,7 +4,7 @@ description: 'Game design for creating or improving how a game plays: connect ru
   information, controls, pacing and progression to the intended player experience.
   Not engine setup, interface styling or technical QA alone.'
 metadata:
-  content_version: charter-game-design@2026.10.12.0
+  content_version: charter-game-design@2026.11.15.0
 ---
 # Full specialist method
 

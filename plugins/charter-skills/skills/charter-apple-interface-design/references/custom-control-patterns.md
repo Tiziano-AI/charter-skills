@@ -3,7 +3,9 @@
 Use this file when a custom elevated control needs Liquid Glass and standard
 Apple containers do not provide the required grouping. These are material
 patterns, not a repertoire of native product layouts. For a content-led flow
-built from standard controls, use the [order counter](order-counter.md).
+built from standard controls, use the [order counter](order-counter.md); for a
+custom content view that carries the app's identity, see
+[native identity](native-identity.md).
 
 ## Source Anchors
 

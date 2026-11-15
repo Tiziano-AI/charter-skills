@@ -4,307 +4,518 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="data:,">
-  <title>Composition studies · Charter</title>
+  <title>Composition studies</title>
   <style>
-    :root { color-scheme: light; --ink: #202922; --muted: #59635c; --line: #d7dbd3; --paper: #f2f2eb; --accent: #285d49; }
+    /* Fonts bundled for the fictional products. The teaching frame and the toolbar study use the system sans. */
+    @font-face { font-family: "Alegreya Sans"; src: url("fonts/AlegreyaSans-Regular.ttf") format("truetype"); font-weight: 400; font-display: block; }
+    @font-face { font-family: "Alegreya Sans"; src: url("fonts/AlegreyaSans-Medium.ttf") format("truetype"); font-weight: 500 700; font-display: block; }
+    @font-face { font-family: "Encode Sans Expanded"; src: url("fonts/EncodeSansExpanded-Regular.ttf") format("truetype"); font-weight: 400; font-display: block; }
+    @font-face { font-family: "Encode Sans Expanded"; src: url("fonts/EncodeSansExpanded-SemiBold.ttf") format("truetype"); font-weight: 600 700; font-display: block; }
+    @font-face { font-family: "Old Standard"; src: url("fonts/OldStandard-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Old Standard"; src: url("fonts/OldStandard-Italic.ttf") format("truetype"); font-weight: 400; font-style: italic; font-display: block; }
+    @font-face { font-family: "Anton"; src: url("fonts/Anton.ttf") format("truetype"); font-weight: 400; font-display: block; }
+    @font-face { font-family: "League Gothic"; src: url("fonts/LeagueGothic.ttf") format("truetype"); font-weight: 400; font-stretch: 75% 100%; font-display: block; }
+
+    /* ---------- Teaching frame: neutral, one plain sans, recedes ---------- */
+    :root { color-scheme: light; --frame-ground: #f5f5f5; --frame-ink: #1c1c1c; --frame-muted: #555; --frame-rule: #cdcdcd; }
     * { box-sizing: border-box; }
-    body { margin: 0; background: #e4e6df; color: var(--ink); font: 15px/1.45 Arial, Helvetica, sans-serif; }
-    h1, h2, h3, p { margin: 0; }
-    button, input, select, textarea { font: inherit; }
-    button, select { cursor: default; }
+    body { margin: 0; background: #e4e4e4; color: var(--frame-ink); font: 15px/1.45 Helvetica, Arial, sans-serif; }
+    h1, h2, h3, h4, h5, p, dl, dd, ul { margin: 0; }
+    ul { padding: 0; list-style: none; }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    button { cursor: default; }
     .intro { width: min(1360px, calc(100% - 64px)); margin: 36px auto; }
-    .intro p { max-width: 78ch; }
-    .intro nav { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 16px; }
-    a { color: #245943; text-underline-offset: 4px; }
-    .study { width: 1440px; margin: 24px auto; padding: 38px 42px 34px; background: var(--paper); }
-    .study-head { display: grid; grid-template-columns: 1fr 490px; gap: 60px; align-items: end; margin-bottom: 28px; }
-    .kicker { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; }
-    .study-head h2 { font-size: 34px; line-height: 1.12; letter-spacing: -.035em; margin-top: 8px; }
-    .brief { font-size: 16px; line-height: 1.5; color: #49564c; }
-    .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-    .panel-heading { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; font-size: 18px; letter-spacing: -.01em; }
-    .letter { font: 12px/1 monospace; color: #607263; border: 1px solid #aab6a9; padding: 5px 7px; }
-    .screen { border: 1px solid #cdd2c8; background: #fff; }
-    .panel-note { padding-top: 13px; font-size: 15px; line-height: 1.48; }
-    .panel-note strong { display: block; color: #234d3a; margin-bottom: 3px; }
-    .context { margin-top: 25px; display: grid; grid-template-columns: 240px 1fr; gap: 28px; padding-top: 19px; border-top: 1px solid #aab6a9; }
-    .context h3 { font-size: 18px; line-height: 1.25; }
-    .context p { max-width: 103ch; }
-    .takeaway { margin-top: 16px; color: #59665c; font-size: 13px; }
-    .appbar { height: 53px; padding: 0 23px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e4e7e1; font-size: 13px; }
-    .brand { letter-spacing: -.045em; font-size: 21px; font-weight: 700; }
-    .quiet { color: #627064; }
-    .small { font-size: 12px; }
-    .button { display: inline-flex; align-items: center; justify-content: center; border: 1px solid #cdd5ce; border-radius: 6px; color: #2b4236; background: #fff; padding: 9px 13px; gap: 7px; white-space: nowrap; }
-    .primary { color: #fff; background: #285d49; border-color: #285d49; font-weight: 700; }
-    .pill { display: inline-flex; padding: 4px 8px; border-radius: 20px; font-size: 12px; background: #eef3ed; color: #355942; }
-    .label { display: block; color: #495a4e; font-size: 12px; font-weight: 700; margin-bottom: 5px; }
-    .field { min-height: 35px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #cbd3cd; border-radius: 5px; padding: 7px 10px; color: #304a3a; background: #fff; font-size: 13px; }
-    .creation { height: 560px; }
-    .creation-a { background: #fbfcf7; }
-    .creation-body { padding: 28px 30px; }
-    .creation-body h3 { font-size: 23px; letter-spacing: -.025em; }
-    .compose { margin-top: 25px; background: #fff; border: 1px solid #acbeb0; border-radius: 10px; box-shadow: 0 7px 20px #30493008; padding: 17px; }
-    .prompt { font-size: 16px; line-height: 1.45; color: #243b2c; }
-    .upload { display: flex; align-items: center; gap: 10px; margin: 16px 0; font-size: 12px; }
-    .pot { width: 42px; height: 42px; border-radius: 4px; background: #e6ddd0; flex: none; }
-    .compose-footer { display: flex; align-items: center; gap: 12px; justify-content: space-between; border-top: 1px solid #ecede8; padding-top: 14px; }
-    .example-row { margin-top: 18px; font-size: 12px; display: flex; gap: 20px; color: #5c6b5e; }
-    .lab-body { padding: 20px 24px; }
-    .lab-body h3 { font-size: 23px; letter-spacing: -.025em; }
-    .tabs { display: flex; gap: 22px; margin: 17px 0 19px; border-bottom: 1px solid #dee3dc; font-size: 13px; }
-    .tabs span { padding-bottom: 8px; }
-    .tabs .active { color: #285d49; border-bottom: 2px solid #285d49; font-weight: 700; }
-    .lab-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-    .lab-prompt { margin-top: 18px; }
-    .lab-prompt .field { min-height: 76px; line-height: 1.5; display: block; }
-    .lab-footer { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; }
-    .lab-upload { margin: 12px 0; }
-    .compare { min-height: 585px; }
-    .rooms-head { padding: 21px 22px 18px; }
-    .rooms-head h3 { font-size: 24px; letter-spacing: -.025em; margin-bottom: 5px; }
-    .rooms-filter { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; font-size: 12px; }
-    .rooms-filter span { background: #edf1e9; padding: 5px 8px; border-radius: 4px; }
-    .table-wrap { padding: 0 17px; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th { font-size: 11px; text-transform: uppercase; letter-spacing: .025em; text-align: left; color: #566154; padding: 11px 6px; border-bottom: 1px solid #bbc6b7; background: #f5f6f1; }
-    td { padding: 16px 6px; border-bottom: 1px solid #e2e6dc; vertical-align: top; }
-    th.num, td.num { text-align: right; font-variant-numeric: tabular-nums; }
-    td strong { font-weight: 700; display: block; }
-    td small { font-size: 11px; color: #606b5c; }
-    .chosen td { background: #edf4e8; }
-    .choice-line { margin: 18px 22px 0; display: flex; justify-content: space-between; align-items: center; gap: 14px; font-size: 13px; }
-    .missing { color: #815130; }
-    .room-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; padding: 0 20px 20px; }
-    .room-card { border: 1px solid #dfe3d8; border-radius: 9px; overflow: hidden; }
-    .room-scene { display: block; height: 82px; width: 100%; background: #eee1cd; }
-    .room-card-body { padding: 10px 12px 12px; }
-    .room-title { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }
-    .room-title h4 { font-size: 15px; margin: 0; }
-    .room-title strong { font-size: 15px; font-variant-numeric: tabular-nums; }
-    .room-card dl { margin: 7px 0 0; display: grid; grid-template-columns: 1fr 1fr; font-size: 11px; gap: 3px 6px; }
-    .room-card dt { color: #63715f; }
-    .room-card dd { margin: 0; text-align: right; }
-    .room-card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 7px; font-size: 11px; color: #506346; }
-    .room-card-footer .button { padding: 3px 8px; font-size: 11px; }
-    .editorial { height: 585px; overflow: hidden; }
-    .editorial-a { background: #eeeadb; color: #243a30; position: relative; }
-    .journal-mast { display: flex; justify-content: space-between; align-items: baseline; margin: 20px 26px 0; padding-bottom: 12px; border-bottom: 1px solid #acb1a1; }
-    .journal-brand { font-family: Georgia, serif; font-size: 30px; letter-spacing: -.055em; }
-    .journal-article { position: relative; padding: 20px 26px; }
-    .journal-article h3 { font: 62px/.95 Georgia, serif; letter-spacing: -.055em; position: relative; z-index: 1; margin-top: 12px; max-width: 550px; }
-    .journal-deck { font: 18px/1.35 Georgia, serif; width: 245px; margin-top: 16px; position: relative; z-index: 2; }
-    .journal-art { position: absolute; width: 360px; height: 310px; right: -2px; top: 177px; }
-    .journal-byline { position: absolute; bottom: 28px; left: 26px; max-width: 230px; font-size: 11px; letter-spacing: .035em; }
-    .journal-read { display: block; margin-top: 16px; font-size: 14px; font-weight: 700; }
-    .dashboard { display: grid; grid-template-columns: 113px 1fr; height: 531px; background: #f3f5f5; }
-    .side { border-right: 1px solid #dee3e3; padding: 20px 12px; background: #fff; font-size: 12px; color: #596466; }
-    .side div { margin-bottom: 18px; }
-    .side .selected { color: #244b3e; font-weight: 700; background: #edf2ed; padding: 8px; margin-left: -5px; margin-right: -5px; border-radius: 4px; }
-    .dashboard-body { padding: 20px; }
-    .dashboard-body h3 { font-size: 23px; letter-spacing: -.02em; }
-    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin: 17px 0; }
-    .stats div { background: #fff; border: 1px solid #e0e5e4; padding: 11px; border-radius: 7px; }
-    .stats strong { font-size: 20px; display: block; }
-    .stats small { font-size: 10px; color: #65716d; }
-    .article-card { border-radius: 8px; border: 1px solid #dce2dc; background: #fff; padding: 17px; }
-    .article-card .mini-art { background: #eeeadb; height: 121px; width: 100%; }
-    .article-card h4 { font-size: 21px; line-height: 1.15; margin: 13px 0 9px; }
-    .article-card p { font-size: 13px; color: #5d6960; }
-    .article-card .meta { font-size: 10px; margin-top: 12px; color: #59665d; }
-    .article-card .button { width: 100%; margin-top: 14px; font-size: 12px; }
-    .toolbar-stage { background: #fff; border: 1px solid #cdd2c8; padding: 23px 25px 27px; }
-    .toolbar-label { margin-bottom: 14px; font-size: 18px; }
-    .bar { display: flex; gap: 12px; align-items: center; background: #f5f7f2; border: 1px solid #dfe4da; padding: 16px; position: relative; }
-    .document-name { font-size: 17px; font-weight: 700; margin-right: auto; min-width: 0; }
-    .document-name small { font-size: 12px; font-weight: 400; color: #63715f; display: block; margin-top: 4px; }
+    .intro h1 { font-size: 24px; }
+    .intro p { max-width: 78ch; margin-top: 8px; }
+    .intro nav { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 14px; }
+    .intro a { color: inherit; text-underline-offset: 3px; }
+    .study { width: 1440px; margin: 24px auto; padding: 38px 42px 30px; background: var(--frame-ground); }
+    .study-head { display: grid; grid-template-columns: 1fr 520px; gap: 64px; align-items: start; margin-bottom: 30px; }
+    .study-head h2 { font-size: 26px; line-height: 1.22; font-weight: 700; letter-spacing: -.01em; max-width: 24em; text-wrap: balance; }
+    .brief { font-size: 15px; line-height: 1.5; color: #3a3a3a; }
+    .pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
+    .arm-label { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+    .arm-label .letter { display: inline-block; min-width: 1.4em; }
+    .screen { border: 1px solid var(--frame-rule); position: relative; overflow: hidden; }
+    .panel-note { padding-top: 14px; font-size: 14.5px; line-height: 1.5; color: #333; }
+    .panel-note strong { display: block; color: var(--frame-ink); margin-bottom: 3px; }
+    .context { margin-top: 26px; display: grid; grid-template-columns: 240px 1fr; gap: 28px; padding-top: 18px; border-top: 1px solid var(--frame-rule); }
+    .context h3 { font-size: 16px; line-height: 1.3; text-wrap: balance; }
+    .context p { max-width: 100ch; }
+    .takeaway { margin-top: 14px; color: var(--frame-muted); font-size: 13.5px; }
+    .foot { margin-top: 18px; color: #777; font-size: 12px; }
+
+    /* ---------- Stillroom: raw clay, graphite, fired colour ---------- */
+    .sr { --clay: #d2d1cc; --slab: #e6e4df; --graphite: #2b2d2f; --pencil: #5c5f62; --rule: #a7a6a1; --tenmoku: #2b1f18; --tenmoku-edge: #8a4f26;
+          height: 560px; background: var(--clay); color: var(--graphite); font-family: "Alegreya Sans", sans-serif; font-size: 16px; font-variant-numeric: lining-nums; }
+    .sr-bar { height: 54px; padding: 0 26px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--rule); }
+    .sr-mark { font-weight: 500; font-size: 22px; letter-spacing: -.01em; }
+    .sr-nav { display: flex; gap: 24px; font-size: 15px; color: var(--pencil); }
+    .sr-body { padding: 26px 28px; }
+    .sr-h { font-weight: 500; font-size: 27px; line-height: 1.1; letter-spacing: -.01em; }
+    .sr-compose { margin-top: 20px; background: var(--slab); border: 1px solid var(--rule); border-radius: 3px; padding: 18px 20px 16px; }
+    .sr-label { display: block; font-size: 14px; color: var(--pencil); margin-bottom: 6px; }
+    .sr-prompt { font-size: 21px; line-height: 1.32; max-width: 26em; }
+    .sr-ref { display: flex; align-items: center; gap: 12px; margin: 16px 0 16px; font-size: 14px; line-height: 1.3; }
+    .sr-ref svg { width: 46px; height: 46px; flex: none; }
+    .sr-ref .quiet { color: var(--pencil); }
+    .sr-foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; border-top: 1px solid var(--rule); padding-top: 14px; }
+    .sr-shape { display: flex; align-items: center; gap: 11px; font-size: 14.5px; line-height: 1.35; }
+    .sr-shape svg { width: 26px; height: 32px; flex: none; }
+    .sr-shape .quiet { color: var(--pencil); }
+    .sr-shape u { text-underline-offset: 2px; }
+    .sr-fire { border: 0; border-radius: 3px; background: var(--tenmoku); color: #ece9e3; padding: 11px 18px 12px; font-family: inherit; font-weight: 500; font-size: 17px; box-shadow: inset 0 -3px 0 var(--tenmoku-edge); }
+    .sr-tiles { margin-top: 20px; }
+    .sr-tiles-label { display: block; font-size: 14px; color: var(--pencil); margin-bottom: 9px; }
+    .sr-rail { display: flex; gap: 16px; padding-top: 5px; border-top: 2px solid #77756f; }
+    .sr-tile { position: relative; width: 128px; padding: 0; border: 0; background: none; text-align: left; font-family: inherit; }
+    .sr-tile svg { display: block; width: 128px; height: 100px; }
+    .sr-tile span { position: absolute; left: 11px; top: 19px; font-size: 14px; line-height: 1.15; color: #4a4d50; }
+    .sr-tabs { display: flex; gap: 24px; margin: 16px 0 18px; border-bottom: 1px solid var(--rule); font-size: 15px; color: var(--pencil); }
+    .sr-tabs span { padding-bottom: 8px; }
+    .sr-tabs .active { color: var(--graphite); border-bottom: 2px solid var(--tenmoku); font-weight: 500; }
+    .sr-log { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 18px; row-gap: 12px; }
+    .sr-log div { border-bottom: 1px solid var(--graphite); padding-bottom: 5px; }
+    .sr-log dt { font-size: 13.5px; color: var(--pencil); }
+    .sr-log dd { margin: 2px 0 0; font-size: 16.5px; display: flex; justify-content: space-between; }
+    .sr-log dd span { color: var(--pencil); }
+    .sr-field { margin-top: 16px; }
+    .sr-field .box { margin-top: 4px; min-height: 64px; border: 1px solid var(--rule); background: var(--slab); border-radius: 3px; padding: 8px 11px; font-size: 15.5px; line-height: 1.4; }
+    .sr-b-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .sr-b-foot .quiet { color: var(--pencil); font-size: 14.5px; }
+    .sr-b .sr-ref { margin: 12px 0 12px; }
+
+    /* ---------- Commonplace: room plaques, floor plans, the booking sheet ---------- */
+    .cp { --paper: #fdfdfc; --ink: #15171a; --muted: #5a5e64; --rule: #d6d8dc; --plaque: #1d2024; --plaque-letter: #eef0f2; --marker: #ffe25a; --red: #c3311f;
+          min-height: 585px; background: var(--paper); color: var(--ink); font-family: "Encode Sans Expanded", sans-serif; font-size: 12.5px; font-variant-numeric: tabular-nums lining-nums; }
+    .cp-bar { height: 50px; padding: 0 22px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--rule); }
+    .cp-mark { font-weight: 600; font-size: 15px; letter-spacing: .02em; }
+    .cp-nav { display: flex; gap: 20px; color: var(--muted); font-size: 12px; }
+    .cp-nav .here { color: var(--ink); font-weight: 600; }
+    .cp-head { padding: 20px 22px 16px; }
+    .cp-head h4 { font-weight: 600; font-size: 19px; line-height: 1.2; letter-spacing: -.005em; }
+    .cp-head p { margin-top: 4px; color: var(--muted); font-size: 12px; }
+    .cp-req { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .cp-req span { border: 1px solid var(--ink); padding: 3px 8px 4px; font-size: 11.5px; }
+    .cp-table { width: calc(100% - 36px); margin: 0 18px; border-collapse: collapse; }
+    .cp-table th { font-size: 10.5px; font-weight: 600; text-align: left; color: var(--muted); padding: 8px 6px 7px; border-bottom: 2px solid var(--ink); }
+    .cp-table td { padding: 11px 6px; border-bottom: 1px solid var(--rule); vertical-align: middle; font-size: 12.5px; }
+    .cp-table .num { text-align: right; }
+    .cp-table .chosen td { background: var(--marker); }
+    .plaque { display: inline-block; background: var(--plaque); color: var(--plaque-letter); font-weight: 600; font-size: 10.5px; letter-spacing: .07em; text-transform: uppercase; padding: 5px 8px 5px; border-radius: 2px; line-height: 1.2; white-space: nowrap; }
+    .cp-where { display: block; margin-top: 4px; font-size: 11px; color: var(--muted); }
+    .cp-chosen-where { color: #3c3a2a; }
+    .mark { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .mark::before { content: ""; width: 9px; height: 9px; flex: none; box-sizing: border-box; }
+    .mark.yes::before { background: var(--ink); }
+    .mark.no { color: var(--red); }
+    .mark.no::before { border: 1.5px solid var(--red); background: linear-gradient(45deg, transparent 42%, var(--red) 42% 58%, transparent 58%); }
+    .mark.unknown::before { border: 1.5px dashed var(--muted); }
+    .mark.unknown { color: var(--muted); }
+    .cp-fit-no { color: var(--red); }
+    .cp-fit-unknown { color: var(--muted); }
+    .cp-fit-yes { font-weight: 600; }
+    .cp-choice { margin: 16px 22px 0; display: flex; justify-content: space-between; align-items: center; gap: 14px; font-size: 12px; line-height: 1.45; }
+    .cp-choice .quiet { color: var(--muted); }
+    .cp-btn { border: 1.5px solid var(--ink); background: var(--ink); color: var(--paper); padding: 8px 14px; font-family: inherit; font-weight: 600; font-size: 12px; border-radius: 2px; white-space: nowrap; }
+    .cp-btn.ghost { background: var(--paper); color: var(--ink); padding: 4px 9px; font-size: 11px; border-width: 1px; }
+    .cp-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 18px 18px; }
+    .cp-card { border: 1px solid var(--rule); background: #fff; }
+    .cp-card svg { display: block; width: 100%; height: 84px; }
+    .cp-card-body { padding: 10px 11px 11px; }
+    .cp-card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .cp-card-top strong { font-size: 14px; font-weight: 600; }
+    .cp-card dl { display: grid; grid-template-columns: 1fr auto; gap: 3px 6px; margin-top: 8px; font-size: 11px; }
+    .cp-card dt { color: var(--muted); }
+    .cp-card dd { text-align: right; }
+    .cp-card-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 11px; }
+
+    /* ---------- fieldnotes: the estuary charted at low water ---------- */
+    .fn { --mud: #a3987f; --ink: #1c2321; --water: #c3ccc8; --marsh: #77806a; --land: #cdcfc4; --lavender: #8a6aa2; --muted: #3f4642;
+          height: 585px; color: var(--ink); font-family: "Old Standard", serif; font-variant-numeric: lining-nums; }
+    .fn-a { background: var(--mud); }
+    .fn-chart { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .fn-mast { position: relative; z-index: 1; height: 58px; padding: 0 26px; display: flex; align-items: center; justify-content: space-between; }
+    .fn-brand { font-size: 25px; letter-spacing: -.01em; }
+    .fn-nav { display: flex; gap: 22px; font-size: 15px; }
+    .fn-title { position: absolute; z-index: 1; left: 26px; top: 112px; width: 400px; }
+    .fn-title h4 { font-weight: 400; font-size: 47px; line-height: 1.02; letter-spacing: -.015em; }
+    .fn-deck { margin-top: 14px; font-size: 19px; line-height: 1.3; width: 300px; }
+    .fn-by { position: absolute; z-index: 1; left: 26px; bottom: 26px; font-size: 14px; line-height: 1.45; }
+    .fn-by a { display: inline-block; margin-top: 8px; color: var(--ink); font-size: 17px; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+    .fn-b { background: #eceeea; }
+    .fn-b .fn-bar { height: 52px; padding: 0 22px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #c9ccc5; background: #f6f7f4; }
+    .fn-b .fn-bar .fn-nav { font-size: 14px; color: var(--muted); }
+    .fn-shell { display: grid; grid-template-columns: 116px 1fr; height: 532px; }
+    .fn-side { border-right: 1px solid #c9ccc5; padding: 18px 10px; background: #f6f7f4; font-size: 14px; color: var(--muted); }
+    .fn-side div { padding: 7px 8px; margin-bottom: 4px; }
+    .fn-side .selected { background: #dde1da; color: var(--ink); }
+    .fn-main { padding: 18px 20px; }
+    .fn-crumb { font-size: 13px; color: var(--muted); }
+    .fn-main h4 { font-weight: 400; font-size: 26px; margin-top: 2px; }
+    .fn-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin: 14px 0; }
+    .fn-stats div { background: #f6f7f4; border: 1px solid #d3d6cf; padding: 9px 11px; border-radius: 4px; }
+    .fn-stats strong { display: block; font-weight: 400; font-size: 22px; }
+    .fn-stats small { font-size: 12px; color: var(--muted); }
+    .fn-card { background: #f6f7f4; border: 1px solid #d3d6cf; border-radius: 6px; padding: 14px; }
+    .fn-card svg { display: block; width: 100%; height: 124px; }
+    .fn-card h5 { font-weight: 400; font-size: 21px; line-height: 1.15; margin: 12px 0 5px; }
+    .fn-card p { font-size: 14px; color: var(--muted); }
+    .fn-card .meta { font-size: 12.5px; margin-top: 8px; }
+    .fn-card button { width: 100%; margin-top: 12px; border: 0; border-radius: 4px; padding: 9px; background: var(--ink); color: #eef0ec; font-size: 14px; font-family: inherit; }
+
+    /* ---------- Toolbar family: deliberately plain ---------- */
+    .tb { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .toolbar-stage { background: #fff; border: 1px solid var(--frame-rule); padding: 23px 25px 27px; }
+    .toolbar-label { margin-bottom: 14px; font-size: 16px; font-weight: 700; font-family: Helvetica, Arial, sans-serif; }
+    .bar { display: flex; gap: 12px; align-items: center; background: #f4f4f4; border: 1px solid #dedede; padding: 16px; position: relative; }
+    .document-name { font-size: 16px; font-weight: 600; margin-right: auto; min-width: 0; }
+    .document-name small { font-size: 12px; font-weight: 400; color: #666; display: block; margin-top: 4px; }
     .save-slot { width: 160px; display: flex; align-items: center; }
     .preview-slot { min-height: 40px; display: flex; align-items: stretch; }
-    .metrics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 26px; margin-top: 13px; color: #675b45; font-size: 13px; }
-    .metrics strong { display: block; margin-bottom: 4px; font-size: 14px; }
-    .metrics code { font-size: 12px; }
+    .metrics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 26px; margin-top: 13px; color: #444; font-size: 13px; }
+    .metrics strong { display: block; margin-bottom: 4px; font-size: 14px; color: #1c1c1c; }
+    .metrics code, .ownership code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; }
     .toolbar-good { margin-top: 26px; }
     .good-bar { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: center; }
     .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-    .control { --control-size: 36px; --control-pad: 12px; --control-block-pad: 7px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: var(--control-size); padding: var(--control-block-pad) var(--control-pad); border: 1px solid #bfccbf; border-radius: 6px; background: #fff; font-size: 13px; line-height: 20px; white-space: nowrap; }
+    .control { --control-size: 36px; --control-pad: 12px; --control-block-pad: 7px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: var(--control-size); padding: var(--control-block-pad) var(--control-pad); border: 1px solid #bdbdbd; border-radius: 6px; background: #fff; font-size: 13px; line-height: 20px; white-space: nowrap; }
     .control--compact { --control-size: 32px; --control-pad: 10px; --control-block-pad: 5px; font-size: 12px; }
-    .control.primary { background: #285d49; color: #fff; border-color: #285d49; }
-    .status { color: #587149; font-size: 12px; white-space: nowrap; margin-right: 8px; }
-    .status:before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #69905a; margin-right: 6px; vertical-align: 1px; }
-    .status.pending { color: #7d5c2b; }
-    .status.pending:before { background: #a37b39; }
-    .control:disabled { background: #edf0e8; color: #64705d; border-color: #c6cfc0; }
-    .ownership { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 26px; padding-top: 21px; }
+    .control.primary { background: #1f1f1f; color: #fff; border-color: #1f1f1f; font-weight: 600; }
+    .status { color: #3d6b3a; font-size: 12px; white-space: nowrap; margin-right: 8px; }
+    .status:before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #4f8a4b; margin-right: 6px; vertical-align: 1px; }
+    .status.pending { color: #7a5a1e; }
+    .status.pending:before { background: #b07f26; }
+    .control:disabled { background: #eee; color: #6b6b6b; border-color: #cfcfcf; font-weight: 600; }
+    .ownership { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 26px; padding-top: 21px; font-family: Helvetica, Arial, sans-serif; }
     .ownership h4 { font-size: 14px; margin: 0 0 5px; }
-    .ownership p { font-size: 13px; color: #55644f; }
-    .ownership code { color: #304b3d; font-size: 12px; }
+    .ownership p { font-size: 13px; color: #444; }
     .stress { margin-top: 24px; display: grid; grid-template-columns: 700px 1fr; gap: 28px; align-items: center; }
     .stress .bar { gap: 12px 20px; }
-    .stress p { font-size: 14px; color: #50614e; }
-    .stress strong { color: #2f4a38; }
-    .foot { margin-top: 20px; display: flex; justify-content: space-between; color: #687263; font-size: 11px; }
+    .stress p { font-size: 14px; color: #444; font-family: Helvetica, Arial, sans-serif; }
+    .stress strong { color: #1c1c1c; }
+
+    /* ---------- Furnace Row, arm A: a familiar look, well made ---------- */
+    .fa { --night: #0d0e10; --raise: #17191c; --text: #f1f2f3; --dim: #8d9198; --line: #26292e; --neon: #c6f432;
+          height: 812px; background: var(--night); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .fa-mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--dim); }
+    .fa-bar { height: 58px; padding: 0 28px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+    .fa-mark { font-weight: 800; font-size: 15px; letter-spacing: .12em; }
+    .fa-nav { display: flex; gap: 24px; font-size: 13.5px; color: var(--dim); }
+    .fa-nav .here { color: var(--text); box-shadow: 0 2px 0 var(--neon); padding-bottom: 3px; }
+    .fa-head { padding: 28px 28px 0; display: flex; align-items: end; justify-content: space-between; }
+    .fa-head h4 { font-size: 46px; line-height: 1; font-weight: 700; letter-spacing: -.035em; }
+    .fa-head .fa-mono { display: block; margin-top: 10px; }
+    .fa-filter { display: flex; gap: 6px; }
+    .fa-filter span { border: 1px solid #3a3e44; border-radius: 999px; padding: 5px 12px; font-size: 12.5px; color: #c9ccd1; }
+    .fa-filter .on { background: var(--neon); color: #0d0e10; border-color: var(--neon); font-weight: 600; }
+    .fa-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px 18px; padding: 26px 28px 0; }
+    .fa-item svg { display: block; width: 100%; aspect-ratio: 1; border-radius: 6px; }
+    .fa-item h5 { margin-top: 10px; font-size: 14.5px; font-weight: 600; line-height: 1.25; }
+    .fa-item p { font-size: 13px; color: var(--dim); margin-top: 1px; }
+    .fa-item .fa-mono { margin-top: 6px; }
+    .fa-player { position: absolute; left: 0; right: 0; bottom: 0; height: 74px; background: var(--raise); border-top: 1px solid var(--line); display: grid; grid-template-columns: 48px 1fr 40px 220px; gap: 14px; align-items: center; padding: 0 28px 0 20px; }
+    .fa-player > svg { width: 48px; height: 48px; border-radius: 4px; display: block; }
+    .fa-player strong { display: block; font-size: 14px; font-weight: 600; }
+    .fa-player small { font-size: 12.5px; color: var(--dim); }
+    .fa-play { width: 40px; height: 40px; border-radius: 50%; background: var(--neon); display: grid; place-items: center; border: 0; }
+    .fa-progress { display: grid; gap: 7px; }
+    .fa-progress i { display: block; height: 3px; background: #2e3237; border-radius: 2px; position: relative; }
+    .fa-progress i::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 52%; background: var(--neon); border-radius: 2px; }
+    .fa-progress .fa-mono { display: flex; justify-content: space-between; font-variant-numeric: tabular-nums; }
+
+    /* ---------- Furnace Row, arm B: the label's own printed matter ---------- */
+    .fr { --sleeve: #ff5c1a; --ink: #111; --stamp: #2d1566;
+          height: 812px; background: var(--sleeve); color: var(--ink); font-family: "League Gothic", sans-serif; }
+    .fr-bar { height: 44px; padding: 0 26px; display: flex; align-items: center; justify-content: flex-end; font-size: 19px; letter-spacing: .03em; text-transform: uppercase; }
+    .fr-bar nav { display: flex; gap: 22px; }
+    .fr-bar .here { border-bottom: 3px solid var(--ink); }
+    /* The name fills the measure, as a poster printer fits a line. In Anton at -.012em, the ink of FURNACE ROW
+       is 4.956em wide and begins .0381em right of the pen position, so the size follows the container width. */
+    .fr-name { margin: 4px 26px 0; container-type: inline-size; }
+    .fr-name span { display: block; font-family: "Anton", sans-serif; font-weight: 400; font-size: calc(100cqi / 4.956); line-height: .84; letter-spacing: -.012em; text-transform: uppercase; white-space: nowrap; margin-left: -.0381em; }
+    .fr-sub { display: flex; justify-content: space-between; align-items: baseline; margin: 16px 26px 0; padding-top: 8px; border-top: 3px solid var(--ink); }
+    .fr-sub h4 { font-family: "Anton", sans-serif; font-weight: 400; font-size: 30px; line-height: 1; text-transform: uppercase; }
+    .fr-sub h4 small { font-family: "League Gothic", sans-serif; font-size: 20px; margin-left: 10px; letter-spacing: .02em; }
+    .fr-filter { display: flex; gap: 4px; font-size: 20px; text-transform: uppercase; }
+    .fr-filter span { padding: 1px 9px 0; }
+    .fr-filter .on { background: var(--ink); color: var(--sleeve); }
+    .fr-wall { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px 20px; padding: 18px 30px 0; }
+    .fr-rec svg { display: block; width: 100%; aspect-ratio: 1; }
+    .fr-rec p { text-align: center; font-size: 17px; letter-spacing: .02em; text-transform: uppercase; margin-top: 2px; }
+    .fr-deck { position: absolute; left: 0; right: 0; bottom: 0; height: 84px; background: var(--ink); color: #f3efe6; display: grid; grid-template-columns: 64px 1fr 46px 176px; gap: 16px; align-items: center; padding: 0 26px 0 18px; }
+    .fr-deck svg.spin { width: 64px; height: 64px; display: block; }
+    .fr-deck .now { font-size: 17px; letter-spacing: .03em; text-transform: uppercase; color: var(--sleeve); }
+    .fr-deck .by { font-size: 17px; letter-spacing: .03em; text-transform: uppercase; }
+    .fr-deck strong { display: block; font-family: "Anton", sans-serif; font-weight: 400; font-size: 25px; line-height: 1.05; text-transform: uppercase; }
+    .fr-play { width: 46px; height: 46px; border-radius: 50%; background: var(--sleeve); border: 0; display: grid; place-items: center; }
+    .fr-time { font-size: 20px; letter-spacing: .03em; font-variant-numeric: tabular-nums; }
+    .fr-time i { display: block; height: 4px; background: #3a3a3a; margin-top: 7px; position: relative; }
+    .fr-time i::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 52%; background: var(--sleeve); }
+    .fr-time span { display: flex; justify-content: space-between; }
+    @media (prefers-reduced-motion: no-preference) { .fr-deck svg.spin { animation: fr-turn 1.33s linear infinite; } }
+    @keyframes fr-turn { to { transform: rotate(360deg); } }
+
     @media (max-width: 1472px) { .study { margin-left: 16px; margin-right: 16px; } }
     @media print { body { background: white; } .intro { display: none; } .study { margin: 0; break-after: page; } }
   </style>
 </head>
 <body>
+  <!-- Shared drawing definitions: record-label text paths and a rubber-stamp ink texture. -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <path id="fr-arc-top" d="M -67 0 A 67 67 0 0 1 67 0"/>
+            <filter id="fr-ink" x="-10%" y="-20%" width="120%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="1.5" result="d"/>
+        <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.1 1.4" result="speck"/>
+        <feComposite in="d" in2="speck" operator="in"/>
+      </filter>
+<g id="fn-art">
+        <path d="M0 0h666v585H0z" fill="#a3987f"/>
+        <path d="M0 0h666v60H0z" fill="#cdcfc4"/>
+        <path d="M0 64H666V84C640 90 600 82 572 92C540 103 520 96 480 90C440 84 400 96 352 90C300 84 250 94 200 88C150 82 100 92 52 86C30 84 12 88 0 86Z" fill="#77806a"/><path d="M0 64H666V84C640 90 600 82 572 92C540 103 520 96 480 90C440 84 400 96 352 90C300 84 250 94 200 88C150 82 100 92 52 86C30 84 12 88 0 86Z" fill="url(#fn-tuft)"/>
+        <path d="M0 60.5h666" stroke="#1c2321" stroke-width="1"/><path d="M0 64h666" stroke="#1c2321" stroke-width=".6"/>
+        <path d="M666 186C640 196 618 214 606 240C594 266 600 290 582 316C564 342 540 360 540 392C540 424 562 444 556 474C550 504 528 528 526 560L524 600H666Z" fill="#77806a"/><path d="M666 186C640 196 618 214 606 240C594 266 600 290 582 316C564 342 540 360 540 392C540 424 562 444 556 474C550 504 528 528 526 560L524 600H666Z" fill="url(#fn-tuft)"/>
+        <path d="M666 300C640 306 620 300 600 316M624 304C628 324 646 336 666 338M666 430C632 426 604 444 560 446M600 440C606 462 628 476 666 478M546 560C574 548 600 556 630 540" fill="none" stroke="#c3ccc8" stroke-width="3" stroke-linecap="round"/>
+        <path d="M120 360C200 380 280 420 352 470M60 430C140 438 200 460 256 494M240 300C300 320 360 330 420 372" fill="none" stroke="#b6ad98" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M690 96C674 102 618 115 591 133C564 151 549 176 528 204C507 232 484 272 464 300C444 328 422 349 410 372C398 395 399 417 390 440C381 463 367 483 354 510C341 537 319 585 312 600L448 600C452 585 463 537 470 510C477 483 486 463 490 440C494 417 486 395 494 372C502 349 524 325 536 300C548 275 556 246 568 224C580 202 588 181 609 167C629 153 676 145 690 140Z" fill="#c3ccc8"/>
+        <path d="M690 96C674 102 618 115 591 133C564 151 549 176 528 204C507 232 484 272 464 300C444 328 422 349 410 372C398 395 399 417 390 440C381 463 367 483 354 510C341 537 319 585 312 600" fill="none" stroke="#1c2321" stroke-width="1" stroke-dasharray="1.5 3.5"/>
+        <path d="M690 140C676 145 629 153 609 167C588 181 580 202 568 224C556 246 548 275 536 300C524 325 502 349 494 372C486 395 494 417 490 440C486 463 477 483 470 510C463 537 452 585 448 600" fill="none" stroke="#1c2321" stroke-width="1" stroke-dasharray="1.5 3.5"/>
+        <text font-family="Old Standard" font-style="italic" font-size="17" fill="#1c2321" letter-spacing="1.5" transform="translate(487 330) rotate(-58)">River Wend</text>
+        <text font-family="Old Standard" font-style="italic" font-size="13" fill="#e6e8e1" transform="translate(592 416)">Hollow Fleet</text>
+        <text font-family="Old Standard" font-size="13" fill="#e6e8e1" letter-spacing="3" transform="translate(566 528)">Saltings</text>
+        <g font-family="Old Standard" font-style="italic" font-size="12" fill="#1c2321">
+          <text x="640" y="125">2<tspan font-size="8" dy="2">4</tspan></text>
+          <text x="566" y="172">2<tspan font-size="8" dy="2">1</tspan></text>
+          <text x="470" y="352">1<tspan font-size="8" dy="2">6</tspan></text>
+          <text x="438" y="430">1<tspan font-size="8" dy="2">2</tspan></text>
+          <text x="398" y="530">0<tspan font-size="8" dy="2">9</tspan></text>
+        </g>
+        <g font-family="Old Standard" font-size="11.5" fill="#2b302c" text-decoration="underline">
+          <text x="596" y="226">0<tspan font-size="8" dy="2">7</tspan></text>
+          <text x="512" y="372">1<tspan font-size="8" dy="2">1</tspan></text>
+          <text x="506" y="512">1<tspan font-size="8" dy="2">8</tspan></text>
+          <text x="400" y="300">0<tspan font-size="8" dy="2">8</tspan></text>
+          <text x="330" y="420">1<tspan font-size="8" dy="2">4</tspan></text>
+          <text x="210" y="400">2<tspan font-size="8" dy="2">3</tspan></text>
+          <text x="96" y="470">2<tspan font-size="8" dy="2">6</tspan></text>
+          <text x="300" y="466">1<tspan font-size="8" dy="2">0</tspan></text>
+        </g>
+      </g>
+      <pattern id="fn-tuft" width="22" height="18" patternUnits="userSpaceOnUse">
+        <path d="M4 13q3-6 3 0m0 0q2-7 4 0m0 0q3-5 4 0" fill="none" stroke="#4d5744" stroke-width="1.1"/>
+        <circle cx="17" cy="6" r="1.4" fill="#8a6aa2"/>
+      </pattern>
+    </defs>
+  </svg>
+
   <header class="intro">
     <h1>Composition studies</h1>
-    <p>Original teaching material, not a production app template. The brands, data and illustrations are fictional; controls depict interface states and do not perform actions. Each pair holds a brief and its content constant, then changes the context in which the alternative becomes useful.</p>
-    <nav aria-label="Study index"><a href="#creation">Creation entrance</a><a href="#comparison">Comparison density</a><a href="#editorial">Editorial character</a><a href="#toolbar">Toolbar family</a></nav>
+    <p>Original teaching material, not a production template. The products, data and drawings are fictional; controls depict interface states and do not perform actions. Each pair holds a brief and its content constant, then names the change of job under which the other arrangement becomes the better one.</p>
+    <nav aria-label="Study index"><a href="#creation">Creation entrance</a><a href="#comparison">Comparison density</a><a href="#editorial">Editorial character</a><a href="#toolbar">Toolbar family</a><a href="#identity">Identity</a></nav>
   </header>
 
+  <!-- ================= 1. Creation entrance: Stillroom ================= -->
   <section class="study" id="creation" aria-labelledby="creation-title">
     <header class="study-head">
-      <div><p class="kicker">01 · The entrance frames the job</p><h2 id="creation-title">Start with the intended image<br>or the machine that makes it?</h2></div>
-      <p class="brief"><strong>Brief.</strong> A small ceramics shop needs one portrait product image from its pitcher photo. The maker knows the desired scene, not the generation parameters.</p>
+      <h2 id="creation-title">Start with the intended image, or with the machine that makes it?</h2>
+      <p class="brief">Brief: a potter needs one portrait product image of a pitcher, made from a photo of it. They know the scene they want, not the generation parameters.</p>
     </header>
     <div class="pair">
       <article>
-        <h3 class="panel-heading"><span class="letter">A</span> Creation entrance</h3>
-        <div class="screen creation creation-a">
-          <div class="appbar"><span class="brand">Stillroom</span><span class="quiet">My images &nbsp; · &nbsp; Silt Studio</span></div>
-          <div class="creation-body">
-            <h3>Create a product image</h3>
-            <div class="compose">
-              <span class="label">Describe your image</span>
-              <p class="prompt">Our stoneware pitcher on a sky-blue table.<br>Soft side light, one branch of olive, no lettering.</p>
-              <div class="upload"><svg class="pot" viewBox="0 0 42 42" aria-label="Pitcher reference"><path d="M14 10h14l-2 5 3 18H12l3-18z" fill="#a88767"/><path d="M27 16c12-2 11 15 1 13" fill="none" stroke="#a88767" stroke-width="4"/></svg><span><strong>pitcher-front.jpg</strong><br><span class="quiet">Reference photo attached</span></span></div>
-              <div class="compose-footer"><span class="small quiet">Portrait · 4:5 &nbsp; <span aria-hidden="true">⌄</span><br>1 image · Studio model · More settings</span><button class="button primary" type="button">Create image <span aria-hidden="true">↗</span></button></div>
+        <h3 class="arm-label"><span class="letter">A</span>Creation entrance</h3>
+        <div class="screen sr sr-a">
+          <div class="sr-bar"><span class="sr-mark">Stillroom</span><nav class="sr-nav"><span>My images</span><span>Silt Studio</span></nav></div>
+          <div class="sr-body">
+            <h4 class="sr-h">Create a product image</h4>
+            <div class="sr-compose">
+              <span class="sr-label">Describe your image</span>
+              <p class="sr-prompt">Our stoneware pitcher on a sky-blue table.<br>Soft side light, one branch of olive, no lettering.</p>
+              <div class="sr-ref"><svg viewBox="0 0 46 46" role="img" aria-label="Reference photo of the pitcher"><rect width="46" height="46" rx="2" fill="#bdbab2"/><path d="M15 12h15l-2 5 3 19H13l3-19z" fill="#6f5a49"/><path d="M29 18c11-1 10 14 1 12" fill="none" stroke="#6f5a49" stroke-width="3.4"/><path d="M13 36h18" stroke="#4c3e33" stroke-width="2"/></svg><span><strong>pitcher-front.jpg</strong><br><span class="quiet">Reference photo attached</span></span></div>
+              <div class="sr-foot">
+                <span class="sr-shape"><svg viewBox="0 0 26 32" aria-hidden="true"><rect x="1.5" y="1.5" width="23" height="29" fill="none" stroke="#4a4c4f" stroke-width="1.2" stroke-dasharray="3 1.6"/><path d="M1.5 25.5h4M20.5 1.5v4" stroke="#4a4c4f" stroke-width="1.2"/></svg><span>Portrait 4:5 <span aria-hidden="true">⌄</span><br><span class="quiet">1 image, Studio model. <u>More settings</u></span></span></span>
+                <button class="sr-fire" type="button">Create image</button>
+              </div>
             </div>
-            <div class="example-row"><span>Try a scene:</span><span>On a kitchen shelf ↗</span><span>In the studio ↗</span></div>
+            <div class="sr-tiles">
+              <span class="sr-tiles-label">Try a scene</span>
+              <div class="sr-rail"><button class="sr-tile" type="button"><svg viewBox="0 0 128 100" aria-hidden="true"><path d="M2 0h124v96H2z" fill="#e8e5df"/><path d="M2 44C24 48 40 40 64 44S104 42 126 45V96H2z" fill="#b39a62"/><path d="M2 44C24 48 40 40 64 44S104 42 126 45" fill="none" stroke="#8a7240" stroke-width="1.6"/><path d="M2 92h124v4H2z" fill="#8a7240" opacity=".55"/><path d="M84 54l18-10M90 64l16-9" stroke="#fff" stroke-width="3" opacity=".18" stroke-linecap="round"/><circle cx="64" cy="9" r="3.4" fill="#2b2d2f" opacity=".75"/></svg><span>Kitchen shelf</span></button><button class="sr-tile" type="button"><svg viewBox="0 0 128 100" aria-hidden="true"><path d="M2 0h124v96H2z" fill="#e8e5df"/><path d="M2 46C20 42 46 47 70 44S108 47 126 43V96H2z" fill="#8fb2a0"/><path d="M2 46C20 42 46 47 70 44S108 47 126 43" fill="none" stroke="#5f8a75" stroke-width="1.6"/><path d="M2 92h124v4H2z" fill="#5f8a75" opacity=".55"/><path d="M84 54l18-10M90 64l16-9" stroke="#fff" stroke-width="3" opacity=".18" stroke-linecap="round"/><circle cx="64" cy="9" r="3.4" fill="#2b2d2f" opacity=".75"/></svg><span>Window sill</span></button><button class="sr-tile" type="button"><svg viewBox="0 0 128 100" aria-hidden="true"><path d="M2 0h124v96H2z" fill="#e8e5df"/><path d="M2 42C28 46 44 41 66 45S106 41 126 44V96H2z" fill="#2f2219"/><path d="M2 42C28 46 44 41 66 45S106 41 126 44" fill="none" stroke="#9a5a2a" stroke-width="1.6"/><path d="M2 92h124v4H2z" fill="#9a5a2a" opacity=".55"/><path d="M84 54l18-10M90 64l16-9" stroke="#fff" stroke-width="3" opacity=".18" stroke-linecap="round"/><circle cx="64" cy="9" r="3.4" fill="#2b2d2f" opacity=".75"/></svg><span>Studio bench</span></button><button class="sr-tile" type="button"><svg viewBox="0 0 128 100" aria-hidden="true"><path d="M2 0h124v96H2z" fill="#e8e5df"/><path d="M2 45C26 41 48 46 72 43S110 46 126 42V96H2z" fill="#2f5296"/><path d="M2 45C26 41 48 46 72 43S110 46 126 42" fill="none" stroke="#1d3466" stroke-width="1.6"/><path d="M2 92h124v4H2z" fill="#1d3466" opacity=".55"/><path d="M84 54l18-10M90 64l16-9" stroke="#fff" stroke-width="3" opacity=".18" stroke-linecap="round"/><circle cx="64" cy="9" r="3.4" fill="#2b2d2f" opacity=".75"/></svg><span>Market stall</span></button></div>
+            </div>
           </div>
         </div>
-        <p class="panel-note"><strong>The scene and the next action share one place.</strong>The attached reference, prompt and output shape explain what will be made. Defaults keep model and sampling choices reachable without making them entrance requirements.</p>
+        <p class="panel-note"><strong>The scene and the next action share one place.</strong>The potter's own sentence, the reference and the output shape say what will be made. Model and sampling stay one step away; the suggestions are drawn as test tiles, half raw and half glazed, because they show how a scene will come out before committing to it.</p>
       </article>
       <article>
-        <h3 class="panel-heading"><span class="letter">B</span> Capability and configuration inventory</h3>
-        <div class="screen creation">
-          <div class="appbar"><span class="brand">Stillroom</span><span class="quiet">My images &nbsp; · &nbsp; Silt Studio</span></div>
-          <div class="lab-body">
-            <h3>Image workspace</h3>
-            <div class="tabs"><span class="active">Generate</span><span>Edit</span><span>Upscale</span><span>Model library</span></div>
-            <div class="lab-grid">
-              <div><span class="label">Model</span><div class="field">Studio <span>⌄</span></div></div>
-              <div><span class="label">Mode</span><div class="field">Photo reference <span>⌄</span></div></div>
-              <div><span class="label">Output</span><div class="field">Portrait 4:5 <span>⌄</span></div></div>
-              <div><span class="label">Images</span><div class="field">1 <span>⌄</span></div></div>
-              <div><span class="label">Sampling steps</span><div class="field">24</div></div>
-              <div><span class="label">Seed</span><div class="field">Random</div></div>
-            </div>
-            <div class="lab-prompt"><span class="label">Prompt</span><div class="field">Our stoneware pitcher on a sky-blue table.<br>Soft side light, one branch of olive, no lettering.</div></div>
-            <div class="upload lab-upload"><svg class="pot" viewBox="0 0 42 42" aria-label="Pitcher reference"><path d="M14 10h14l-2 5 3 18H12l3-18z" fill="#a88767"/><path d="M27 16c12-2 11 15 1 13" fill="none" stroke="#a88767" stroke-width="4"/></svg><span><strong>pitcher-front.jpg</strong><br><span class="quiet">Reference photo attached</span></span></div>
-            <div class="lab-footer"><span class="small quiet">Advanced parameters <span aria-hidden="true">⌄</span></span><button class="button primary" type="button">Create image <span aria-hidden="true">↗</span></button></div>
+        <h3 class="arm-label"><span class="letter">B</span>Capability and configuration inventory</h3>
+        <div class="screen sr sr-b">
+          <div class="sr-bar"><span class="sr-mark">Stillroom</span><nav class="sr-nav"><span>My images</span><span>Silt Studio</span></nav></div>
+          <div class="sr-body">
+            <h4 class="sr-h">Image workspace</h4>
+            <div class="sr-tabs"><span class="active">Generate</span><span>Edit</span><span>Upscale</span><span>Model library</span></div>
+            <dl class="sr-log">
+              <div><dt>Model</dt><dd>Studio <span aria-hidden="true">⌄</span></dd></div>
+              <div><dt>Mode</dt><dd>Photo reference <span aria-hidden="true">⌄</span></dd></div>
+              <div><dt>Output</dt><dd>Portrait 4:5 <span aria-hidden="true">⌄</span></dd></div>
+              <div><dt>Images</dt><dd>1 <span aria-hidden="true">⌄</span></dd></div>
+              <div><dt>Sampling steps</dt><dd>24</dd></div>
+              <div><dt>Seed</dt><dd>Random</dd></div>
+            </dl>
+            <div class="sr-field"><span class="sr-label">Prompt</span><div class="box">Our stoneware pitcher on a sky-blue table.<br>Soft side light, one branch of olive, no lettering.</div></div>
+            <div class="sr-ref"><svg viewBox="0 0 46 46" role="img" aria-label="Reference photo of the pitcher"><rect width="46" height="46" rx="2" fill="#bdbab2"/><path d="M15 12h15l-2 5 3 19H13l3-19z" fill="#6f5a49"/><path d="M29 18c11-1 10 14 1 12" fill="none" stroke="#6f5a49" stroke-width="3.4"/><path d="M13 36h18" stroke="#4c3e33" stroke-width="2"/></svg><span><strong>pitcher-front.jpg</strong><br><span class="quiet">Reference photo attached</span></span></div>
+            <div class="sr-b-foot"><span class="quiet">Advanced parameters <span aria-hidden="true">⌄</span></span><button class="sr-fire" type="button">Create image</button></div>
           </div>
         </div>
-        <p class="panel-note"><strong>The system's dimensions arrive before the maker's scene.</strong>Nothing is missing, and the form is orderly. For this brief, equal emphasis on mode, model and sampling spends attention on decisions the maker need not make.</p>
+        <p class="panel-note"><strong>The system's dimensions arrive before the potter's scene.</strong>Nothing is missing, and the parameters are ruled like a kiln log. For this brief, equal emphasis on mode, model and sampling spends attention on decisions the potter need not make.</p>
       </article>
     </div>
-    <aside class="context"><h3>Change the job:<br>evaluate a model.</h3><p>An imaging engineer needs to hold the seed, dimensions and reference constant while varying a model or sampling setting. B's persistent parameter layout now exposes the independent variables and makes successive runs comparable. A's compressed settings would hide the engineer's main work.</p></aside>
+    <aside class="context"><h3>Change the job: evaluate a model.</h3><p>An imaging engineer needs to hold the seed, dimensions and reference constant while varying a model or sampling setting. B's persistent parameter layout now exposes the independent variables and makes successive runs comparable, as a kiln log does for firings. A's compressed settings would hide the engineer's main work.</p></aside>
     <p class="takeaway">Transfer: capability placement follows the decision being made. A creation entrance can still disclose exact controls; a model lab can still keep its output visible.</p>
-    <footer class="foot"><span>Original fictional study · same prompt, reference and output settings</span><span>Charter / composition</span></footer>
+    <p class="foot">Original fictional study. Both arms use the same prompt, reference and output settings.</p>
   </section>
 
+  <!-- ================= 2. Comparison density: Commonplace ================= -->
   <section class="study" id="comparison" aria-labelledby="comparison-title">
     <header class="study-head">
-      <div><p class="kicker">02 · Density preserves a relationship</p><h2 id="comparison-title">Make the trade-off visible<br>without remembering each card.</h2></div>
-      <p class="brief"><strong>Brief.</strong> Choose a room for 12 people: step-free access and a projector are required, with a £180 session budget. Compare the same four shortlisted rooms.</p>
+      <h2 id="comparison-title">Make the trade-off visible without remembering each card.</h2>
+      <p class="brief">Brief: choose a room for 12 people. Step-free access and a projector are required, with a £180 session budget. Compare the same four shortlisted rooms.</p>
     </header>
     <div class="pair">
       <article>
-        <h3 class="panel-heading"><span class="letter">A</span> Aligned comparison</h3>
-        <div class="screen compare">
-          <div class="appbar"><span class="brand">Commonplace</span><span class="quiet">Spaces / Shortlist</span></div>
-          <div class="rooms-head"><h3>A room for the whole team</h3><p class="small quiet">4 shortlisted spaces · prices per session</p><div class="rooms-filter"><span>12 people</span><span>Step-free</span><span>Projector</span><span>Budget £180</span></div></div>
-          <div class="table-wrap"><table><thead><tr><th>Room</th><th class="num">Seats</th><th>Step-free</th><th>Projector</th><th class="num">Price</th><th>Fit</th></tr></thead><tbody>
-            <tr><td><strong>North Loft</strong><small>Old Mill</small></td><td class="num">14</td><td>Yes</td><td>Yes</td><td class="num">£195</td><td class="missing">£15 over</td></tr>
-            <tr class="chosen"><td><strong>Garden Room</strong><small>Elm House</small></td><td class="num">12</td><td>Yes</td><td>Yes</td><td class="num">£160</td><td><strong>Matches</strong></td></tr>
-            <tr><td><strong>Reading Room</strong><small>Civic Library</small></td><td class="num">12</td><td>Yes</td><td class="missing">No</td><td class="num">£125</td><td class="missing">No projector</td></tr>
-            <tr><td><strong>East Studio</strong><small>Old Mill</small></td><td class="num">16</td><td class="missing">Unconfirmed</td><td>Yes</td><td class="num">£175</td><td class="missing">Access unknown</td></tr>
-          </tbody></table></div>
-          <div class="choice-line"><span><strong>Garden Room meets all 4 requirements.</strong><br><span class="quiet small">East Studio still needs an access check.</span></span><button class="button primary" type="button">View room ↗</button></div>
+        <h3 class="arm-label"><span class="letter">A</span>Aligned comparison</h3>
+        <div class="screen cp">
+          <div class="cp-bar"><span class="cp-mark">Commonplace</span><nav class="cp-nav"><span>Spaces</span><span class="here">Shortlist</span><span>Bookings</span></nav></div>
+          <div class="cp-head"><h4>A room for the whole team</h4><p>4 shortlisted rooms in 3 buildings. Prices are per session.</p><div class="cp-req"><span>12 people</span><span>Step-free</span><span>Projector</span><span>Up to £180</span></div></div>
+          <table class="cp-table"><thead><tr><th>Room</th><th class="num">Seats</th><th>Step-free</th><th>Projector</th><th class="num">Price</th><th>Fit</th></tr></thead><tbody>
+            <tr><td><span class="plaque">North Loft</span><span class="cp-where">Old Mill, second floor</span></td><td class="num">14</td><td><span class="mark yes">Yes</span></td><td><span class="mark yes">Yes</span></td><td class="num">£195</td><td class="cp-fit-no">£15 over</td></tr>
+            <tr class="chosen"><td><span class="plaque">Garden Room</span><span class="cp-where cp-chosen-where">Elm House, ground floor</span></td><td class="num">12</td><td><span class="mark yes">Yes</span></td><td><span class="mark yes">Yes</span></td><td class="num">£160</td><td class="cp-fit-yes">Matches</td></tr>
+            <tr><td><span class="plaque">Reading Room</span><span class="cp-where">Civic Library, first floor</span></td><td class="num">12</td><td><span class="mark yes">Yes</span></td><td><span class="mark no">No</span></td><td class="num">£125</td><td class="cp-fit-no">No projector</td></tr>
+            <tr><td><span class="plaque">East Studio</span><span class="cp-where">Old Mill, first floor</span></td><td class="num">16</td><td><span class="mark unknown">Unconfirmed</span></td><td><span class="mark yes">Yes</span></td><td class="num">£175</td><td class="cp-fit-unknown">Access unknown</td></tr>
+          </tbody></table>
+          <div class="cp-choice"><span><strong>Garden Room meets all 4 requirements.</strong><br><span class="quiet">East Studio still needs an access check.</span></span><button class="cp-btn" type="button">View room</button></div>
         </div>
-        <p class="panel-note"><strong>Shared columns turn a collection into a comparison.</strong>The unknown stays distinct from “No”; numbers line up; the qualifying room and each exception can be found without retaining another room's details. Empty space remains where the decision needs no more content.</p>
+        <p class="panel-note"><strong>Shared columns turn a collection into a comparison.</strong>Unconfirmed is drawn as an open mark and stays distinct from No; prices line up; the matching room is marked as it would be on the paper booking sheet. Each room carries its door plaque, so the name in the table is the name on the door.</p>
       </article>
       <article>
-        <h3 class="panel-heading"><span class="letter">B</span> Attractive independent cards</h3>
-        <div class="screen compare">
-          <div class="appbar"><span class="brand">Commonplace</span><span class="quiet">Spaces / Shortlist</span></div>
-          <div class="rooms-head"><h3>A room for the whole team</h3><p class="small quiet">4 shortlisted spaces · prices per session</p><div class="rooms-filter"><span>12 people</span><span>Step-free</span><span>Projector</span><span>Budget £180</span></div></div>
-          <div class="room-cards">
-            <article class="room-card"><svg class="room-scene" viewBox="0 0 280 82" role="img" aria-label="Illustrated loft with roof beams and a long meeting table"><path d="M0 0h280v82H0z" fill="#ece0cd"/><path d="M0 64h280v18H0z" fill="#c4ae8c"/><path d="M0 4h280M30 0v66M246 0v66M0 0l140 35L280 0" fill="none" stroke="#9d7355" stroke-width="6"/><path d="M59 17h56v39H59zM171 17h56v39h-56z" fill="#c0d6d3" stroke="#f8f4e8" stroke-width="4"/><path d="M61 61h161v8H61zM72 69v13m138-13v13" fill="#a17b54" stroke="#856040" stroke-width="3"/><path d="M98 74v8m29-8v8m29-8v8m29-8v8" stroke="#4e695a" stroke-width="14"/></svg><div class="room-card-body"><div class="room-title"><h4>North Loft</h4><strong>£195</strong></div><p class="small quiet">Old Mill</p><dl><dt>Seats</dt><dd>14</dd><dt>Step-free</dt><dd>Yes</dd><dt>Projector</dt><dd>Yes</dd></dl><div class="room-card-footer"><span class="missing">£15 over budget</span><button class="button" type="button">View ↗</button></div></div></article>
-            <article class="room-card"><svg class="room-scene" viewBox="0 0 280 82" role="img" aria-label="Illustrated garden room with broad windows and plants"><path d="M0 0h280v82H0z" fill="#d6ddc8"/><path d="M31 9h218v52H31z" fill="#b6ccb0" stroke="#f6f3e5" stroke-width="6"/><path d="M68 58l19-31 14 24 21-36 25 42m19 0 20-36 26 36" fill="#88a27c"/><path d="M101 7v55m73-55V7" stroke="#f6f3e5" stroke-width="5"/><path d="M0 65h280v17H0z" fill="#c0af91"/><ellipse cx="139" cy="66" rx="70" ry="9" fill="#b18158"/><path d="M99 71v11m80-11v11" stroke="#8c6345" stroke-width="4"/><path d="M21 70Q10 44 26 31M25 59Q43 30 37 20M254 68Q239 42 251 30" fill="none" stroke="#5d7a4d" stroke-width="6"/><path d="M15 68h24l-4 14H19zm231 0h20l-3 14h-14z" fill="#b67d57"/></svg><div class="room-card-body"><div class="room-title"><h4>Garden Room</h4><strong>£160</strong></div><p class="small quiet">Elm House</p><dl><dt>Seats</dt><dd>12</dd><dt>Step-free</dt><dd>Yes</dd><dt>Projector</dt><dd>Yes</dd></dl><div class="room-card-footer"><span>Matches all 4</span><button class="button" type="button">View ↗</button></div></div></article>
-            <article class="room-card"><svg class="room-scene" viewBox="0 0 280 82" role="img" aria-label="Illustrated library room with bookshelves and green reading lamps"><path d="M0 0h280v82H0z" fill="#d9c6ad"/><path d="M14 5h80v59H14zm172 0h80v59h-80z" fill="#9c7d5f"/><path d="M20 11v15m9-15v15m9-15v15m12-15v15m10-15v15m12-15v15m11-15v15m108-15v15m9-15v15m9-15v15m12-15v15m10-15v15m12-15v15m11-15v15M20 38v16m13-16v16m11-16v16m12-16v16m13-16v16m13-16v16m109-16v16m13-16v16m11-16v16m12-16v16m13-16v16m13-16v16" stroke="#d6b394" stroke-width="6"/><path d="M105 13h68v47h-68z" fill="#d6e1d1" stroke="#f5eddf" stroke-width="4"/><path d="M0 65h280v17H0z" fill="#ac9275"/><path d="M62 67h158v8H62z" fill="#7c533b"/><path d="M95 66V51m91 15V51" stroke="#52694c" stroke-width="3"/><path d="M80 54q15-24 30 0m61 0q15-24 30 0" fill="#597454"/></svg><div class="room-card-body"><div class="room-title"><h4>Reading Room</h4><strong>£125</strong></div><p class="small quiet">Civic Library</p><dl><dt>Seats</dt><dd>12</dd><dt>Step-free</dt><dd>Yes</dd><dt>Projector</dt><dd>No</dd></dl><div class="room-card-footer"><span class="missing">No projector</span><button class="button" type="button">View ↗</button></div></div></article>
-            <article class="room-card"><svg class="room-scene" viewBox="0 0 280 82" role="img" aria-label="Illustrated studio with wide industrial windows and movable tables"><path d="M0 0h280v82H0z" fill="#dce4e3"/><path d="M20 7h169v55H20z" fill="#bbd4d8" stroke="#768b88" stroke-width="4"/><path d="M62 7v55m42-55v55m42-55v55M20 32h169" stroke="#768b88" stroke-width="3"/><path d="M210 17h48v40h-48z" fill="#f2efe4" stroke="#a7b3ac" stroke-width="2"/><path d="M0 65h280v17H0z" fill="#b5beb9"/><path d="M41 59h83v7H41zm116 0h83v7h-83z" fill="#c49973"/><path d="M49 66v16m67-16v16m49-16v16m67-16v16" stroke="#5d706e" stroke-width="3"/><path d="M63 74h38m79 0h37" stroke="#a7674e" stroke-width="7"/></svg><div class="room-card-body"><div class="room-title"><h4>East Studio</h4><strong>£175</strong></div><p class="small quiet">Old Mill</p><dl><dt>Seats</dt><dd>16</dd><dt>Step-free</dt><dd>Unconfirmed</dd><dt>Projector</dt><dd>Yes</dd></dl><div class="room-card-footer"><span class="missing">Access unknown</span><button class="button" type="button">View ↗</button></div></div></article>
+        <h3 class="arm-label"><span class="letter">B</span>Attractive independent cards</h3>
+        <div class="screen cp">
+          <div class="cp-bar"><span class="cp-mark">Commonplace</span><nav class="cp-nav"><span>Spaces</span><span class="here">Shortlist</span><span>Bookings</span></nav></div>
+          <div class="cp-head"><h4>A room for the whole team</h4><p>4 shortlisted rooms in 3 buildings. Prices are per session.</p><div class="cp-req"><span>12 people</span><span>Step-free</span><span>Projector</span><span>Up to £180</span></div></div>
+          <div class="cp-cards">
+            <article class="cp-card"><svg viewBox="0 0 280 84" role="img" aria-label="Drawing of a loft room under roof beams with a long table"><path d="M0 0h280v84H0z" fill="#e9e7e2"/><path d="M0 0l140 30L280 0" fill="none" stroke="#5b5650" stroke-width="5"/><path d="M28 0v68M252 0v68" stroke="#5b5650" stroke-width="5"/><path d="M58 22h50v34H58zM172 22h50v34h-50z" fill="#c9d6da" stroke="#fdfdfc" stroke-width="3"/><path d="M0 68h280v16H0z" fill="#b7aa95"/><path d="M62 62h156v7H62z" fill="#3d3a36"/><path d="M92 69v15m96-15v15" stroke="#3d3a36" stroke-width="3"/></svg><div class="cp-card-body"><div class="cp-card-top"><span class="plaque">North Loft</span><strong>£195</strong></div><span class="cp-where">Old Mill, second floor</span><dl><dt>Seats</dt><dd>14</dd><dt>Step-free</dt><dd><span class="mark yes">Yes</span></dd><dt>Projector</dt><dd><span class="mark yes">Yes</span></dd></dl><div class="cp-card-foot"><span class="cp-fit-no">£15 over budget</span><button class="cp-btn ghost" type="button">View</button></div></div></article>
+            <article class="cp-card"><svg viewBox="0 0 280 84" role="img" aria-label="Drawing of a garden room with wide windows onto planting"><path d="M0 0h280v84H0z" fill="#e9e7e2"/><path d="M26 8h228v54H26z" fill="#b9cbb0" stroke="#fdfdfc" stroke-width="5"/><path d="M64 60l18-28 13 20 20-32 24 40m20 0 19-30 25 30" fill="#6f8a61"/><path d="M102 8v54M178 8v54" stroke="#fdfdfc" stroke-width="4"/><path d="M0 66h280v18H0z" fill="#b7aa95"/><ellipse cx="140" cy="68" rx="66" ry="8" fill="#3d3a36"/><path d="M104 73v11m72-11v11" stroke="#3d3a36" stroke-width="3"/></svg><div class="cp-card-body"><div class="cp-card-top"><span class="plaque">Garden Room</span><strong>£160</strong></div><span class="cp-where">Elm House, ground floor</span><dl><dt>Seats</dt><dd>12</dd><dt>Step-free</dt><dd><span class="mark yes">Yes</span></dd><dt>Projector</dt><dd><span class="mark yes">Yes</span></dd></dl><div class="cp-card-foot"><span class="cp-fit-yes">Matches all 4</span><button class="cp-btn ghost" type="button">View</button></div></div></article>
+            <article class="cp-card"><svg viewBox="0 0 280 84" role="img" aria-label="Drawing of a library reading room with shelves and lamps"><path d="M0 0h280v84H0z" fill="#e9e7e2"/><path d="M12 6h78v58H12zm178 0h78v58h-78z" fill="#8c8173"/><path d="M18 12v14m9-14v14m9-14v14m11-14v14m10-14v14m11-14v14m10-14v14m116-14v14m9-14v14m9-14v14m11-14v14m10-14v14m11-14v14m10-14v14M18 36v16m12-16v16m11-16v16m12-16v16m12-16v16m12-16v16m118-16v16m12-16v16m11-16v16m12-16v16m12-16v16m12-16v16" stroke="#d9d2c5" stroke-width="5"/><path d="M104 12h72v46h-72z" fill="#cdd8dc" stroke="#fdfdfc" stroke-width="3"/><path d="M0 66h280v18H0z" fill="#b7aa95"/><path d="M60 66h160v7H60z" fill="#3d3a36"/><path d="M95 65V52m90 13V52" stroke="#3d3a36" stroke-width="2.5"/><path d="M82 54q13-20 26 0m64 0q13-20 26 0" fill="#3d3a36"/></svg><div class="cp-card-body"><div class="cp-card-top"><span class="plaque">Reading Room</span><strong>£125</strong></div><span class="cp-where">Civic Library, first floor</span><dl><dt>Seats</dt><dd>12</dd><dt>Step-free</dt><dd><span class="mark yes">Yes</span></dd><dt>Projector</dt><dd><span class="mark no">No</span></dd></dl><div class="cp-card-foot"><span class="cp-fit-no">No projector</span><button class="cp-btn ghost" type="button">View</button></div></div></article>
+            <article class="cp-card"><svg viewBox="0 0 280 84" role="img" aria-label="Drawing of a studio with wide steel windows and movable tables"><path d="M0 0h280v84H0z" fill="#e9e7e2"/><path d="M18 6h172v56H18z" fill="#c9d6da" stroke="#5b5650" stroke-width="4"/><path d="M61 6v56m43-56v56m43-56v56M18 32h172" stroke="#5b5650" stroke-width="3"/><path d="M210 16h50v40h-50z" fill="#fdfdfc" stroke="#8d877f" stroke-width="2"/><path d="M0 66h280v18H0z" fill="#b7aa95"/><path d="M38 60h84v7H38zm118 0h84v7h-84z" fill="#3d3a36"/><path d="M46 67v17m68-17v17m50-17v17m68-17v17" stroke="#3d3a36" stroke-width="3"/></svg><div class="cp-card-body"><div class="cp-card-top"><span class="plaque">East Studio</span><strong>£175</strong></div><span class="cp-where">Old Mill, first floor</span><dl><dt>Seats</dt><dd>16</dd><dt>Step-free</dt><dd><span class="mark unknown">Unconfirmed</span></dd><dt>Projector</dt><dd><span class="mark yes">Yes</span></dd></dl><div class="cp-card-foot"><span class="cp-fit-unknown">Access unknown</span><button class="cp-btn ghost" type="button">View</button></div></div></article>
           </div>
         </div>
-        <p class="panel-note"><strong>Each room is easy to browse, but each restarts the scan.</strong>The repeated labels and image areas support one room's identity. Comparing the same attribute across rooms requires crossing cards and rows, even though all the decision data is present.</p>
+        <p class="panel-note"><strong>Each room is easy to browse, but each restarts the scan.</strong>The repeated labels and pictures support one room's identity. Comparing the same attribute across rooms means crossing cards and rows, even though all the decision data is present.</p>
       </article>
     </div>
-    <aside class="context"><h3>Change the job:<br>discover a place.</h3><p>A visitor exploring spaces for an informal gathering may choose atmosphere before equipment. B's images and independent cards now support browsing and opening one appealing room. Keep the meaningful facts, and offer aligned comparison when the visitor has a shortlist; do not turn discovery into a spreadsheet by habit.</p></aside>
+    <aside class="context"><h3>Change the job: discover a place.</h3><p>A visitor exploring spaces for an informal gathering may choose atmosphere before equipment. B's pictures and independent cards now support browsing and opening one appealing room. Keep the meaningful facts, and offer aligned comparison once the visitor has a shortlist; do not turn discovery into a spreadsheet by habit.</p></aside>
     <p class="takeaway">Transfer: useful density brings related values together. It is not smaller type, more rows at any cost, or a ban on cards.</p>
-    <footer class="foot"><span>Original fictional study · identical room facts and requirement outcomes</span><span>Charter / composition</span></footer>
+    <p class="foot">Original fictional study. Both arms hold identical room facts and requirement outcomes.</p>
   </section>
 
+  <!-- ================= 3. Editorial character: fieldnotes ================= -->
   <section class="study" id="editorial" aria-labelledby="editorial-title">
     <header class="study-head">
-      <div><p class="kicker">03 · Let the subject occupy the page</p><h2 id="editorial-title">An estuary has a character.<br>Its reading experience can too.</h2></div>
-      <p class="brief"><strong>Brief.</strong> Introduce an illustrated field essay to a curious reader. The entrance should make the estuary's shifting edge worth exploring, then offer the essay.</p>
+      <h2 id="editorial-title">An estuary has a character. Its reading experience can too.</h2>
+      <p class="brief">Brief: introduce an illustrated field essay to a curious reader. The entrance should make the estuary's shifting edge worth exploring, then offer the essay.</p>
     </header>
     <div class="pair">
       <article>
-        <h3 class="panel-heading"><span class="letter">A</span> Subject-led editorial composition</h3>
-        <div class="screen editorial editorial-a">
-          <div class="journal-mast"><span class="journal-brand">fieldnotes</span><span class="small">Places &nbsp; / &nbsp; Journal &nbsp; / &nbsp; About</span></div>
-          <div class="journal-article"><p class="kicker">Estuary · No. 04</p><h3>Where the river<br>loosens its hold.</h3><p class="journal-deck">Salt, silt and the plants that hold a shifting shore.</p>
-            <svg class="journal-art" viewBox="0 0 400 330" role="img" aria-label="Original illustration of tidal water, saltmarsh reeds and a wading bird">
-              <path d="M0 202C78 159 96 226 162 179S270 158 400 105V330H0Z" fill="#b2c5bb"/><path d="M0 250C80 219 117 274 199 205S323 225 400 160V330H0Z" fill="#769d91"/><path d="M0 290C84 252 177 321 243 257S354 272 400 234" stroke="#e6e9d8" stroke-width="5" fill="none"/>
-              <path d="M56 288Q32 180 57 88M67 296Q84 181 72 133M85 296Q88 204 121 159M42 294Q21 224 10 211" fill="none" stroke="#4e674b" stroke-width="4"/><path d="M55 159Q22 135 28 97Q57 113 55 159M58 116Q74 84 66 52Q43 77 58 116M76 209Q105 188 107 150Q79 168 76 209" fill="#657b4d"/>
-              <path d="M222 290l12-59m17 62 10-66" stroke="#5a5c40" stroke-width="3" fill="none"/><path d="M224 217q-40-13-32-40 39-3 72 15l15-64q-21-20-8-30 15-8 25 7l30 7-28 7-8 86q-19 34-66 12" fill="#ecebdc"/><path d="M197 179q27 37 68 23-38-4-45-20" fill="#81988b"/><circle cx="286" cy="105" r="3" fill="#2b4233"/><path d="M296 108l32 5-31 7" fill="#a97746"/><path d="M232 290l-16 1m32 2-15 1" stroke="#5a5c40" stroke-width="3"/><circle cx="330" cy="45" r="28" fill="#c78b55"/>
-              <path d="M130 121q10-9 20 0m-10 0q10-8 20 0" fill="none" stroke="#56735b" stroke-width="2"/>
-            </svg>
-          </div>
-          <div class="journal-byline">WORDS BY LEAH MOSS<br>ILLUSTRATIONS BY FIELDNOTES<span class="journal-read">Read the field essay ↗</span></div>
+        <h3 class="arm-label"><span class="letter">A</span>Subject-led editorial composition</h3>
+        <div class="screen fn fn-a">
+          <svg class="fn-chart" viewBox="0 0 666 585" role="img" aria-label="Original chart-style drawing of the estuary at low water: the river channel with soundings, mudflats with underlined drying heights, and salt marsh cut by creeks"><use href="#fn-art"/></svg>
+          <div class="fn-mast"><span class="fn-brand">fieldnotes</span><nav class="fn-nav"><span>Places</span><span>Journal</span><span>About</span></nav></div>
+          <div class="fn-title"><h4>Where the river loosens its hold.</h4><p class="fn-deck">Salt, silt and the plants that hold a shifting shore.</p></div>
+          <p class="fn-by">Words by Leah Moss, drawing by fieldnotes<br><a href="#editorial">Read the field essay</a></p>
         </div>
-        <p class="panel-note"><strong>Type, image and open ground describe one place.</strong>Large type gives the title room to establish a voice; the illustration enters the reading field instead of sitting in a thumbnail. A restrained contents navigation leaves the subject first.</p>
+        <p class="panel-note"><strong>The estuary is charted, and the title sits on its mud.</strong>The drawing fills the page as a low-water chart: drying heights underlined on the flats, soundings in the channel, the river named in sloping letters as charts name water. A restrained contents navigation leaves the subject first.</p>
       </article>
       <article>
-        <h3 class="panel-heading"><span class="letter">B</span> Regular application chrome</h3>
-        <div class="screen editorial">
-          <div class="appbar"><span class="brand">fieldnotes</span><span class="quiet">Search &nbsp; / &nbsp; Saved &nbsp; / &nbsp; Profile</span></div>
-          <div class="dashboard"><aside class="side"><div>Overview</div><div class="selected">Journal</div><div>Places</div><div>Species</div><div>Collections</div><div>About</div></aside><div class="dashboard-body"><p class="small quiet">Journal / Estuary</p><h3>Estuary · No. 04</h3><div class="stats"><div><strong>08</strong><small>Field essays</small></div><div><strong>12</strong><small>Places</small></div><div><strong>24</strong><small>Species</small></div></div><article class="article-card">
-            <svg class="mini-art" viewBox="0 0 400 145" role="img" aria-label="Original illustration of tidal water, saltmarsh reeds and a wading bird">
-              <path d="M0 93C78 59 96 105 162 69S270 68 400 25V145H0Z" fill="#b2c5bb"/><path d="M0 120C80 99 117 144 199 85S323 115 400 80V145H0Z" fill="#769d91"/><path d="M56 138Q32 90 57 8M67 146Q84 91 72 43M85 146Q88 104 121 69" fill="none" stroke="#4e674b" stroke-width="3"/><path d="M55 69Q22 45 28 17Q57 33 55 69M76 119Q105 98 107 60Q79 78 76 119" fill="#657b4d"/>
-              <g transform="translate(96,-66) scale(.72)"><path d="M222 290l12-59m17 62 10-66" stroke="#5a5c40" stroke-width="3" fill="none"/><path d="M224 217q-40-13-32-40 39-3 72 15l15-64q-21-20-8-30 15-8 25 7l30 7-28 7-8 86q-19 34-66 12" fill="#ecebdc"/><path d="M197 179q27 37 68 23-38-4-45-20" fill="#81988b"/><circle cx="286" cy="105" r="3" fill="#2b4233"/></g><circle cx="350" cy="24" r="15" fill="#c78b55"/>
-            </svg>
-            <h4>Where the river loosens its hold.</h4><p>Salt, silt and the plants that hold a shifting shore.</p><p class="meta">Words by Leah Moss · Illustrations by Fieldnotes</p><button class="button primary" type="button">Read the field essay ↗</button>
+        <h3 class="arm-label"><span class="letter">B</span>Regular application chrome</h3>
+        <div class="screen fn fn-b">
+          <div class="fn-bar"><span class="fn-brand">fieldnotes</span><nav class="fn-nav"><span>Search</span><span>Saved</span><span>Profile</span></nav></div>
+          <div class="fn-shell"><aside class="fn-side"><div>Overview</div><div class="selected">Journal</div><div>Places</div><div>Species</div><div>Collections</div><div>About</div></aside><div class="fn-main"><p class="fn-crumb">Journal / Estuary</p><h4>Estuary</h4><div class="fn-stats"><div><strong>8</strong><small>Field essays</small></div><div><strong>12</strong><small>Places</small></div><div><strong>24</strong><small>Species</small></div></div><article class="fn-card">
+            <svg viewBox="300 240 366 95" preserveAspectRatio="xMidYMid slice" role="img" aria-label="The same estuary chart, cropped to a thumbnail"><use href="#fn-art"/></svg>
+            <h5>Where the river loosens its hold.</h5><p>Salt, silt and the plants that hold a shifting shore.</p><p class="meta">Words by Leah Moss, drawing by fieldnotes</p><button type="button">Read the field essay</button>
           </article></div></div>
         </div>
-        <p class="panel-note"><strong>The essay becomes one item in a managed collection.</strong>The shell is legible and the action is visible. Its navigation rail, statistics and equal containers make collection structure more prominent than the essay's voice; changing the accent would not change that hierarchy.</p>
+        <p class="panel-note"><strong>The essay becomes one item in a managed collection.</strong>The shell is legible and the action is visible, in the same type and colours as A. Its navigation rail, counts and equal containers make collection structure more prominent than the estuary; changing the palette would not change that hierarchy.</p>
       </article>
     </div>
-    <aside class="context"><h3>Change the job:<br>work an archive.</h3><p>A field researcher finding a place, species record or saved collection repeatedly needs stable navigation, filters and regular entries. B's shell can serve that utility directory. The expressive composition suits the essay's entrance; it need not govern the archive's working view.</p></aside>
+    <aside class="context"><h3>Change the job: work an archive.</h3><p>A field researcher finding a place, species record or saved collection repeatedly needs stable navigation, filters and regular entries. B's shell can serve that working directory. The charted entrance suits the essay; it need not govern the archive's working view.</p></aside>
     <p class="takeaway">Transfer: character comes from how the subject controls scale, crop, pacing and type. It does not require ornamental clutter or unusual controls.</p>
-    <footer class="foot"><span>Original fictional study · original inline SVG artwork, no product screenshots</span><span>Charter / composition</span></footer>
+    <p class="foot">Original fictional study. The chart is an original drawing of an invented estuary, not navigational information.</p>
   </section>
 
+  <!-- ================= 4. Toolbar family: plain ================= -->
   <section class="study" id="toolbar" aria-labelledby="toolbar-title">
     <header class="study-head">
-      <div><p class="kicker">04 · Give geometry an owner</p><h2 id="toolbar-title">A control family is a relationship,<br>not a collection of local fixes.</h2></div>
-      <p class="brief"><strong>Brief.</strong> A product-image editor places save status, output shape, preview and export in one toolbar. The export label can change; status is information, not an action.</p>
+      <h2 id="toolbar-title">A control family is a relationship, not a collection of local fixes.</h2>
+      <p class="brief">Brief: a product-image editor places save status, output shape, preview and export in one toolbar. The export label can change; status is information, not an action.</p>
     </header>
-    <div class="toolbar-stage">
-      <h3 class="toolbar-label"><span class="letter">A</span> &nbsp; A shared control family, undermined by local choices</h3>
-      <div class="bar"><div class="document-name">Stoneware / market launch<small>Image editor</small></div><div class="actions"><span class="save-slot"><span class="status">Saved locally</span></span><button class="control control--compact" type="button">Portrait · 4:5 <span aria-hidden="true">⌄</span></button><span class="preview-slot"><button class="control" type="button">Preview</button></span><button class="control primary" type="button">Export image <span aria-hidden="true">↗</span></button></div></div>
+    <div class="toolbar-stage tb">
+      <h3 class="toolbar-label"><span class="letter">A</span>&ensp;Shared control family, undermined by local choices</h3>
+      <div class="bar"><div class="document-name">Stoneware / market launch<small>Image editor</small></div><div class="actions"><span class="save-slot"><span class="status">Saved locally</span></span><button class="control control--compact" type="button">Portrait 4:5 <span aria-hidden="true">⌄</span></button><span class="preview-slot"><button class="control" type="button">Preview</button></span><button class="control primary" type="button">Export image</button></div></div>
       <div class="metrics"><p><strong>A stale width reservation</strong><code>.save-slot { width: 160px }</code><br>The passive status is short, but its wrapper still reserves room for a former, longer message.</p><p><strong>A wrapper changes the control</strong><code>.preview-slot { min-height: 40px }</code><br>Flex stretch makes Preview 40px high, despite the shared control's 36px minimum.</p><p><strong>A valid variant in the wrong group</strong><code>.control--compact { --control-size: 32px }</code><br>Output shape uses the compact variant next to default-sized actions, without a density reason.</p></div>
-      <h3 class="toolbar-label toolbar-good"><span class="letter">B</span> &nbsp; Keep the family; remove the competing geometry</h3>
-      <div class="bar good-bar"><div class="document-name">Stoneware / market launch<small>Image editor</small></div><div class="actions"><span class="status">Saved locally</span><button class="control" type="button">Portrait · 4:5 <span aria-hidden="true">⌄</span></button><button class="control" type="button">Preview</button><button class="control primary" type="button">Export image <span aria-hidden="true">↗</span></button></div></div>
-      <div class="ownership"><div><h4>Toolbar owns placement</h4><p>Flex layout, grouping, gaps and alignment live on the toolbar. Its containers do not supply control padding or stretch a button beyond its family size.</p></div><div><h4>The control owns its defaults</h4><p><code>.control</code> declares its own size, padding, type, border and radius. It works outside this toolbar too. This group's actions use the same default density.</p></div><div><h4>Content owns useful width</h4><p>“Preview” stays compact; “Export image” gets the width of its label and icon. Passive status remains unboxed and quieter, without an unused width reservation.</p></div></div>
-      <div class="stress"><div class="bar good-bar"><div class="document-name">Stoneware / market launch<small>700px available · longer label · save pending</small></div><div class="actions"><span class="status pending">Saving locally…</span><button class="control" type="button">Portrait · 4:5 <span aria-hidden="true">⌄</span></button><button class="control" type="button">Preview</button><button class="control primary" type="button" disabled>Export print-ready image <span aria-hidden="true">↗</span></button></div></div><p><strong>Changed content, same ownership.</strong><br>The same flex layout wraps the action group when both regions no longer fit. Export grows for its label, retaining the family metrics. Here export needs a saved version: the pending save changes status and availability, not control size.</p></div>
+      <h3 class="toolbar-label toolbar-good"><span class="letter">B</span>&ensp;Keep the family; remove the competing geometry</h3>
+      <div class="bar good-bar"><div class="document-name">Stoneware / market launch<small>Image editor</small></div><div class="actions"><span class="status">Saved locally</span><button class="control" type="button">Portrait 4:5 <span aria-hidden="true">⌄</span></button><button class="control" type="button">Preview</button><button class="control primary" type="button">Export image</button></div></div>
+      <div class="ownership"><div><h4>Toolbar owns placement</h4><p>Flex layout, grouping, gaps and alignment live on the toolbar. Its containers do not supply control padding or stretch a button beyond its family size.</p></div><div><h4>The control owns its defaults</h4><p><code>.control</code> declares its own size, padding, type, border and radius. It works outside this toolbar too. This group's actions use the same default density.</p></div><div><h4>Content owns useful width</h4><p>“Preview” stays compact; “Export image” gets the width of its label. Passive status remains unboxed and quieter, without an unused width reservation.</p></div></div>
+      <div class="stress"><div class="bar good-bar"><div class="document-name">Stoneware / market launch<small>700px available, longer label, save pending</small></div><div class="actions"><span class="status pending">Saving locally…</span><button class="control" type="button">Portrait 4:5 <span aria-hidden="true">⌄</span></button><button class="control" type="button">Preview</button><button class="control primary" type="button" disabled>Export print-ready image</button></div></div><p><strong>Changed content, same ownership.</strong><br>The same flex layout wraps the action group when both regions no longer fit. Export grows for its label, retaining the family metrics. Here export needs a saved version: the pending save changes status and availability, not control size.</p></div>
     </div>
-    <aside class="context"><h3>When a difference<br>has a real job.</h3><p>A changing zoom readout may reserve width to keep adjacent controls still. A compact variant can serve a dense table, while a touch action needs a larger target. Those differences follow content or input conditions. Here the passive status and action buttons legitimately differ; unrelated wrapper dimensions do not justify three action heights.</p></aside>
+    <aside class="context"><h3>When a difference has a real job.</h3><p>A changing zoom readout may reserve width to keep adjacent controls still. A compact variant can serve a dense table, while a touch action needs a larger target. Those differences follow content or input conditions. Here the passive status and action buttons legitimately differ; unrelated wrapper dimensions do not justify three action heights.</p></aside>
     <p class="takeaway">Transfer: align the relationship that matters. Equal heights can unify related actions; unequal widths, a quieter status or a larger touch target can be correct.</p>
-    <footer class="foot"><span>Original fictional study · CSS shows both ownership models directly</span><span>Charter / composition</span></footer>
+    <p class="foot">Original fictional study. The CSS shows both ownership models directly; the toolbar is kept plain so that geometry is the only subject.</p>
+  </section>
+
+  <!-- ================= 5. Identity: Furnace Row ================= -->
+  <section class="study" id="identity" aria-labelledby="identity-title">
+    <header class="study-head">
+      <h2 id="identity-title">Both pages are competent. Only one belongs to this label.</h2>
+      <p class="brief">Brief: a small label for sound-system music needs its catalogue page: twelve releases on seven-, ten- and twelve-inch vinyl, a format filter, and the record now playing. Both arms carry the same content in the same order of importance.</p>
+    </header>
+    <div class="pair">
+      <article>
+        <h3 class="arm-label"><span class="letter">A</span>A familiar look, well made</h3>
+        <div class="screen fa">
+          <div class="fa-bar"><span class="fa-mark">FURNACE ROW</span><nav class="fa-nav"><span class="here">Catalogue</span><span>Dances</span><span>Mailing list</span></nav></div>
+          <div class="fa-head"><div><h4>Catalogue</h4><span class="fa-mono">12 releases / 2023–2026</span></div><div class="fa-filter"><span class="on">All</span><span>7″</span><span>10″</span><span>12″</span></div></div>
+          <div class="fa-grid">
+            <div class="fa-item"><svg viewBox="0 0 100 100" role="img" aria-label="Cover of Heavy Weather"><rect width="100" height="100" fill="#1d2024"/><circle cx="50" cy="50" r="34" fill="none" stroke="#3a3f46" stroke-width="1"/><circle cx="50" cy="50" r="24" fill="none" stroke="#4a5059" stroke-width="1"/><circle cx="50" cy="50" r="14" fill="none" stroke="#5d646e" stroke-width="1"/><circle cx="50" cy="50" r="3.2" fill="#c6f432"/></svg><h5>Heavy Weather</h5><p>Aston Bell</p><div class="fa-mono">FR 012 · 7″ · 2026</div></div>
+            <div class="fa-item"><svg viewBox="0 0 100 100" role="img" aria-label="Cover of Hold the Ground"><rect width="100" height="100" fill="#22252a"/><path d="M0 64h100v36H0z" fill="#2d3137"/><path d="M14 64h72" stroke="#8d9198" stroke-width=".8"/><rect x="40" y="30" width="20" height="34" fill="#3b4048"/></svg><h5>Hold the Ground</h5><p>Maudie Grant</p><div class="fa-mono">FR 011 · 10″ · 2026</div></div>
+            <div class="fa-item"><svg viewBox="0 0 100 100" role="img" aria-label="Cover of Low Road Version"><rect width="100" height="100" fill="#1a1c20"/><g stroke="#4a5059" stroke-width="1.4"><path d="M10 72v-8M18 72V52M26 72V40M34 72V58M42 72V30M50 72V46M58 72V36M66 72V60M74 72V44M82 72V54M90 72v-6"/></g><path d="M10 72h80" stroke="#c6f432" stroke-width="1"/></svg><h5>Low Road Version</h5><p>Junior Hadley</p><div class="fa-mono">FR 010 · 7″ · 2025</div></div>
+            <div class="fa-item"><svg viewBox="0 0 100 100" role="img" aria-label="Cover of Iron Gate"><rect width="100" height="100" fill="#202327"/><g fill="none" stroke="#454b53" stroke-width="2"><path d="M26 82V30q24-18 48 0v52"/><path d="M38 82V36m12-10v56m12-46v46"/></g></svg><h5>Iron Gate</h5><p>Desi Rowe and the Yard Band</p><div class="fa-mono">FR 009 · 12″ · 2025</div></div>
+            <div class="fa-item"><svg viewBox="0 0 100 100" role="img" aria-label="Cover of Night Bus Skank"><rect width="100" height="100" fill="#16181b"/><g fill="#2f343b"><rect x="12" y="40" width="10" height="10"/><rect x="28" y="40" width="10" height="10"/><rect x="44" y="40" width="10" height="10"/><rect x="60" y="40" width="10" height="10"/><rect x="76" y="40" width="10" height="10"/></g><rect x="60" y="40" width="10" height="10" fill="#8d9198"/><path d="M8 62h84" stroke="#3a3f46"/></svg><h5>Night Bus Skank</h5><p>Coral Edwards</p><div class="fa-mono">FR 008 · 7″ · 2025</div></div>
+            <div class="fa-item"><svg viewBox="0 0 100 100" role="img" aria-label="Cover of Brick and Bassline"><rect width="100" height="100" fill="#1e2125"/><g fill="none" stroke="#3e434b" stroke-width="1"><path d="M0 30h100M0 46h100M0 62h100M0 78h100M20 30v16M50 30v16M80 30v16M35 46v16M65 46v16M20 62v16M50 62v16M80 62v16"/></g></svg><h5>Brick and Bassline</h5><p>Tafari Mills</p><div class="fa-mono">FR 007 · 7″ · 2024</div></div>
+          </div>
+          <div class="fa-player"><svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" fill="#1d2024"/><circle cx="50" cy="50" r="34" fill="none" stroke="#3a3f46" stroke-width="2"/><circle cx="50" cy="50" r="20" fill="none" stroke="#5d646e" stroke-width="2"/><circle cx="50" cy="50" r="5" fill="#c6f432"/></svg><div><strong>Heavy Weather</strong><small>Aston Bell</small></div><button class="fa-play" type="button" aria-label="Pause"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 2h3v10H3zm5 0h3v10H8z" fill="#0d0e10"/></svg></button><div class="fa-progress"><i></i><span class="fa-mono"><span>1:42</span><span>3:18</span></span></div></div>
+        </div>
+        <p class="panel-note"><strong>A near-black ground with one acid or neon accent.</strong>Monospace labels, a grid of square covers and a neon play button: nothing is broken, the hierarchy is clear and the player is easy to find. Cover the name and it could be any label's catalogue, or a podcast's; every element would have arrived for an unrelated label.</p>
+      </article>
+      <article>
+        <h3 class="arm-label"><span class="letter">B</span>Direction from the label's own printed matter</h3>
+        <div class="screen fr">
+          <div class="fr-bar"><nav><span class="here">Catalogue</span><span>Dances</span><span>Mailing list</span></nav></div>
+          <h4 class="fr-name"><span>Furnace Row</span></h4>
+          <div class="fr-sub"><h4>Catalogue<small>12 releases, 2023–2026</small></h4><div class="fr-filter"><span class="on">All</span><span>7″</span><span>10″</span><span>12″</span></div></div>
+          <div class="fr-wall">
+            <div class="fr-rec"><svg viewBox="-100 -100 200 200" role="img" aria-label="FR 012, Aston Bell, Heavy Weather, seven-inch, 2026"><circle r="99" fill="#111"/><circle r="93" fill="none" stroke="#2a2a2a" stroke-width=".7"/><circle r="87" fill="none" stroke="#262626" stroke-width=".7"/><circle r="80" fill="#ff5c1a"/><text font-family="League Gothic" font-size="13" letter-spacing="2.4" fill="#111"><textPath href="#fr-arc-top" startOffset="50%" text-anchor="middle">FURNACE ROW</textPath></text><text font-family="Anton" font-size="22" text-anchor="middle" fill="#111"><tspan x="0" y="-30">HEAVY</tspan><tspan x="0" y="-8">WEATHER</tspan></text><circle r="3.6" fill="#111"/><text font-family="League Gothic" font-size="12" letter-spacing=".8" fill="#111"><tspan x="-56" y="8">SIDE A</tspan><tspan x="30" y="8">45 RPM</tspan></text><text font-family="League Gothic" font-size="17" letter-spacing=".8" text-anchor="middle" fill="#111" x="0" y="32">ASTON BELL</text><g transform="translate(4 60) rotate(-9)" filter="url(#fr-ink)"><rect x="-32" y="-12" width="64" height="24" rx="2" fill="none" stroke="#2d1566" stroke-width="2.4"/><text font-family="League Gothic" font-size="19" letter-spacing="1" text-anchor="middle" y="7" fill="#2d1566">FR 012</text></g></svg><p>7-inch, 2026</p></div>
+            <div class="fr-rec"><svg viewBox="-100 -100 200 200" role="img" aria-label="FR 011, Maudie Grant, Hold the Ground, ten-inch, 2026"><circle r="99" fill="#111"/><circle r="93" fill="none" stroke="#2a2a2a" stroke-width=".7"/><circle r="87" fill="none" stroke="#262626" stroke-width=".7"/><circle r="80" fill="#ff8ec4"/><text font-family="League Gothic" font-size="13" letter-spacing="2.4" fill="#111"><textPath href="#fr-arc-top" startOffset="50%" text-anchor="middle">FURNACE ROW</textPath></text><text font-family="Anton" font-size="22" text-anchor="middle" fill="#111"><tspan x="0" y="-30">HOLD THE</tspan><tspan x="0" y="-8">GROUND</tspan></text><circle r="3.6" fill="#111"/><text font-family="League Gothic" font-size="12" letter-spacing=".8" fill="#111"><tspan x="-56" y="8">SIDE A</tspan><tspan x="30" y="8">45 RPM</tspan></text><text font-family="League Gothic" font-size="17" letter-spacing=".8" text-anchor="middle" fill="#111" x="0" y="32">MAUDIE GRANT</text><g transform="translate(-3 60) rotate(6)" filter="url(#fr-ink)"><rect x="-32" y="-12" width="64" height="24" rx="2" fill="none" stroke="#2d1566" stroke-width="2.4"/><text font-family="League Gothic" font-size="19" letter-spacing="1" text-anchor="middle" y="7" fill="#2d1566">FR 011</text></g></svg><p>10-inch, 2026</p></div>
+            <div class="fr-rec"><svg viewBox="-100 -100 200 200" role="img" aria-label="FR 010, Junior Hadley, Low Road Version, seven-inch, 2025"><circle r="99" fill="#111"/><circle r="93" fill="none" stroke="#2a2a2a" stroke-width=".7"/><circle r="87" fill="none" stroke="#262626" stroke-width=".7"/><circle r="80" fill="#17a35a"/><text font-family="League Gothic" font-size="13" letter-spacing="2.4" fill="#111"><textPath href="#fr-arc-top" startOffset="50%" text-anchor="middle">FURNACE ROW</textPath></text><text font-family="Anton" font-size="22" text-anchor="middle" fill="#111"><tspan x="0" y="-30">LOW ROAD</tspan><tspan x="0" y="-8">VERSION</tspan></text><circle r="3.6" fill="#111"/><text font-family="League Gothic" font-size="12" letter-spacing=".8" fill="#111"><tspan x="-56" y="8">SIDE B</tspan><tspan x="30" y="8">45 RPM</tspan></text><text font-family="League Gothic" font-size="17" letter-spacing=".8" text-anchor="middle" fill="#111" x="0" y="32">JUNIOR HADLEY</text><g transform="translate(2 60) rotate(-4)" filter="url(#fr-ink)"><rect x="-32" y="-12" width="64" height="24" rx="2" fill="none" stroke="#2d1566" stroke-width="2.4"/><text font-family="League Gothic" font-size="19" letter-spacing="1" text-anchor="middle" y="7" fill="#2d1566">FR 010</text></g></svg><p>7-inch, 2025</p></div>
+            <div class="fr-rec"><svg viewBox="-100 -100 200 200" role="img" aria-label="FR 009, Desi Rowe and the Yard Band, Iron Gate, twelve-inch, 2025"><circle r="99" fill="#111"/><circle r="93" fill="none" stroke="#2a2a2a" stroke-width=".7"/><circle r="87" fill="none" stroke="#262626" stroke-width=".7"/><circle r="80" fill="#ffd21a"/><text font-family="League Gothic" font-size="13" letter-spacing="2.4" fill="#111"><textPath href="#fr-arc-top" startOffset="50%" text-anchor="middle">FURNACE ROW</textPath></text><text font-family="Anton" font-size="22" text-anchor="middle" fill="#111"><tspan x="0" y="-30">IRON</tspan><tspan x="0" y="-8">GATE</tspan></text><circle r="3.6" fill="#111"/><text font-family="League Gothic" font-size="12" letter-spacing=".8" fill="#111"><tspan x="-56" y="8">SIDE A</tspan><tspan x="28" y="8">33⅓ RPM</tspan></text><text font-family="League Gothic" font-size="15" letter-spacing=".6" text-anchor="middle" fill="#111" x="0" y="30">DESI ROWE AND</text><text font-family="League Gothic" font-size="15" letter-spacing=".6" text-anchor="middle" fill="#111" x="0" y="46">THE YARD BAND</text><g transform="translate(0 64) rotate(8)" filter="url(#fr-ink)"><rect x="-32" y="-12" width="64" height="24" rx="2" fill="none" stroke="#2d1566" stroke-width="2.4"/><text font-family="League Gothic" font-size="19" letter-spacing="1" text-anchor="middle" y="7" fill="#2d1566">FR 009</text></g></svg><p>12-inch, 2025</p></div>
+            <div class="fr-rec"><svg viewBox="-100 -100 200 200" role="img" aria-label="FR 008, Coral Edwards, Night Bus Skank, seven-inch, 2025"><circle r="99" fill="#111"/><circle r="93" fill="none" stroke="#2a2a2a" stroke-width=".7"/><circle r="87" fill="none" stroke="#262626" stroke-width=".7"/><circle r="80" fill="#35b4ff"/><text font-family="League Gothic" font-size="13" letter-spacing="2.4" fill="#111"><textPath href="#fr-arc-top" startOffset="50%" text-anchor="middle">FURNACE ROW</textPath></text><text font-family="Anton" font-size="22" text-anchor="middle" fill="#111"><tspan x="0" y="-30">NIGHT BUS</tspan><tspan x="0" y="-8">SKANK</tspan></text><circle r="3.6" fill="#111"/><text font-family="League Gothic" font-size="12" letter-spacing=".8" fill="#111"><tspan x="-56" y="8">SIDE A</tspan><tspan x="30" y="8">45 RPM</tspan></text><text font-family="League Gothic" font-size="17" letter-spacing=".8" text-anchor="middle" fill="#111" x="0" y="32">CORAL EDWARDS</text><g transform="translate(4 60) rotate(-12)" filter="url(#fr-ink)"><rect x="-32" y="-12" width="64" height="24" rx="2" fill="none" stroke="#2d1566" stroke-width="2.4"/><text font-family="League Gothic" font-size="19" letter-spacing="1" text-anchor="middle" y="7" fill="#2d1566">FR 008</text></g></svg><p>7-inch, 2025</p></div>
+            <div class="fr-rec"><svg viewBox="-100 -100 200 200" role="img" aria-label="FR 007, Tafari Mills, Brick and Bassline, seven-inch, 2024"><circle r="99" fill="#111"/><circle r="93" fill="none" stroke="#2a2a2a" stroke-width=".7"/><circle r="87" fill="none" stroke="#262626" stroke-width=".7"/><circle r="80" fill="#f3efe4"/><text font-family="League Gothic" font-size="13" letter-spacing="2.4" fill="#111"><textPath href="#fr-arc-top" startOffset="50%" text-anchor="middle">FURNACE ROW</textPath></text><text font-family="Anton" font-size="22" text-anchor="middle" fill="#111"><tspan x="0" y="-30">BRICK AND</tspan><tspan x="0" y="-8">BASSLINE</tspan></text><circle r="3.6" fill="#111"/><text font-family="League Gothic" font-size="12" letter-spacing=".8" fill="#111"><tspan x="-56" y="8">SIDE A</tspan><tspan x="30" y="8">45 RPM</tspan></text><text font-family="League Gothic" font-size="17" letter-spacing=".8" text-anchor="middle" fill="#111" x="0" y="32">TAFARI MILLS</text><g transform="translate(4 60) rotate(-7)" filter="url(#fr-ink)"><rect x="-32" y="-12" width="64" height="24" rx="2" fill="none" stroke="#2d1566" stroke-width="2.4"/><text font-family="League Gothic" font-size="19" letter-spacing="1" text-anchor="middle" y="7" fill="#2d1566">FR 007</text></g></svg><p>7-inch, 2024</p></div>
+          </div>
+          <div class="fr-deck"><svg class="spin" viewBox="-100 -100 200 200" aria-hidden="true"><circle r="99" fill="#2a2a2a"/><circle r="92" fill="#111"/><circle r="80" fill="none" stroke="#1f1f1f" stroke-width="2"/><circle r="56" fill="#ff5c1a"/><path d="M-30-22h60M-24-10h48" stroke="#111" stroke-width="8"/><circle r="6" fill="#111"/></svg><div><span class="now">Now playing</span><strong>Heavy Weather</strong><span class="by">Aston Bell</span></div><button class="fr-play" type="button" aria-label="Pause"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h4v12H3zm6 0h4v12H9z" fill="#111"/></svg></button><div class="fr-time"><span><span>1:42</span><span>3:18</span></span><i></i></div></div>
+        </div>
+        <p class="panel-note"><strong>Loud throughout, because the label's own printed matter is.</strong>The ground is the sleeve colour of the record now playing; the capitals are the wood type of the label's dance posters, and the name fills the measure edge to edge, as a poster printer fits a line; each release is drawn as its seven-inch label, its text set in the round about the spindle hole and its catalogue number rubber-stamped as on a pre-release; the player sits on the bottom edge like a deck. Heavy condensed capitals on a flat saturated ground also arrive whenever a page is merely asked to be bold. Here the posters and labels ask for them.</p>
+      </article>
+    </div>
+    <aside class="context"><h3>Change the job: the sleeves are the identity.</h3><p>A label that releases mostly digitally, each record with its own commissioned square artwork, has made the artwork its subject. A's quiet dark ground and grid of square covers then let every sleeve speak, and B's labels in the round would hide the work the label paid for. The same holds when a label already owns A's look: that is then the direction, followed exactly.</p></aside>
+    <p class="takeaway">Transfer: polish and a sound hierarchy do not make a direction. For each element, ask whether an unrelated subject would have received it.</p>
+    <p class="foot">Original fictional study. The label, artists, titles and drawings are invented.</p>
   </section>
 </body>
 </html>

@@ -103,6 +103,10 @@ people need to inspect.
 
 Keep fixed or sticky regions from occluding content and focus. Account for
 zoom, text enlargement, safe areas and software keyboards where applicable.
+Test text enlargement by raising the browser's default font size, which also
+moves breakpoints written in em; overriding the root size in the page does
+not. A display line with a rem minimum can break inside its words at a large
+text setting: cap that minimum by the viewport so the line still fits.
 Pointer-dense controls and touch targets have different costs; support the
 actual input context rather than adding empty space everywhere.
 

@@ -28,15 +28,22 @@ PARTS = {
     "far_left": {"rect": [0.57, 0.32, 0.62, 0.74], "depth": 9, "length": 1.5},
     "far_right": {"rect": [0.86, 0.32, 0.91, 0.74], "depth": 9, "length": 1.5},
 }
+# Hues come from an indigo dye works at dusk: vat-dark indigo for the near
+# mass, lighter dyed-cloth indigos for its side, top and the far frame, a
+# madder-pink sky, mauve-grey wet flagstones and a madder-red disc. Each
+# region keeps the relative luminance (linear Rec. 709 Y) of the earlier
+# neutral palette, so the value structure the study teaches is unchanged.
 COLORS = {
-    "sky": "d5cbbb",
-    "floor": "9e9b88",
-    "front": "273536",
-    "side": "53605b",
-    "top": "6f7769",
-    "far": "64736c",
-    "ember": "e48445",
+    "sky": "f3bfc7",
+    "floor": "a395b5",
+    "front": "312a65",
+    "side": "5a559b",
+    "top": "746cae",
+    "far": "7467a2",
+    "ember": "fb7076",
 }
+# The equalized variant uses one pale lavender at the old gray-green's Y.
+EQUALIZED = "afa7c2"
 
 
 def arguments():
@@ -45,6 +52,26 @@ def arguments():
     parser.add_argument("--renders", action="store_true")
     parser.add_argument("--compare", nargs=2, type=Path, metavar=("REFERENCE", "CANDIDATE"))
     return parser.parse_args(sys.argv[sys.argv.index("--") + 1 :])
+
+
+def use_gpu(scene):
+    """Ask Cycles for a GPU itself; a headless process does not do it at start-up."""
+    prefs = bpy.context.preferences.addons["cycles"].preferences
+    prefs.refresh_devices()
+    for kind in ("METAL", "OPTIX", "CUDA", "HIP", "ONEAPI"):
+        try:
+            prefs.compute_device_type = kind
+        except TypeError:
+            continue
+        prefs.refresh_devices()
+        gpus = [d for d in prefs.devices if d.type == kind]
+        if gpus:
+            for device in gpus:
+                device.use = True
+            scene.cycles.device = "GPU"
+            scene.cycles.denoising_use_gpu = True
+            return
+    print("No GPU device available; Cycles renders on the CPU.")
 
 
 def rgb(hex_color):
@@ -202,6 +229,7 @@ def camera(scene, reference, location=(0, -8, 2), target=(0, 0, 2), lens=24):
 def scene_base(name, mats):
     scene = bpy.data.scenes.new(name)
     scene.render.engine = "CYCLES"
+    use_gpu(scene)
     scene.cycles.samples = 8
     scene.cycles.use_denoising = False
     scene.render.resolution_x, scene.render.resolution_y = WIDTH, HEIGHT
@@ -380,7 +408,7 @@ def build(output, renders):
     reference.filepath = "//reference.png"
     reference.pack(data=content, data_len=len(content))
     mats = {name: material(name, color) for name, color in COLORS.items()}
-    mats["flat"] = material("equalized values", "a6ad9f")
+    mats["flat"] = material("equalized values", EQUALIZED)
     scenes = {}
     for name in (
         "reference-informed",
@@ -475,6 +503,7 @@ def build(output, renders):
                 area.spaces.active.region_3d.view_perspective = "CAMERA"
     text = bpy.data.texts.new("BUILD SOURCE — edit the external script to regenerate")
     text.write(Path(__file__).read_text())
+    scrub_file_browsers()
     bpy.ops.wm.save_as_mainfile(filepath=str(output / "reference-scene-study.blend"), compress=True)
     if renders:
         for name, scene in scenes.items():
@@ -482,6 +511,19 @@ def build(output, renders):
             bpy.ops.render.render(write_still=True, scene=scene.name)
         for candidate in ("literal-inventory", "engineered-gate", "reference-informed"):
             comparison(output / "reference.png", output / f"{candidate}.png", output, candidate)
+
+
+def scrub_file_browsers():
+    """Blender's default Shading workspace keeps a file browser opened on the
+    author's home folder, and the native file saves that fixed-size field
+    whole: fill it before pointing it at the file's own folder, so no tail of
+    the earlier path survives the save."""
+    for screen in bpy.data.screens:
+        for area in screen.areas:
+            for space in area.spaces:
+                if space.type == "FILE_BROWSER" and space.params:
+                    space.params.directory = b"/" * 4096
+                    space.params.directory = b"//"
 
 
 def main():

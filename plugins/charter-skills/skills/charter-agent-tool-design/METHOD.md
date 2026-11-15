@@ -49,12 +49,19 @@ or a companion guide, not a second surface.
 
 **Capability:** which operation is offered, with which inputs, results and
 errors? Use nouns for durable objects and verbs for meaningful transitions.
-`invoice void` or `release_promote` exposes constraints that a generic
-`update` hides, so the tool can reject an illegal transition before a provider
-call and its help can say what survives. Generic CRUD fits a resource with no
-stronger lifecycle. Consolidate the calls that implement one transition into
-one operation instead of exposing every internal method and leaving the caller
-to sequence them.
+`invoice void` or `release_promote` exposes constraints that a generic `update`
+hides, so the tool can reject an illegal transition before a provider call and
+its help can say what survives. Generic CRUD fits a resource with no stronger
+lifecycle. Take the words from the people who work with those objects, not from
+the implementation, and keep the same word for the same operation: a caller who
+learned `invoice show` can predict `subscription show` when both expose the
+same kind of read, while `fetch`, `get` and `show` for one kind of read send it
+to the help of every command. Different lifecycle transitions keep their own
+words; an invoice may be voided while a subscription is canceled. A term
+callers already know from an established protocol or a neighboring tool is the
+right word when its meaning fits, even when it is plain. Consolidate the calls
+that implement one transition into one operation instead of exposing every
+internal method and leaving the caller to sequence them.
 
 **Exposure:** how does the caller or host discover, enable, name and present
 it? Package metadata, configured registration, a listed catalog entry and

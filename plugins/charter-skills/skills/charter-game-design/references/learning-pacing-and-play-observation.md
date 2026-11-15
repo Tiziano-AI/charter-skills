@@ -76,6 +76,15 @@ without useful practice. But removing the approach can remove suspense or a
 resource decision the whole encounter depends on. Judge the complete attempt,
 not just the instant of failure.
 
+Construct the retry around the next useful attempt. For a short execution
+challenge, automatic reset or a single retry input can return control without
+another title screen or repeated transition; retain enough of the failed move
+to make its cause legible. Measure from failure to the first accepted gameplay
+input, not merely until a restart overlay disappears. If loss changes a run's
+strategy, leave room to understand the consequence and choose a new approach.
+A checkpoint restores the state that decision requires, not automatically
+the most convenient state or the entire run.
+
 ## Observe the question you actually have
 
 For first-use comprehension, let someone encounter the game without explaining

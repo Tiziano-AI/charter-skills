@@ -12,4 +12,10 @@ mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 cp "$binary_dir/OrderCounter" "$app/Contents/MacOS/OrderCounter"
 cp "$package_dir/Info.plist" "$app/Contents/Info.plist"
 cp "$package_dir/LICENSE.txt" "$app/Contents/Resources/LICENSE.txt"
+# Compile the asset catalog as Xcode does. Info.plist names AccentColor through
+# NSAccentColorName, and AppKit reads it from Contents/Resources/Assets.car.
+xcrun actool "$package_dir/Assets.xcassets" --compile "$app/Contents/Resources" \
+  --platform macosx --minimum-deployment-target 14.0 --accent-color AccentColor \
+  --output-partial-info-plist "$output_dir/asset-catalog-info.plist" \
+  --output-format human-readable-text --errors --warnings >/dev/null
 printf '%s\n' "$app"

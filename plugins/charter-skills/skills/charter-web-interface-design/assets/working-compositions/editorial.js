@@ -46,7 +46,10 @@ if ('IntersectionObserver' in window) {
   titles.forEach(title => observer.observe(title));
 }
 motion.addEventListener('change', () => { if (motion.matches) activeAnimations.forEach(animation => animation.cancel()); });
-document.querySelector('#replay').addEventListener('click', () => {
+/* Replay needs this script, so the button is shown only once it can work. */
+const replay = document.querySelector('#replay');
+replay.hidden = false;
+replay.addEventListener('click', () => {
   const title = titles[0];
   title.scrollIntoView({ block: 'center', behavior: 'instant' });
   title.tabIndex = -1;

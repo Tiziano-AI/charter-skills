@@ -52,6 +52,10 @@ The original authored diagram **Aperture / distant ember** puts a large,
 cropped dark mass close to the eye, a lighter opening off to the right and a
 small warm disc beyond it. The offset openings and unequal masses matter;
 the inventory “posts, lintels, disc” does not specify their relationship.
+Its hues come from an indigo dye works at dusk (vat-dark and dyed-cloth
+indigos, a madder-pink sky, mauve-grey wet flagstones, a madder-red disc).
+Each region's luminance was fixed first and its hue chosen at that luminance,
+so the value relationships the study depends on do not rest on these hues.
 
 [Editable concept SVG](../assets/reference-scene-study/reference.svg) ·
 [separate reference raster](../assets/reference-scene-study/reference.png) ·
@@ -93,8 +97,8 @@ The native file opens on `reference-informed`. Its named scenes hold the
 alternatives; switch with Blender's scene selector. The camera, meshes and
 face materials are directly editable. The external script is the reproducible
 parameter owner; object properties record authored inputs but do **not**
-rebuild geometry when edited. The embedded text block is a copy of that source,
-not an automatic updater.
+rebuild geometry when edited. Regenerate from that script to change the
+parameter-controlled alternatives; direct scene edits need their own export.
 
 | Control | What it changes in this study |
 | --- | --- |
@@ -166,9 +170,10 @@ accidental contour would be the wrong obligation.
 ![Identical camera and geometry with face values equalized](../assets/reference-scene-study/equalized-values.png)
 
 This version keeps the hero camera and geometry but equalizes face materials
-to a light gray-green. The dominant dark near mass and its separation from the
+to one pale lavender. The dominant dark near mass and its separation from the
 far opening disappear. Matching projected extents cannot recover that value
-structure.
+structure. The converse also holds: with each region's luminance kept, its
+hue can change without disturbing the composition.
 
 The study deliberately uses emission shaders and authored face colours to
 make spatial and value choices inspectable. It does not teach a physically

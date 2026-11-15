@@ -14,10 +14,13 @@ priorities for every asset.
 
 A small character sprite must keep identity in silhouette and motion. An
 editorial portrait can depend on expression and lighting. An illustration under
-text needs a deliberate quiet region. Translate the role into a visual register:
-subject, hierarchy, palette, material, texture and camera. Mention unwanted
-lettering, logos, props or extra subjects when they would be plausible but wrong
-additions, not as a universal negative-prompt incantation.
+text needs a deliberate quiet region. Translate the role into a medium and
+manner, then into decisions drawn from the subject's own world: the moment, the
+viewpoint, the light by its source and hour, the palette by its matter and the
+material with its wear. [Directing a look](directing-a-look.md) works this
+through for very different briefs. Mention unwanted lettering, logos, props or
+extra subjects when they would be plausible but wrong additions, not as a
+universal negative-prompt incantation.
 
 Assign references by what they control. An identity reference and a lighting
 reference should not be blended into two half-identities. A layout guide can
@@ -28,7 +31,8 @@ when thumbnails or prior derivatives have lost the needed detail.
 ## Source quality and repairability are different
 
 A candidate's fitness comes from its subject, silhouette, expression,
-perspective, anatomy, focal hierarchy, palette and placement. A tiny asset may
+perspective, anatomy, focal hierarchy, palette and placement, and its character
+from whether its strongest choice belongs to this subject. A tiny asset may
 need less detail and stronger shape; a wide crop may need a different camera
 rather than stretching the subject.
 
@@ -43,6 +47,12 @@ Compare these nearby cases:
   the source.
 - A beautiful landscape that leaves no space for essential text may need a new
   composition, not increasingly heavy text shadows.
+- Of two clean candidates, one is centred at eye level and the other is taken
+  from low beside the subject, which runs out of the frame. If the brief is
+  about scale and the low view keeps the cues that make size readable, it
+  carries the brief, and a damaged edge on it calls for a repair, not for
+  taking the first. If its crop loses those cues, the eye-level view may serve
+  better.
 
 Choose a canonical base capable of supporting the family. Independent generation
 is appropriate for independent images; dependent states, poses and themes need

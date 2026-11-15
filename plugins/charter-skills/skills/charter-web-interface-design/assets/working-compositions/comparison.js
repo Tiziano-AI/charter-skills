@@ -1,13 +1,13 @@
 // Original fictional dataset and application. No fetch, framework or backend.
 const rooms = [
-  { id: 'garden', name: 'Garden Room', location: 'Elm House / Ground floor', seats: 12, access: true, projector: true, price: 160 },
-  { id: 'north', name: 'North Loft', location: 'Old Mill / Second floor', seats: 14, access: true, projector: true, price: 195 },
-  { id: 'reading', name: 'Reading Room', location: 'Civic Library / Ground floor', seats: 12, access: true, projector: false, price: 125 },
-  { id: 'east', name: 'East Studio', location: 'Old Mill / First floor', seats: 16, access: null, projector: true, price: 175 },
-  { id: 'assembly', name: 'Assembly Hall', location: 'Foundry / Ground floor', seats: 24, access: true, projector: true, price: 180 },
-  { id: 'print', name: 'The Printmakers’ Workshop & Community Meeting Room', location: 'Riverside Cooperative / Courtyard', seats: 10, access: true, projector: null, price: 150 },
-  { id: 'west', name: 'West Attic', location: 'Station House / Third floor', seats: 14, access: false, projector: true, price: 110 },
-  { id: 'map', name: 'Map Room', location: 'Civic Library / First floor', seats: 8, access: true, projector: false, price: 90 }
+  { id: 'garden', name: 'Garden Room', location: 'Elm House, ground floor', seats: 12, access: true, projector: true, price: 160 },
+  { id: 'north', name: 'North Loft', location: 'Old Mill, second floor', seats: 14, access: true, projector: true, price: 195 },
+  { id: 'reading', name: 'Reading Room', location: 'Civic Library, ground floor', seats: 12, access: true, projector: false, price: 125 },
+  { id: 'east', name: 'East Studio', location: 'Old Mill, first floor', seats: 16, access: null, projector: true, price: 175 },
+  { id: 'assembly', name: 'Assembly Hall', location: 'Foundry, ground floor', seats: 24, access: true, projector: true, price: 180 },
+  { id: 'print', name: 'The Printmakers’ Workshop & Community Meeting Room', location: 'Riverside Cooperative, courtyard', seats: 10, access: true, projector: null, price: 150 },
+  { id: 'west', name: 'West Attic', location: 'Station House, third floor', seats: 14, access: false, projector: true, price: 110 },
+  { id: 'map', name: 'Map Room', location: 'Civic Library, first floor', seats: 8, access: true, projector: false, price: 90 }
 ];
 const byId = new Map(rooms.map(room => [room.id, room]));
 const storageKey = 'charter-fieldwork-shortlist-v1';
@@ -21,6 +21,7 @@ let storageError = '';
 const defaults = { people: 12, budget: 180, access: true, projector: true, matches: false, sort: 'fit' };
 let requirements;
 const money = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
+const list = new Intl.ListFormat('en-GB', { type: 'conjunction' });
 const $ = selector => document.querySelector(selector);
 const booleanText = value => value === null ? 'Unconfirmed' : value ? 'Yes' : 'No';
 // Text goes through textContent; the same renderer can safely carry long names.
@@ -30,13 +31,37 @@ function element(tag, text, className) {
   if (className) node.className = className;
   return node;
 }
+// One judgement per requirement, in column order. A required feature that is
+// unconfirmed is a gap of its own kind, never a No.
+function judge(room) {
+  const feature = (required, value) => !required ? 'off' : value === true ? 'met' : value === null ? 'unknown' : 'short';
+  return {
+    people: room.seats < requirements.people ? 'short' : 'met',
+    access: feature(requirements.access, room.access),
+    projector: feature(requirements.projector, room.projector),
+    budget: room.price > requirements.budget ? 'short' : 'met'
+  };
+}
 function issues(room) {
+  const state = judge(room);
   const gaps = [];
-  if (room.seats < requirements.people) gaps.push(`${requirements.people - room.seats} seats short`);
-  if (room.price > requirements.budget) gaps.push(`${money.format(room.price - requirements.budget)} over budget`);
-  if (requirements.access && room.access !== true) gaps.push(room.access === null ? 'Access unconfirmed' : 'No step-free access');
-  if (requirements.projector && room.projector !== true) gaps.push(room.projector === null ? 'Projector unconfirmed' : 'No projector');
+  if (state.people === 'short') gaps.push({ kind: 'short', text: `${requirements.people - room.seats} seats short` });
+  if (state.budget === 'short') gaps.push({ kind: 'short', text: `${money.format(room.price - requirements.budget)} over budget` });
+  if (state.access !== 'met' && state.access !== 'off') gaps.push(state.access === 'unknown' ? { kind: 'unknown', text: 'Access unconfirmed' } : { kind: 'short', text: 'No step-free access' });
+  if (state.projector !== 'met' && state.projector !== 'off') gaps.push(state.projector === 'unknown' ? { kind: 'unknown', text: 'Projector unconfirmed' } : { kind: 'short', text: 'No projector' });
   return gaps;
+}
+const ruleText = {
+  people: () => `${requirements.people} or more`,
+  access: () => requirements.access ? 'required' : 'not required',
+  projector: () => requirements.projector ? 'required' : 'not required',
+  budget: () => `up to ${money.format(requirements.budget)}`
+};
+function headerCell(name, key, className) {
+  const cell = element('th', name, className);
+  cell.scope = 'col';
+  if (key) cell.append(element('span', ruleText[key](), 'rule'));
+  return cell;
 }
 function readURL() {
   const query = new URLSearchParams(location.search);
@@ -54,16 +79,56 @@ function writeURL() {
   for (const [key, value] of Object.entries(requirements)) url.searchParams.set(key, typeof value === 'boolean' ? Number(value) : value);
   if (url.href !== location.href) history.pushState(null, '', url);
 }
+// The fit marks: one 12px square per requirement, in column order. Filled
+// meets it, a red cross falls short, a dashed outline is unconfirmed and a
+// short dash was not asked for.
+const svgNS = 'http://www.w3.org/2000/svg';
+const markShapes = {
+  met: [['rect', { x: 0, y: 0, width: 12, height: 12, class: 'm-met' }]],
+  short: [['rect', { x: .75, y: .75, width: 10.5, height: 10.5, class: 'm-short' }], ['path', { d: 'M3 3L9 9M9 3L3 9', class: 'm-short' }]],
+  unknown: [['rect', { x: .75, y: .75, width: 10.5, height: 10.5, class: 'm-unknown' }]],
+  off: [['rect', { x: 0, y: 5, width: 12, height: 2, class: 'm-off' }]]
+};
+function markStrip(states) {
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('class', 'marks');
+  svg.setAttribute('width', states.length * 16 - 4);
+  svg.setAttribute('height', 12);
+  svg.setAttribute('aria-hidden', 'true');
+  states.forEach((state, index) => {
+    const group = document.createElementNS(svgNS, 'g');
+    group.setAttribute('transform', `translate(${index * 16} 0)`);
+    for (const [tag, attributes] of markShapes[state]) {
+      const shape = document.createElementNS(svgNS, tag);
+      for (const [name, value] of Object.entries(attributes)) shape.setAttribute(name, value);
+      group.append(shape);
+    }
+    svg.append(group);
+  });
+  return svg;
+}
+for (const slot of document.querySelectorAll('[data-mark]')) slot.replaceWith(markStrip([slot.dataset.mark]));
+// Each fact is drawn against the applied requirement: red where it falls
+// short, a dashed box where it is unconfirmed, plain ink otherwise.
 function roomCells(row, room) {
+  const state = judge(room);
   const nameCell = element('th');
   nameCell.scope = 'row';
   nameCell.append(element('span', room.name, 'room-name'), element('span', room.location, 'room-location'));
-  row.append(nameCell, element('td', room.seats, 'numeric'));
-  for (const field of ['access', 'projector']) row.append(element('td', booleanText(room[field]), room[field] === null ? 'unknown' : ''));
-  row.append(element('td', money.format(room.price), 'numeric'));
+  row.append(nameCell, element('td', room.seats, state.people === 'short' ? 'numeric short' : 'numeric'));
+  for (const field of ['access', 'projector']) {
+    const cell = element('td', undefined, state[field] === 'short' ? 'short' : '');
+    cell.append(room[field] === null ? element('span', booleanText(null), 'unknown') : booleanText(room[field]));
+    row.append(cell);
+  }
+  row.append(element('td', money.format(room.price), state.budget === 'short' ? 'numeric short' : 'numeric'));
+  const fitCell = element('td', undefined, 'fit-cell');
+  const marks = markStrip(['people', 'access', 'projector', 'budget'].map(key => state[key]));
+  const lines = element('span', undefined, 'fit-lines');
   const gaps = issues(room);
-  const fitCell = element('td');
-  fitCell.append(element('span', gaps.length ? gaps.join(' · ') : 'All requirements met', gaps.length ? 'gap' : 'fit'));
+  if (gaps.length) for (const gap of gaps) lines.append(element('span', gap.text, gap.kind === 'short' ? 'short' : 'unknown-gap'));
+  else lines.append(element('span', 'All requirements met', 'met-all'));
+  fitCell.append(marks, lines);
   row.append(fitCell);
 }
 function renderRows() {
@@ -89,9 +154,10 @@ function renderRows() {
     roomCells(row, room);
     $('#room-rows').append(row);
   }
-  $('#result-heading').textContent = requirements.matches ? 'Confirmed matches' : 'All spaces';
-  $('#result-count').textContent = `${visible.length} of ${rooms.length} spaces shown · ${allMatches} confirmed ${allMatches === 1 ? 'match' : 'matches'}`;
-  $('#active-requirements').textContent = [`${requirements.people} people`, `up to ${money.format(requirements.budget)} / session`, requirements.access ? 'step-free required' : null, requirements.projector ? 'projector required' : null].filter(Boolean).join(' / ');
+  $('#result-heading').textContent = requirements.matches ? 'Confirmed matches' : 'All rooms';
+  $('#result-count').textContent = `${visible.length} of ${rooms.length} rooms shown, ${allMatches} confirmed ${allMatches === 1 ? 'match' : 'matches'}`;
+  $('#active-requirements').textContent = `Fit is judged against ${list.format([`${requirements.people} people`, `up to ${money.format(requirements.budget)} a session`, requirements.access ? 'step-free access' : null, requirements.projector ? 'a projector' : null].filter(Boolean))}.`;
+  for (const rule of document.querySelectorAll('.results thead .rule')) rule.textContent = ruleText[rule.dataset.rule]();
   $('#empty').hidden = visible.length !== 0;
   $('.results > .table-region').hidden = visible.length === 0;
   $('#scroll-hint').hidden = visible.length === 0;
@@ -101,8 +167,9 @@ function renderRows() {
 function sameSelection() { return savedIds.length === selected.size && savedIds.every(id => selected.has(id)); }
 function renderSelection(message) {
   const hiddenCount = [...selected].filter(id => !visible.some(room => room.id === id)).length;
-  $('#selection-count').textContent = selected.size ? `${selected.size} ${selected.size === 1 ? 'space' : 'spaces'} selected` : 'No spaces selected';
-  $('#selection-scope').textContent = selected.size ? (hiddenCount ? `${hiddenCount} outside the current filters · included in compare and save.` : 'All selected spaces are shown above.') : 'Select a room to start your shortlist.';
+  $('#selection-count').textContent = selected.size ? `${selected.size} ${selected.size === 1 ? 'room' : 'rooms'} selected` : 'No rooms selected';
+  $('.selection-bar').classList.toggle('has-selection', selected.size > 0);
+  $('#selection-scope').textContent = selected.size ? (hiddenCount ? `${hiddenCount} outside the current filters, included in compare and save.` : 'All selected rooms are shown above.') : 'Select a room to start your shortlist.';
   for (const id of ['compare', 'save', 'download', 'clear']) $(`#${id}`).disabled = selected.size === 0;
   // Empty selection may overwrite a saved shortlist, but only via Save.
   $('#save').disabled = sameSelection();
@@ -147,11 +214,9 @@ $('#download').addEventListener('click', () => {
 });
 $('#compare').addEventListener('click', () => {
   const table = $('#selected-table'); table.replaceChildren();
-  table.append(element('caption', 'Selected spaces against the applied requirements', 'sr-only'));
+  table.append(element('caption', 'Selected rooms against the applied requirements', 'sr-only'));
   const head = element('thead'); const headers = element('tr');
-  for (const name of ['Room / Location', 'Seats', 'Step-free', 'Projector', 'Price', 'Fit']) {
-    const cell = element('th', name, name === 'Room / Location' ? 'room-column' : name === 'Fit' ? 'fit-column' : ['Seats', 'Price'].includes(name) ? 'numeric' : ''); cell.scope = 'col'; headers.append(cell);
-  }
+  headers.append(headerCell('Room and building', null, 'room-column'), headerCell('Seats', 'people', 'numeric'), headerCell('Step-free', 'access'), headerCell('Projector', 'projector'), headerCell('Price', 'budget', 'numeric'), headerCell('Fit', null, 'fit-column'));
   head.append(headers); table.append(head);
   const body = element('tbody');
   for (const id of selected) { const row = element('tr'); roomCells(row, byId.get(id)); body.append(row); }

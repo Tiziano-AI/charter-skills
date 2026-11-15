@@ -14,6 +14,9 @@ WWDC_SESSION_RE = re.compile(
 # This is the semantic owner for WWDC session URL-to-title verification. Every
 # WWDC session linked by the package must have one declared official title here.
 WWDC_SESSION_TITLES = {
+    "https://developer.apple.com/videos/play/wwdc2024/10140/": (
+        "Add personality to your app through UX writing"
+    ),
     "https://developer.apple.com/videos/play/wwdc2025/219/": "Meet Liquid Glass",
     "https://developer.apple.com/videos/play/wwdc2025/220/": (
         "Say hello to the new look of app icons"
@@ -41,6 +44,9 @@ WWDC_SESSION_TITLES = {
     ),
     "https://developer.apple.com/videos/play/wwdc2026/250/": (
         "Principles of great design"
+    ),
+    "https://developer.apple.com/videos/play/wwdc2026/251/": (
+        "Communicate your brand identity on iOS"
     ),
     "https://developer.apple.com/videos/play/wwdc2026/269/": "What's new in SwiftUI",
     "https://developer.apple.com/videos/play/wwdc2026/278/": (

@@ -5,7 +5,7 @@ description: 'Instruction system design when agent guidance conflicts, misfires 
   where each rule lives and how layers compose. Not a wording comparison or retrieval
   repair.'
 metadata:
-  content_version: charter-instruction-system-design@2026.11.15.0
+  content_version: charter-instruction-system-design@2026.11.15.1
 ---
 # Full specialist method
 

@@ -1,11 +1,11 @@
 ---
 name: charter-product-experience
 description: 'Design or improve product journeys from a user''s need to a retained
-  result: first success, comprehension, trust, recovery, control and desire to return.
-  Market positioning, substantive product functions and platform implementation have
-  separate owners.'
+  result: onboarding and first success, comprehension, trust, recovery, control, character
+  and reasons to return. Market positioning, substantive product functions and platform
+  implementation have separate owners.'
 metadata:
-  content_version: charter-product-experience@2026.10.16.0
+  content_version: charter-product-experience@2026.11.15.0
 ---
 # Full specialist method
 

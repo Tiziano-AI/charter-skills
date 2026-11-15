@@ -66,6 +66,7 @@ automatic navigation may lose comparison context, and proactive assistance
 may interrupt concentration. Compare the resulting journey at that seam.
 
 Return findings in decision order, not discovery order. Show the decisive
-moment, the change and why it should help. Keep source-only conclusions
+moment as the person meets it, with its real content and words, then the
+change and why it should help. Keep source-only conclusions
 source-only; do not turn a walkthrough into a claim about measured demand,
 accessibility conformance or population-wide usability.

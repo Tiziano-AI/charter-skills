@@ -1,11 +1,11 @@
 ---
 name: charter-apple-interface-design
-description: Design native Apple interfaces when scene, input or platform choices
-  shape the workflow; create coherent navigation, commands, adaptation and accessibility
-  across Apple platforms and framework seams. Apple-styled browser pages remain web-interface
-  work.
+description: 'Design native Apple interfaces when scene, input, platform or look choices
+  shape the work: navigation, commands, adaptation, accessibility and an identity
+  drawn from the app''s subject, across Apple platforms and framework seams. Apple-styled
+  browser pages remain web-interface work.'
 metadata:
-  content_version: charter-apple-interface-design@2026.10.16.0
+  content_version: charter-apple-interface-design@2026.11.15.1
 ---
 # Full specialist method
 

@@ -30,7 +30,7 @@ Work Discovery's [seven guides](skills/charter-work-discovery/references/catalog
 
 ### [Apple Interface Design](skills/charter-apple-interface-design/SKILL.md)
 
-`charter-apple-interface-design` — Design native Apple interfaces when scene, input or platform choices shape the workflow; create coherent navigation, commands, adaptation and accessibility across Apple platforms and framework seams. Apple-styled browser pages remain web-interface work.
+`charter-apple-interface-design` — Design native Apple interfaces when scene, input, platform or look choices shape the work: navigation, commands, adaptation, accessibility and an identity drawn from the app's subject, across Apple platforms and framework seams. Apple-styled browser pages remain web-interface work.
 
 ### [Architecture Simplification](skills/charter-architecture-simplification/SKILL.md)
 
@@ -86,7 +86,7 @@ Work Discovery's [seven guides](skills/charter-work-discovery/references/catalog
 
 ### [Product Experience](skills/charter-product-experience/SKILL.md)
 
-`charter-product-experience` — Design or improve product journeys from a user's need to a retained result: first success, comprehension, trust, recovery, control and desire to return. Market positioning, substantive product functions and platform implementation have separate owners.
+`charter-product-experience` — Design or improve product journeys from a user's need to a retained result: onboarding and first success, comprehension, trust, recovery, control, character and reasons to return. Market positioning, substantive product functions and platform implementation have separate owners.
 
 ### [Product Strategy](skills/charter-product-strategy/SKILL.md)
 
