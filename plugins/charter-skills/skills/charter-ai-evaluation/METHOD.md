@@ -98,6 +98,15 @@ self-preference without removing shared-instruction assumptions. Read the
 transcripts of failed cases: a grader that rejects a valid answer is a grader
 defect, not a model defect.
 
+The written result is itself a reading of the records, and its author's reading
+drifts, for example crediting a plan in a run's log as an action in its answer.
+When many runs or grades are condensed for readers who will act without opening
+the records, and the decision is costly to reverse, have someone who did not
+write it try to refute each claim against the raw outputs, logs, grades and the
+stated decision rule before the decision is taken; the judge rules above on
+model family and shared instructions apply to that reviewer. Otherwise deliver
+the result with pointers to the records each claim rests on.
+
 ## Cost is an outcome
 
 Tokens, latency and money per useful result belong beside quality. A

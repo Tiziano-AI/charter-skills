@@ -80,7 +80,9 @@ population, the readiness claim covers only that part.
 ## Wind-down changes what may start, not what already happened
 
 Use the user's own wording when they give it. Otherwise send this, with the
-reason filled in, in the language the user writes in:
+reason filled in, in the language the user's standing guidance sets for
+messages to other sessions, or the language the user writes in when it sets
+none:
 
 > Stop at the nearest coherent point, because {reason}. Let useful work
 > already in flight finish, but start nothing new. In your last message, say
@@ -89,40 +91,29 @@ reason filled in, in the language the user writes in:
 > running, and any question still waiting for my answer with what depends on
 > it. Then wait until I explicitly tell you to continue.
 
-> Fermati al primo punto coerente, perché {motivo}. Lascia finire il lavoro
-> utile già in corso, ma non avviarne altro. Nel tuo ultimo messaggio indica
-> cosa è stato completato e dove si trova, gli effetti esterni già prodotti,
-> cosa resta, la prima azione sicura per chi riprende, cosa è ancora attivo e
-> ogni domanda che aspetta ancora una mia risposta, con cosa ne dipende. Poi
-> aspetta che ti dica esplicitamente di continuare.
-
-The reason is, for example, "the app needs to restart" / "devo riavviare
-l'app", "I am switching account" / "sto cambiando account", "I am pausing this
-work" / "metto in pausa questo lavoro", or "another agent will take over this
-work" / "un altro agente prenderà in carico questo lavoro". Send it only to
-sessions with a running turn, or with a self-starting objective that will
-start one, together with the request to pause it below: a message to an idle
-session starts a turn there, the opposite of stopping it. Keep each
-session's settings as they are. When a session has already accepted an
-equivalent request, watch it rather than sending another. A delivered message
-is not a wind-down that took effect: look for the effect where the runtime
-shows it, and treat silence as not yet seen.
+The reason is, for example, "the app needs to restart", "I am switching
+account", "I am pausing this work", or "another agent will take over this
+work". Send it only to sessions with a running turn, or with a self-starting
+objective that will start one, together with the request to pause it below: a
+message to an idle session starts a turn there, the opposite of stopping it.
+Keep each session's settings as they are. When a session has already accepted
+an equivalent request, watch it rather than sending another. A delivered
+message is not a wind-down that took effect: look for the effect where the
+runtime shows it, and treat silence as not yet seen.
 
 Queued messages are not in-flight work: starting them to empty the queue
 defeats the stop. Besides the queue, two things start turns on their own. An
-objective that restarts its session whenever it goes idle lets the session
-hold still only once that objective is paused. Use the actual runtime's
-lifecycle tools and permission contract to establish who can pause it; this
-skill does not supply a session-control API. When you cannot pause it
-yourself, add to the text "Also pause
-your {objective}; this is my explicit request." / "Metti in pausa anche il tuo
-{obiettivo}: te lo chiedo esplicitamente." If the session cannot act on it,
-the pause is the user's to make. Never mark such an objective complete or
-blocked, or clear it, to make it stop. Scheduled work that targets an affected
-session, such as an automation, a scheduled task or a loop, starts turns on
-its schedule: pause it only when the user's stop covers scheduled work, and
-list it among the things to resume. A queued message, objective or schedule
-you can see but not control is an item for the user.
+objective that restarts its session whenever it goes idle lets the session hold
+still only once that objective is paused. Use the actual runtime's lifecycle
+tools and permission contract to establish who can pause it; this skill does
+not supply a session-control API. When you cannot pause it yourself, add to the
+text "Also pause your {objective}; this is my explicit request." If the session
+cannot act on it, the pause is the user's to make. Never mark such an objective
+complete or blocked, or clear it, to make it stop. Scheduled work that targets
+an affected session, such as an automation, a scheduled task or a loop, starts
+turns on its schedule: pause it only when the user's stop covers scheduled
+work, and list it among the things to resume. A queued message, objective or
+schedule you can see but not control is an item for the user.
 
 Let useful contained actions finish; interrupt when the user asks or when
 continuing would defeat the stop. Cancelling a local command can leave an

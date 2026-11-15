@@ -5,7 +5,7 @@ description: 'Session wind-down before a restart, pause, handoff or account swit
   start nothing new, keep the way back and report what is ready. Does not restart,
   resume or move them.'
 metadata:
-  content_version: charter-session-wind-down@2026.11.07.1
+  content_version: charter-session-wind-down@2026.11.15.0
 ---
 # Full specialist method
 
