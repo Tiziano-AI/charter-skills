@@ -13,8 +13,11 @@ intervention.
 Use a product-specific skill after the process, runtime, or application has been
 identified and its own control surface owns the next action. Use an application
 profiler when source code and the hot code path are already known. Use
-`charter-systemic-failure-analysis` after the macOS occurrence has been localized and the
-remaining job is to redesign a distributed recurrence mechanism.
+`charter-systemic-failure-analysis` when the unresolved question is how
+interacting clients, retained state, queues or controllers produced the
+failure. Naming the hot process does not settle that question; use its
+diagnostic method while the failing state is still available, not only
+when redesign begins.
 
 ## First move
 
@@ -69,6 +72,13 @@ visible resource holder
 - **RSS is not system pressure.** Compression, swap, wired memory, shared mappings,
   purgeable pages, and memory pressure determine machine consequence. One
   process's RSS does not equal the memory the system can immediately recover.
+- **Allocation is not retention.** Stacks show executing paths; allocation
+  summaries show how memory is distributed. Neither necessarily identifies
+  who still owns an object or why its release has not occurred. To explain
+  growth, trace creation, ownership and release. Backlog, a stalled consumer
+  and failed reclamation can produce similar totals and hot lookups while
+  needing different repairs. Choose a supported diagnostic that separates
+  those possibilities; more totals do not supply missing ownership.
 - **GPU activity is not GPU memory.** System GPU utilization and per-process GPU
   time can establish work; they do not automatically quantify a process's
   unified-memory allocation.
@@ -146,19 +156,16 @@ For `fseventsd`, `deleted`, `backupd`, watcher churn, or FSEvents drop/rescan
 signals, read [the FSEvents branch](references/fsevents-branch.md) before creating
 a custom stream or interpreting the dropped client as the producer.
 
-### Stop at the actionable recurrence owner
+### Distinguish the interventions
 
-Climb from symptom to mechanism to trigger and recurrence condition only while
-the next layer changes the intervention. Separate:
+Choose an intervention at the owner of the established failure. Keep these
+outcomes distinct:
 
 1. **Containment** — reduce current compute, requests, I/O, or thermal load.
 2. **Recovery** — unload a model, release retained state, or return the service
    to a clean run.
 3. **Structural repair** — change model lifecycle, client, watcher, controller,
    limits, or contract that recreates the overload.
-
-A restart can prove that state was retained and can recover the machine, but it
-does not prove the recurrence was fixed.
 
 ## Intervention boundary
 
@@ -167,8 +174,7 @@ storage until the diagnosis supports an intervention and the user authorizes it.
 Do not unload a model, stop inference, kill or restart a process or daemon, wake
 or stop a model service, close an application, unmount a volume, delete or
 rebuild a journal, purge snapshots, disable backup, or run a credentialed `sudo`
-probe without that authority. Preserve the onset evidence before any action that
-would erase it.
+probe without that authority.
 
 When a read-only probe is denied, report what that missing layer would establish
 instead of treating denial as proof. Prefer a narrower live observation over a
@@ -182,15 +188,13 @@ Lead with the verdict and keep proof layers explicit:
   thermal state, and I/O at the relevant time.
 - **Observed owners:** process, service, helper, runtime, loaded model, client,
   controller, and event order established directly.
-- **Strongly supported:** the mechanism that best explains the observations and
-  predicts the recovery pattern.
+- **Explanation:** the causal links supported by the observations, with
+  unresolved alternatives where they change the requested explanation or
+  repair. An installed defect is a candidate cause until evidence connects
+  its activation to the occurrence.
 - **Not established:** unknowns that would change the structural repair.
 - **Recurrence condition:** what combination makes the incident return.
 - **Intervention:** containment, model or state recovery, and structural fix,
   kept distinct.
 - **Effects:** every model, process, service, volume, or journal mutation
   actually made; say explicitly when none were made.
-
-Return control when the user can decide whether to contain, recover, escalate,
-or repair the real owner, and the remaining unknowns no longer change that next
-move.

@@ -37,6 +37,40 @@ helps when the evidence is partial logs spread across processes, inspection may
 be failing independently of its target, or an experiment must preserve the
 condition it tests.
 
+## Preserve the question while changing the system
+
+Finding where work waits or memory accumulates can localize a failure
+without explaining why it arose. Follow the unresolved transition: what
+should have released the resource, drained the backlog or acknowledged the
+operation, and what could prevent it? Plausible explanations earn their
+place through the observed mechanism, not an exhaustive list of imaginable
+causes. An observation helps choose between them where they predict
+different state or behavior. If each predicts that restarting will help,
+recovery cannot distinguish them.
+
+Choose observations for both the distinction they reveal and how long the
+evidence will remain available. A restart, purge or rebuild can restore
+operation while erasing the state that separates the explanations. Read
+perishable evidence before removing it; analysis that can be done from
+retained records or unchanged code need not consume that opportunity. Know
+which distinctions a capture retains: it may preserve the symptoms but omit
+the ownership or transition history needed to explain them.
+
+When a causal investigation is requested, determine before recommending
+such an intervention whether the distinguishing evidence is already kept,
+can still be obtained proportionately, or is unavailable. Continue the
+useful inquiry without asking the person to choose it again. If recovery
+and obtaining the evidence genuinely compete, recommend a course with the
+consequence for each requested outcome; do not let authorization for a
+restart silently settle that trade-off.
+
+Immediate harm or an explicit restoration priority can justify recovery
+first; take useful evidence that does not obstruct it and state the limit
+that remains. A recovery-only request does not commission a recurrence
+investigation. When no useful observation is accessible, keeping a broken
+system alive indefinitely is not investigation: name the limit and the
+viable next route rather than collecting more of the same measurements.
+
 ## The effective owner has information and control
 
 An invariant can be enforced only where the required distinction is knowable

@@ -4,7 +4,7 @@ description: Diagnose unexplained slowness or recurring, cross-boundary failures
   explain the mechanism in interacting owners, state, queues, feedback or incentives
   and choose the nearest sufficient intervention. Not for an already-localized bug.
 metadata:
-  content_version: charter-systemic-failure-analysis@2026.10.16.0
+  content_version: charter-systemic-failure-analysis@2026.11.16.0
 ---
 # Full specialist method
 
