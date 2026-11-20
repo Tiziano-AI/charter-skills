@@ -75,10 +75,13 @@ and CLI, IDE, desktop, local and cloud surfaces need not select the same
 inputs. Compare them when the difference can change the decision, reading the
 selecting implementation where that is what settles it.
 
-Where your file replaces the vendor base, editorial changes in the vendor
-template never reach the model. The review only has to catch new
-behavior-bearing content: a changed tool contract, or a rule the old base
-supplied that nothing else now supplies. Where the harness keeps the vendor
+Where your file wins selection, the vendor template is not the base for that
+request. A switch or resume can still deliver parts of a different template
+in a separate message. Distinguish the initial base, a replacement and an
+addition; finding your text does not prove that only your text arrived. A
+fresh no-model input render can isolate which setting supplies a clause; it
+cannot establish that a model acted on it. Look for behavior-bearing changes
+that no other carrier supplies. Where the harness keeps the vendor
 base and appends your files, an upgrade changes the text beneath yours; read
 what the new base says and drop local copies of what it now supplies.
 

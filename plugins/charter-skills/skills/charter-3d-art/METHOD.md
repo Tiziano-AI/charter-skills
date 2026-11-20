@@ -175,6 +175,10 @@ visible fasteners. Choose which causes to expose, compress or invent instead
 of decorating every subject with physical traces. An impossible object can be
 coherent on its own terms.
 
+When creating or deriving the source image for a surface, consult
+`charter-visual-asset-production` before producing it. If the source image is
+settled and the question is how the material responds to light, stay here.
+
 Materials and illumination act together. In a relit scene, distinguish surface
 properties from the lighting already present in a photograph or generated
 image. A convincing picture of polished metal is not automatically a usable
@@ -333,9 +337,7 @@ substitutes for delivering it.
   before the first render in the final kind of process, before committing
   samples, frame rate or length, and when motion cannot be watched.
 
-`charter-visual-asset-production` directs and finishes image/video sources,
-including concepts and texture imagery; this skill owns their interpretation
-inside a 3D scene. For a still or film rendered from a 3D scene, this skill
+For a still or film rendered from a 3D scene, this skill
 owns the scene, its motion, its render and its master and grade, and Visual
 Asset Production owns the finished asset: placement, playback, derivation and
 encode. `charter-game-design` owns what the player needs to notice, what a

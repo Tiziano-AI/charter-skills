@@ -172,13 +172,23 @@ first write is available. A cache key may influence routing or accounting;
 it neither makes changed input identical nor universally identifies a saved
 entry. Follow its contract instead of transplanting it across APIs.
 
+Prefix reuse and reasoning continuity answer different questions. A request
+can carry the visible conversation and still lose a prior reasoning item
+after a history edit, a model change or a change of user or organization. If
+the same admitted conversation continues, preserve the API's ordered items
+and append a correction when that faithfully represents what happened. If
+something must be removed, remove it; never keep wrong or inadmissible
+context to save tokens. After a necessary reset, restore the evidence and
+decisions the next step needs rather than assuming the visible text restores
+the model's earlier work.
+
 These provider distinctions change the design; use their current contracts
 for the selected model, endpoint and deployment rather than freezing prices,
 thresholds, retention values or support tables here:
 
 | Provider path | What changes the choice |
 | --- | --- |
-| [OpenAI prompt caching](https://developers.openai.com/api/docs/guides/prompt-caching) | Automatic token-prefix caching and breakpoint-aware model families have different write, lookup and pricing rules. In the latter, unchanged instructions can lack their own reusable entry if only a later changing boundary was written. Check the exact endpoint's schema and SDK as well as the guide; a longer common prefix alone does not establish eligibility. |
+| [OpenAI prompt caching](https://developers.openai.com/api/docs/guides/prompt-caching) | Automatic and breakpoint-aware families differ in what is written and reused. On [Responses models that append top-level `instructions` after `input`](https://developers.openai.com/api/docs/guides/latest-model), place stable developer guidance in the first `input` item with role `developer`; reserve the top-level field for this request's guidance. Inspect the actual request: an unchanged prefix still needs an eligible cache boundary. |
 | [xAI prompt caching](https://docs.x.ai/developers/advanced-api-usage/prompt-caching/how-it-works) | Automatic prefix reuse and per-server availability make [affinity](https://docs.x.ai/developers/advanced-api-usage/prompt-caching/maximizing-cache-hits) relevant. The Responses body key and Chat Completions header are endpoint-specific controls, not interchangeable wire fields or hit guarantees. Faithful conversation continuation, including reasoning items where required, differs from rebuilding one snapshot string. |
 | [Anthropic Messages caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) | Tool, system and message prefixes form an ordered hierarchy. Caching is opt-in per request: top-level automatic placement or explicit block markers select writes; a request with neither writes nothing. Backward lookup searches prior written boundaries within a bounded range. Minimums, availability of the initial write, invalidation and isolation depend on model/platform; a marker alone does not establish a cached prefix. |
 | Google [Gemini Developer API](https://ai.google.dev/gemini-api/docs/caching) and [Cloud caching](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/context-cache/context-cache-overview) | Implicit reuse and explicit cache resources have different support, lifecycle and costs. Developer API Interactions and generateContent do not expose the same cache controls; availability also differs by model family and Cloud route. An explicit resource needs a valid model, scope/location and lifetime; storing content is a separate cost decision, not a universal Gemini recipe. |
