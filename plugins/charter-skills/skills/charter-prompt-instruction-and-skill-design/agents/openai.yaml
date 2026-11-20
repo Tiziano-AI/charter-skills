@@ -1,0 +1,7 @@
+interface:
+  display_name: Charter · Prompt, Instruction & Skill Design
+  short_description: Write model prompts, resolve rule conflicts and design skills
+  default_prompt: Use $charter-skills:charter-prompt-instruction-and-skill-design
+    to write or repair the prompt, instruction or skill that should change this decision.
+policy:
+  allow_implicit_invocation: true

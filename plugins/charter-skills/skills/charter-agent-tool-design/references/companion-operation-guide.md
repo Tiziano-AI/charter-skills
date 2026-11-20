@@ -40,7 +40,8 @@ recover.
 Link to deeper references instead of copying every flag, endpoint, enum, and JSON field. Examples
 should use stable product vocabulary and should not depend on an author's personal directory,
 account, or hidden setup. The package form of the guide (card, references, metadata) is
-`charter-skill-package-design`'s subject.
+the skill-design branch of `charter-prompt-instruction-and-skill-design`: take it the
+caller’s job and the choices the command’s own help cannot settle.
 
 ## Keep it current
 

@@ -1,5 +1,5 @@
 interface:
-  display_name: Charter · Test Design
+  display_name: Charter · Software Test Design
   short_description: Add, fix or prune tests so they catch the real bug
   default_prompt: 'Use $charter-skills:charter-test-design to add or fix the tests
     for this change: take the expected result from the requirement rather than the

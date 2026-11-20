@@ -1,13 +1,17 @@
 ---
 name: charter-workflow-recovery
-description: Recover interrupted workflows with uncertain surviving effects; reconcile
-  operation state and durable output to find the first safe continuation without duplicating
-  work. Healthy processes, ordinary waits and broken protocol design need different
-  treatment.
+description: Recover one interrupted job, batch or external operation without duplicating
+  a send, charge or other uncertain effect. Reconcile by operation identity, not a
+  lost connection; a healthy running job needs no recovery.
 metadata:
-  content_version: charter-workflow-recovery@2026.11.07.0
+  content_version: charter-workflow-recovery@2026.11.20.0
 ---
-# Charter · Workflow Recovery
+# Charter · Interrupted Workflow Recovery
+
+When a receipt goes missing, ask which operation might already have taken
+effect and which owner can establish that. A disconnected view is not a failed
+operation. If the UI invites a retry before those facts are known, do not use
+the button as an experiment.
 
 ## When a plain relaunch is enough
 
@@ -39,8 +43,9 @@ An interrupted job is not a blank slate: its local status, worker, checkpoint
 and provider may disagree because they commit at different times. Restarting
 from the last visible line can lose work or repeat effects that the line never
 recorded. This applies to jobs, batches, migrations, exports and external
-operations; a broken transport contract belongs to
-`charter-stream-protocol-repair` instead.
+operations. If independent occurrences lose the same final event, give the
+sequence to `charter-stream-protocol-repair` for future connections; continue
+reconciling this occurrence separately.
 
 Resolve the product's logical operation, attempt, worker or lease, natural
 unit of progress and external-effect identity. Find the owner that can
@@ -125,4 +130,6 @@ consumer result.
 The decisive feedback is that the same lifecycle owner now permits the next
 normal action and the affected units agree with it. A changed dashboard label
 alone is not recovery. What comes back is the recovered or safely concluded
-workflow, with any unit whose outcome is still unknown named as such.
+workflow, with any unit whose outcome is still unknown named as such. If the
+display still invites unsafe action, bring those distinctions and the allowed
+transitions to the status method in `charter-web-apple-and-status-interfaces`.

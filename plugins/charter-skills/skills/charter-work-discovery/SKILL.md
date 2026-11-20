@@ -1,10 +1,10 @@
 ---
 name: charter-work-discovery
-description: 'Work discovery when a need is hard to articulate: discover the intended
-  result and scope through adaptive interviewing, evidence and exploration, and carry
-  that understanding into the result. Clear requests need ordinary execution.'
+description: 'Clarify a need the person cannot yet put into a request: use a concrete
+  episode, evidence or contrasting examples to discover the intended result and carry
+  it through. A clear request needs no interview.'
 metadata:
-  content_version: charter-work-discovery@2026.11.15.0
+  content_version: charter-work-discovery@2026.11.20.0
 ---
 # Charter · Work Discovery
 
@@ -41,9 +41,12 @@ supplied that fragment, build on it.
 ## Bring the right expertise into the discovery
 
 Consult expertise that can change the inquiry, not only implement a finished
-brief. A product specialist may expose an unresolved user need; a diagnosis
-specialist may distinguish a broken operation from a misleading display before
-the wrong repair is agreed. Read the relevant specialist's instructions when
+brief. Take a concrete episode into `charter-product-strategy-and-design` when it
+shows a gap between what a product does and what someone needs to keep. If
+two feasible outcomes remain, `charter-research-and-decisions` can separate
+what evidence settles from what the person values. A diagnosis specialist
+can distinguish a broken operation from a misleading display before the
+wrong repair is agreed. Read the relevant specialist's instructions when
 its judgment helps. The person need not select skills for you.
 
 For help finding a starting point, offer relevant named guides from

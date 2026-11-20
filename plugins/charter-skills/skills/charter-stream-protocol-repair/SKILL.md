@@ -5,7 +5,7 @@ description: Repair streaming protocols when event semantics corrupt outcomes; f
   competing terminal signals at the responsible seam. Ordinary command waiting and
   recovery of one durable job are separate work.
 metadata:
-  content_version: charter-stream-protocol-repair@2026.11.15.0
+  content_version: charter-stream-protocol-repair@2026.11.20.0
 ---
 # Charter · Stream Protocol Repair
 
@@ -18,9 +18,11 @@ replayed bytes become new work.
 
 SSE, WebSocket, JSONL, PTY and subprocess protocols and realtime callbacks
 share this class of problem, not one universal state machine. Ordinary command
-waiting belongs to its process lifecycle. Durable-job reconciliation belongs to
-`charter-workflow-recovery`; presentation of established state belongs to
-`charter-status-interface-design`.
+waiting belongs to its process lifecycle. If a broken stream left a charge,
+send or other effect uncertain, give `charter-workflow-recovery` the operation
+identity and evidence; fixing the protocol does not settle that occurrence.
+For presentation of established state, take its meaning and allowed actions
+to the status method in `charter-web-apple-and-status-interfaces`.
 
 A defect with a reproducing input at one layer, such as a record split across
 reads or a missing flush, needs the fix at that layer and a check with the
@@ -130,5 +132,6 @@ The useful feedback is the sequence at the consumer boundary, including retained
 output and final state. Contrast a split valid record with a malformed complete
 one, a duplicate with a new event, cancellation before commit with cancellation
 after it, or a reconnect replay with a genuine gap as the defect requires.
-Repairing one branch does not establish the others. Report what became
+Give `charter-test-design` the sequence that reproduced the defect and the
+observable result the old consumer got wrong. Repairing one branch does not establish the others. Report what became
 terminal, what output or effects survived and what can safely happen next.

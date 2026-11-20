@@ -15,6 +15,8 @@ undocumented, and real-owner integration establish the adapter's behavior during
 development. Help text alone cannot establish destructive semantics, but ordinary
 cleanup does not require a fresh source audit. A refusal must identify the
 unsupported capability, output, target or scope rather than a release mismatch.
+Continue independently supported families; do not downgrade tools, edit the plan or
+guess a raw command.
 
 Inspect-to-execute checks are separate from compatibility admission. They bind
 the observed version, executable/interpreter/wrapper identities, configuration,
@@ -27,7 +29,9 @@ root, and OrbStack's Docker multicall entrypoint dispatches by its invocation
 name. Calling only a resolved binary can change the operation.
 
 `inspect --owner <owner> [--target <target>] --output <new-scan.json>` returns a
-dynamic operation candidate, including every destination it can affect. Use
+dynamic operation candidate, including every destination it can affect. Repeat
+`--owner` for several families; `--target` requires a single owner. A refusal
+appears in `native_findings`, not as a selectable candidate. Use
 the ordinary selection/plan process, qualifying consumers against the native
 protection actually available. The helper does not install an owner, start an
 engine or connect to a remote endpoint. Expected failures remain inspectable
@@ -108,6 +112,12 @@ disk-pressure flags. Native confirmation suppression does not bypass reference
 protection. The helper offers a bounded policy, not cache-record-ID deletion.
 
 ## Reclaim and uncertain execution
+
+For requested reclaim, inspect the exact owner separately, use `plan --kind
+reclaim`, then `reclaim` with its own digest and operation file. Cleanup does not
+imply authority to trim every writable container mount. Apple Container trim is
+online and does not start stopped containers. OrbStack's route observes its
+automatic sparse recovery and sends no unsupported compaction command.
 
 Apple `clean` frees already-unused guest blocks; it does not remove files.
 There is no per-mount selection. Qualify every writable block mount, not just

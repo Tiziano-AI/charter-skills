@@ -17,15 +17,13 @@ when the work needs them.
 **Outcome:** an answer grounded in applicable evidence, or a choice the person
 can act on with the material uncertainty understood.
 
-- `charter-current-fact-research` resolves facts, source authority, freshness
-  and applicability when those are uncertain.
-- `charter-decision-design` compares feasible choices when preferences,
-  uncertainty or shared commitments make the decision consequential.
-- Add `charter-product-strategy` for a market or advantage bet,
-  `charter-architecture-simplification` for a choice about unnecessary custom
-  responsibilities, `charter-provider-support-design` for support across
-  providers or backends, or `charter-ai-evaluation` when observed AI quality
-  decides adoption.
+- Use `charter-research-and-decisions` to settle a disputed fact against the
+  applicable source and date. If the facts leave feasible choices, compare the
+  trade-off that matters to the person, including uncertainty and shared commitments.
+- For a market bet, take the alternatives to `charter-product-strategy-and-design`.
+  When choosing a native primitive or backend, `charter-architecture-and-provider-design`
+  compares the responsibilities each can actually take. If AI output quality
+  decides adoption, `charter-ai-evaluation-and-session-learning` compares the work.
 
 **Boundary:** finding facts is not necessarily choosing; choosing does not
 authorize carrying out the choice. A settled fact or straightforward local
@@ -36,19 +34,20 @@ choice needs no formal decision exercise.
 **Outcome:** the commissioned product direction, design or working change,
 useful to its intended user.
 
-- `charter-product-strategy` addresses whom to serve, why they switch,
-  distribution and economics; `charter-functional-design` addresses the
-  substantive transformations the product performs; `charter-product-experience`
-  addresses the journey from a user's need to a retained result.
-- `charter-repository-assessment` locates current capability and behavior owners;
-  `charter-architecture-simplification` removes needless custom responsibilities;
-  `charter-cross-layer-change-design` carries a coherent change through its
-  producers and consumers.
-- `charter-test-design` chooses tests that discriminate real defects;
-  `charter-release-engineering` delivers an exact change to the actual consumer.
-- Add the interface or AI expertise below where it determines the result.
+- In `charter-product-strategy-and-design`, begin at the missing answer: whom
+  to serve and why they would switch, how the product turns input into useful
+  work, or where someone loses the result on the way to using or keeping it.
+  Distribution and economics matter to the first question, not to every feature.
+- `charter-codebase-analysis-and-change` traces current behavior to its owner.
+  For a requested change, follow the new meaning through producers and consumers.
+  If the question is which custom responsibilities can go, use
+  `charter-architecture-and-provider-design` to find the actual replacement.
+- Give `charter-test-design` the failure a test must distinguish;
+  `charter-release-and-configuration-diagnosis` carries an approved change
+  to the consumer that must actually run it.
+- Use interface or AI expertise below where it determines the result.
   `charter-game-design` owns rules, information, pacing and progression when
-  the product is a game.
+  the result in question is play.
 
 **Boundary:** strategy, substantive function and user experience answer
 different questions; not every feature reopens all three. A clear local change
@@ -60,19 +59,22 @@ does not authorize building, installing or releasing it.
 **Outcome:** an explanation or repair at the actual failing owner, with the
 requested behavior restored when repair is commissioned.
 
-- `charter-systemic-failure-analysis` explains recurring, cross-boundary
-  failures and unexplained slowness when the mechanism is not localized.
-- `charter-configuration-diagnosis` traces why the running process does not
-  use the intended setting.
+- `charter-system-and-mac-diagnosis` explains recurring cross-boundary
+  failures and unexplained slowness; on a pressured Mac, investigate the
+  processes, devices and controllers without waiting for a second incident.
+- For a process that ignores a setting, `charter-release-and-configuration-diagnosis`
+  finds the reader, winning input and load time. Diagnosis is not a release.
 - `charter-stream-protocol-repair` repairs framing, event ordering,
   cancellation, replay or competing terminal signals when stream semantics
-  corrupt outcomes.
-- `charter-workflow-recovery` reconciles uncertain surviving effects after an
-  interruption; `charter-status-interface-design` fixes shown state that
-  misleads a person's next action.
-- Add `charter-repository-assessment`, `charter-test-design`,
-  `charter-architecture-simplification` or `charter-release-engineering` when
-  locating, discriminating or delivering the repair needs that judgment.
+  corrupt outcomes. For *one interrupted occurrence*, `charter-workflow-recovery`
+  reconciles surviving effects. If the underlying state is known but the
+  displayed state or actions mislead, use the status method in
+  `charter-web-apple-and-status-interfaces`.
+- When the repair depends on locating a behavior owner, tracing a responsibility
+  that can move, or isolating a regression, use `charter-codebase-analysis-and-change`,
+  `charter-architecture-and-provider-design` or `charter-test-design`
+  respectively. Delivery of a commissioned fix belongs to
+  `charter-release-and-configuration-diagnosis`.
 
 **Boundary:** an already-localized bug needs no systemic investigation. Healthy
 running work needs no recovery. Repairing a status display does not recover the
@@ -83,18 +85,19 @@ operation beneath it; retrying an operation does not repair a broken protocol.
 **Outcome:** an AI capability that performs the intended work at the quality
 the surrounding use requires.
 
-- `charter-prompt-design` addresses one prompt or role's instructions and
-  adaptation to a model; `charter-context-engineering` addresses retrieval and
-  assembly of the right evidence, relationships and history.
-- `charter-ai-evaluation` investigates observed output quality and the cases
-  that decide adoption or repair.
-- `charter-provider-support-design` addresses selection, adaptation,
-  degradation and fallback across providers or backends.
-- `charter-agent-tool-design` shapes operations, identities, results and errors
-  for CLIs, MCP servers and other tools agents call.
-- Add `charter-functional-design` when the transformation from input to useful
-  work is unresolved, and `charter-product-experience` when the user's journey,
-  control or recovery determines whether the capability is useful.
+- Did the relevant facts reach the model? `charter-context-engineering` follows
+  evidence, relationships and history into the assembled request. If those
+  arrived and instructions caused a misreading, `charter-prompt-instruction-and-skill-design`
+  uses the actual request to revise the prompt or role for the target model.
+- `charter-ai-evaluation-and-session-learning` compares observed output
+  quality on cases that can decide adoption or repair.
+- `charter-architecture-and-provider-design` addresses selection, adaptation,
+  degradation and fallback across providers or backends. `charter-agent-tool-design`
+  shapes operations, identities, results and errors for CLIs, MCP servers and
+  other tools agents call.
+- When technically correct output still isn't useful, `charter-product-strategy-and-design`
+  distinguishes the transformation the capability should perform from the
+  user's journey, control and recovery around it.
 
 **Boundary:** missing evidence is not automatically a prompt defect, and useful
 model output is not automatically a useful product. Account setup and operating
@@ -105,38 +108,39 @@ an existing tool follow the owning integration's guide, not this combination.
 **Outcome:** an interface or visual artifact that works at its intended
 placement, with the required form, interaction and delivery format.
 
-- `charter-web-interface-design` shapes websites and web apps;
-  `charter-apple-interface-design` shapes native Apple scenes, input and
-  platform interaction.
-- `charter-visual-asset-production` directs, selects, repairs and delivers
-  images, logos and finished media for a concrete use.
-- `charter-3d-art` builds and renders models, scenes, materials, light and
-  scene motion.
-- Add `charter-product-experience` when the journey needs design, and
-  `charter-document-fidelity` when document layout, calculation, extraction
-  or editability must survive the destination.
+- Use `charter-web-apple-and-status-interfaces` for the controls someone sees
+  and operates. Design for the browser when the surface is a website or web
+  app; for a native Apple app, begin with its scenes, input and platform
+  interactions. A status display starts instead with what its evidence justifies.
+- Use `charter-3d-and-visual-production` to build or render models, scenes,
+  materials, light and motion, or to direct, select, repair and deliver
+  images, logos and finished media for a particular placement. If a scene
+  needs original texture imagery, choose how to make it before touching the pixels.
+- Use `charter-product-strategy-and-design` when the user's journey needs
+  design, and `charter-document-fidelity` when document layout, calculation,
+  extraction or editability must survive the destination.
 
 **Boundary:** Apple-styled browser pages remain web work. A game's rules are
-`charter-game-design`'s responsibility, not a synonym for visual styling. In a
-rendered film, 3D art owns the scene and render; visual asset production owns
-the finished placement, encoding and variants. Neither replaces the actual
-authoring or generation tool.
+`charter-game-design`'s responsibility, not a synonym for visual styling. For a
+rendered film the visual skill covers two distinct deliverables: the scene
+and render, then the finished placement, encoding and variants. It does not
+replace the actual authoring or generation tool.
 
 ## Improve how an agent works
 
 **Outcome:** a supported improvement to the agent's guidance, specialist
 knowledge or callable tools at the owner responsible for the observed gap.
 
-- `charter-agent-session-learning` studies recorded intent–behavior gaps,
-  repeated corrections and changes of direction.
-- `charter-instruction-system-design` addresses guidance ownership, conflicts,
-  composition and delivery across the instruction system.
-- `charter-skill-package-design` addresses the scope, recognition and resources
-  of a specialist skill.
-- Add `charter-prompt-design` for one prompt or role,
-  `charter-ai-evaluation` when output-quality evidence can settle a change,
-  or `charter-agent-tool-design` when the callable operation is the failing
-  owner.
+- Reconstruct a missed intention, repeated correction or change of direction
+  with `charter-ai-evaluation-and-session-learning`. A record can establish
+  one occurrence; use comparative output-quality evidence if it can settle a choice.
+- For `charter-prompt-instruction-and-skill-design`, carry the actual input and
+  the decision that went wrong. Revise one prompt or role when its text is the
+  problem; repair rule ownership, composition or delivery when competing
+  layers caused it. For a missed specialist, distinguish its scope, discovery
+  card and resources before rewriting any of them.
+- Use `charter-agent-tool-design` when the callable operation itself cannot
+  express the job or return what the caller needs to continue.
 
 **Boundary:** a retrospective can recommend a repair without authorizing an
 instruction or memory rewrite. Source consistency does not establish better
@@ -148,13 +152,14 @@ helped.
 **Outcome:** the requested account of current work, resolution of an actual
 collision, or a controlled stop with a usable way back.
 
-- `charter-session-portfolio-status` reports what is usable, running or waiting
-  across the sessions the current runtime can list.
-- `charter-session-coordination` resolves real dependencies, competing writes
-  or contribution handoffs between sessions.
-- `charter-session-wind-down` stops new work, lets the authorized in-flight
-  work settle and preserves resumption.
-- Add `charter-workflow-recovery` only when surviving effects are uncertain.
+- In `charter-session-status-coordination-and-wind-down`, start with the
+  requested action. “Can I quit?” calls for reporting what is usable, running
+  or waiting across visible sessions, without contacting or steering them.
+  Coordination instead needs a real dependency, competing write or handoff
+  and a commission to resolve it. Wind-down stops new work, lets authorized
+  in-flight work settle and preserves a way back.
+- If an interrupted session left an external effect uncertain, take its
+  operation identity to `charter-workflow-recovery` before trying again.
 
 **Boundary:** status is observation, not permission to continue or coordinate
 work. Independent parallel work needs no coordination. Wind-down does not

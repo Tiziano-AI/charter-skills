@@ -113,6 +113,18 @@ mutants imitate. A surviving mutant is either a missing assertion or an
 equivalent change that alters no observable behavior; only the first needs a
 test.
 
+## Isolating each part
+
+A test that fails against the unfixed code shows that the change as a whole is
+needed, not that each of its parts is protected. Where several parts decide one
+result together, such as the fields of a key or the clauses of a filter,
+fixtures that differ in one part often differ in another too; either part then
+keeps the cases apart by itself, and losing the other goes unnoticed. Break
+each part by itself, and give a part whose break no test notices a case in
+which it alone changes the outcome. Parts that move together in every input the
+code will actually receive act as one, and breaking one of them needs no test;
+fixtures that happen to move them together do not show that.
+
 ## Determinism and claim limits
 
 Fixing random seeds and controlling clocks can make a regression reproducible.

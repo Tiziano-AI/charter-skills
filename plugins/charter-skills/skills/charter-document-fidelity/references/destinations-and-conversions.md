@@ -21,6 +21,22 @@ Decide whether the imported native object or the local file becomes canonical, t
 conversion boundary in each direction users will traverse. An upload receipt shows transfer, not
 successful editing or rendering; a clean local preview says nothing about the imported object.
 
+## Font substitution and reflow
+
+Your renderer is not the recipient's application. LibreOffice substitutes any
+font it lacks, as a PDF viewer does for fonts the PDF does not embed, and a
+substitute with different widths moves line breaks, table rows and page breaks.
+Before judging pagination, overflow or a spill page, inspect the PDF's fonts
+with `pdffonts` or an equivalent and compare them with the ones the document
+names. Carlito is designed as a metric-compatible alternative to Calibri;
+Liberation Sans, Serif and Mono target Arial, Times New Roman and Courier New.
+That reduces reflow risk, but the actual font version, style and glyph fallback
+still matter, and another suite's layout can differ even with matching metrics.
+Do not rule out font substitution from the family name alone. An Aptos document,
+for example, may render in an unrelated installed face when Aptos is absent.
+Confirm consequential layout in the recipient's application, or leave slack
+and name the pagination that remains unconfirmed.
+
 ## Screen, print, projection and editing
 
 The same document can need different treatment by destination:

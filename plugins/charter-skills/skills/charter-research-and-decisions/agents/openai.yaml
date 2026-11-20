@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Research & Decisions
+  short_description: Find what the evidence settles and what decides a choice
+  default_prompt: Use $charter-skills:charter-research-and-decisions to answer my
+    factual question or recommend the feasible choice that best fits what matters
+    here.
+policy:
+  allow_implicit_invocation: true

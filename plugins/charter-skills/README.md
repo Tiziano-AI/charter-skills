@@ -7,25 +7,27 @@ in Codex and Claude Code. Charter is an opinionated, Mac-first library: call
 on the expertise a task needs while keeping your agent's native model,
 permissions and settings.
 
-**Version 1.0.0-rc.25**
+**Version 1.0.0-rc.26**
 
 > **Release candidate.**
 
 ## Choose a starting point
 
-Bring an idea, problem, document or task. Start with **Work Discovery** when
-you are unsure how to approach it, or choose a specialist from the
-[catalogue](CATALOGUE.md) when you know what you need.
+Describe the work in your own words; you don't have to name a skill. If you
+want to choose one yourself, the [catalogue](CATALOGUE.md) shows what each
+specialist does. **Work Discovery** is for the point when you know something
+needs to change but can't yet explain what.
 
 - “Improve this frontend; the first visit feels confusing.”
 - “Explore a logo direction and produce something we can use.”
 - “This setting does not take effect. Find the cause and fix it.”
 - “We want an AI feature. Help us decide what it should actually do.”
 
-A clear request should lead to work, not an intake interview. Work Discovery's
-seven use-case guides suggest useful combinations; they are not mandatory
-stages or a requirement to load every skill. You can invoke specialists
-directly, and the native agent can select them when relevant.
+A clear request should lead to work, not an intake interview. Within a skill,
+the agent can follow the method your task calls for: making a game texture
+needs an image that works on the model; changing how an existing surface
+reflects light need not produce a new image. Work Discovery's seven use-case
+guides suggest combinations, not mandatory stages.
 
 ## Install
 
@@ -46,12 +48,6 @@ matching command is missing, follow the official
 need both CLIs, a Charter account or Charter's deployment engine. Public
 repository access needs no private token. Follow your organization's
 installation and plugin policies.
-
-**Compatibility:** for this release, installation, update from the previous
-release and removal were exercised with Codex CLI 0.169.0 and Claude Code
-2.1.325. The desktop instructions follow the host documentation; desktop use
-and first-time setup on a colleague's Mac remain untested for this release
-candidate.
 
 ### Codex: macOS app and CLI
 
@@ -131,6 +127,10 @@ handling and permission boundaries. Do not treat local bundled examples as
 a promise that the host runs offline.
 
 ## Update, disable or remove
+
+Some formerly separate skills now share an entry in the [catalogue](CATALOGUE.md).
+If you saved an explicit invocation, select the current skill and keep the
+request that describes the work. Retired names are not aliases.
 
 Release versions are immutable. Refresh the shared marketplace and update
 only this plugin, then start a fresh conversation:

@@ -19,6 +19,21 @@ document's language on scanned pages and keep page numbers as metadata for
 citation. Record document-level metadata at ingest, while the structure is
 still visible: title, version, effective date, audience, owner and location.
 
+## Preserve governing relationships
+
+Chunk along the document's structure: sections, articles, clauses, functions,
+a table with its header row and footnotes. Prefix each chunk with its document
+title and heading path ("Travel policy › 4 Travel › 4.2 Flights"). Carry scope
+statements that govern many sections (audience, jurisdiction, product version,
+effective date) down to every chunk they govern, as text and as metadata, and
+turn cross-references such as "for contractors see Annex C" into links that
+retrieval can follow. Start from meaningful section boundaries and split long
+sections where their relationships survive. Indexing small units while
+returning their parent section can restore context when the unit alone is
+ambiguous; measure the resulting evidence and distractors on actual questions.
+Overlap between fixed windows only softens cuts in unstructured
+prose; it cannot reattach a scope stated a page earlier.
+
 ## Chunk design by document type
 
 **Policies, contracts and regulations.** Use the article or clause as the
@@ -55,6 +70,25 @@ matching with fuller meaning, but adds budget and distractors. Fixed windows
 with overlap are a fallback for prose without useful structure; choose their
 size from the relationships and misses in the corpus rather than a percentage
 alone.
+
+## Match the query to the evidence
+
+Dense embeddings find paraphrases; lexical search such as BM25 finds exact
+identifiers, codes, names and rare terms that embeddings can blur. Combine them
+when their observed misses differ; rank fusion can join scores that are not
+directly comparable. Add a cross-encoder when its improved selection earns
+its cost, rather than making a full hybrid stack the entry price for every
+corpus. Rewrite the query when the raw message is a poor query: resolve
+"and for contractors?" against the previous turn, pull out the attributes that
+decide applicability (role, product, region, date), and search separately for
+the rule and for its governing condition when the answer needs both.
+
+Similarity alone does not enforce "applies to contractors", so explicit
+applicability attributes belong in metadata. Filter hard on attributes that are reliable and
+exclusionary, such as tenant and access rights, which must be enforced at
+retrieval rather than requested in the prompt. Boost rather than filter on an
+attribute inferred from the question: a wrong inference behind a hard filter
+silently removes the answer.
 
 ## Retrieval and ranking
 
@@ -122,6 +156,25 @@ has received is not access control. Retrieved text is data, and instructions
 inside a document ("ignore the rules above") must not arrive where they read as
 the product's own instructions: delimit and label every retrieved passage, and
 keep it out of the system prompt.
+
+## Cache reuse and useful work
+
+When repeated context makes prompt-cache reuse or input cost a design question,
+an identical prefix is an opportunity, not a hit. Inspect the effective request
+after SDK or gateway transformations, including tools, schemas, messages and
+content blocks. The adopted provider, API and model contract decides what can
+be written, which saved boundaries or resources a later request can find, and
+whether that entry is available within its scope and lifetime. Put reusable
+material before changing material where meaning permits, but preserve causal
+order, useful evidence and freshness rather than retaining wrong context or
+cutting useful content to improve cache statistics.
+
+Observed cache reads are not net savings. Interpret the provider's usage
+categories before adding them: a cached count may already be inside total
+input, while another API reports disjoint input, read and write counts. Compare
+the same useful work, including applicable writes, refresh or storage charges,
+output and additional calls, not just a hit ratio. The provider contracts
+below matter when reuse or cost can change this choice.
 
 ## Ordering and budget
 

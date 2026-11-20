@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Release Engineering & Configuration Diagnosis
+  short_description: Deliver the right build or explain an ignored setting
+  default_prompt: Use $charter-skills:charter-release-and-configuration-diagnosis
+    to trace what the consumer actually selects and distinguish a delivery problem
+    from an ineffective setting.
+policy:
+  allow_implicit_invocation: true

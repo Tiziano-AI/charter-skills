@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Agent Session Status, Coordination & Wind-Down
+  short_description: Report session status, resolve a collision or prepare a stop
+  default_prompt: Use $charter-skills:charter-session-status-coordination-and-wind-down
+    for the requested status report, coordination or wind-down, keeping a readiness
+    question read-only.
+policy:
+  allow_implicit_invocation: true

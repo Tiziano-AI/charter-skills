@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Codebase Analysis & Change
+  short_description: Trace product behavior and change the contract at its source
+  default_prompt: Use $charter-skills:charter-codebase-analysis-and-change to trace
+    this behavior to its source and readers, then explain what works or carry the
+    requested change through those that depend on it.
+policy:
+  allow_implicit_invocation: true

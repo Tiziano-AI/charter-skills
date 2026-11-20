@@ -7,6 +7,11 @@ usable capability.
 
 ## Definitions and results are read by a model
 
+Distinguish registration, a listed catalog entry, discovery after permission
+and actual callability. Name the accepted identity, whether the call reads,
+previews or commits an effect, and what it returns; similar names with subtly
+different effect boundaries make selection harder.
+
 A tool's name, description, and schema reach the model as text and decide selection. Name tools in
 the vocabulary of the task, and when a host loads many tools, namespace related ones by service or
 resource (`asana_search`, `jira_search`). Tool search and progressive discovery reduce schema
@@ -48,6 +53,12 @@ MCP server that declares the `listChanged` capability should send
 `notifications/tools/list_changed` when its tools change, so clients list them again; a client that
 ignores it keeps a stale catalog.
 
+Give a changed meaning a new name and reject incompatible calls with an explicit
+stale-definition error rather than reinterpreting a parameter. A discovery
+refresh can fix a stale card, not a host that never supported the operation.
+A tightly bundled extension may coordinate versions; independent releases
+need explicit compatibility and refresh behavior.
+
 With deferred discovery, a missing catalog row may mean "not loaded here yet," and a stale row may
 name an operation that is no longer callable. Use the host's own discovery and diagnostics rather
 than a second, shadow registry.
@@ -88,6 +99,20 @@ may exist, return its identity and a way to read it; a missing terminal response
 to replay. Idempotency binds the same logical operation, not repeated transport bytes, and a
 wrapper over a provider without readback or deduplication preserves the unknown outcome rather than
 simulating certainty.
+
+## Disable and uninstall
+
+Disabling normally stops new invocations. It does not end durable jobs or
+revoke credentials, and the extension may not be told at all. Uninstalling
+removes package-owned registrations and files, while in-flight workers, remote
+objects, shared caches and user data can have other owners. For an in-process
+read-only formatter, unloading is enough. For a queued remote export, removing
+the registration leaves accepted jobs alive; their identities and results must
+stay reachable through an owner that survives removal, such as the provider's
+own job list. State which effects the design performs: stopping new calls,
+quiescing running work, removing package-owned files, keeping user data and
+remote objects, and, as separate effects, revoking credentials or deleting
+external state.
 
 ## Diagnostics by boundary
 

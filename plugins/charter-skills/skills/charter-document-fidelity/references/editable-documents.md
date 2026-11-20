@@ -30,6 +30,24 @@ converted or imported copy, downloaded or re-exported copy, fixed PDF or image d
 copy the recipient opens. Paths, stable names, hashes or application identifiers prevent repairing
 one file while delivering another.
 
+## What encodes the intent
+
+In word processing, named styles carry repeated hierarchy, sections carry page
+geometry, and lists, fields and references carry relationships. Direct
+formatting can be the right exception; repeating the same manual nudge usually
+signals a broken style, section or table rule.
+
+In presentations, themes, masters and layouts make recurring structures
+reproducible. Custom art direction can remain editable without forcing every
+slide into identical placeholders. An editable chart needs its data
+relationship, not separate vector shapes that resemble a chart.
+
+In workbooks, inputs, formulas, references, tables and calculation settings
+carry the analytical model. Formula text, cached values and recalculated
+results are different layers. Missing, blank, zero and error mean different
+things; locale, leading zeroes and date interpretation can silently corrupt
+that meaning.
+
 ## Inspection layers
 
 | Layer | What it can reveal | What it cannot establish alone |

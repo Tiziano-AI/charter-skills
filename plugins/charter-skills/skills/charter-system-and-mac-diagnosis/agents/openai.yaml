@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · System Failures & Mac Resource Diagnosis
+  short_description: Find what drives a recurring failure or a Mac under load
+  default_prompt: Use $charter-skills:charter-system-and-mac-diagnosis to explain
+    the slowdown or failure from the live evidence and identify what would address
+    its cause.
+policy:
+  allow_implicit_invocation: true

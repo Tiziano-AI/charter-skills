@@ -4,6 +4,21 @@ Use this when players stall, repeat without improving, tire of the activity or
 behave differently from what the design intended. The same pause or failure
 can come from different causes, and lowering difficulty answers only some.
 
+## What changes as the player learns
+
+Not knowing how to act, misunderstanding a rule, not yet finding a solution
+and executing a difficult move are different obstacles. A hint that removes
+one may spoil another. Let layout, safe encounters and feedback teach where
+they can; text or explicit demonstration is useful when it communicates what
+the game cannot otherwise make clear.
+
+Progression can open new combinations, deepen understanding, change a
+relationship or develop mastery. Larger numbers need a changed decision or
+desired sensation to justify them. Vary pressure, discovery and opportunities
+to use what was learned; rest can make tension legible, and familiarity can
+make a small change significant. A quiet interval is not automatically lost
+engagement.
+
 ## Identify the learning problem
 
 Follow what the player was trying to do and what they believed would happen.
@@ -84,6 +99,35 @@ input, not merely until a restart overlay disappears. If loss changes a run's
 strategy, leave room to understand the consequence and choose a new approach.
 A checkpoint restores the state that decision requires, not automatically
 the most convenient state or the entire run.
+
+## Separate the design claim from a technical check
+
+A design hypothesis concerns what players will do or experience. A technical
+defect concerns whether the implementation performs its intended behavior.
+Missing observation concerns what has not been seen, heard or attempted. They
+can coexist: first distinguish a dropped command from an intentionally slow
+response before redesigning the action around it.
+
+Inspect the channel that carries the claimed experience. A screenshot can
+show visual hierarchy, not how aiming feels; audio code can show a trigger,
+not whether the mix masks the cue. When the relevant experience is unavailable,
+make the design contribution supported by the available material and leave
+that perceptual question open. Do not substitute another round of code checks
+for hearing or playing it.
+
+When you build something whose feel you cannot judge yourself, put its feel
+values where they can be changed, in the engine's inspector or one named
+configuration block, each with its unit and the move it should permit
+("apex 3 units: clears the crate from standing"). That hands whoever plays it
+a concrete move to try and a way to change the response, rather than a claim
+that it feels right. In a repair, keep the parameters the game already uses.
+
+Connect the intervention to a specific expectation and a revealing observation:
+giving up a firing opportunity to reposition, anticipating a turn earlier,
+forming a new theory about a room, or another player gaining a meaningful
+contribution. Observe without coaching when first-use learning is the question.
+Completion, repetition and reported enjoyment each say something different;
+none alone establishes that the intended experience occurred.
 
 ## Observe the question you actually have
 

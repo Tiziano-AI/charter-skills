@@ -1,5 +1,5 @@
 interface:
-  display_name: Charter · Context Engineering
+  display_name: Charter · LLM Context Engineering
   short_description: Design retrieval and context that preserve answer evidence
   default_prompt: Use $charter-skills:charter-context-engineering to design or repair
     this product's retrieval and context assembly, tracing representative questions

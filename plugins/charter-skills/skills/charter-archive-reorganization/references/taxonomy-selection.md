@@ -3,6 +3,25 @@
 Choose the primary axis from the archive owner's most common retrieval question and the collection's
 lifecycle. Use secondary axes below it or as metadata.
 
+## What the primary axis must predict
+
+A primary axis works when it predicts where new material belongs and where a
+future person will look. Entity, subject, time, source and lifecycle answer
+different questions. Choose one within a genuine collection zone; secondary
+access can come from names, metadata, search or an index. Copying material into
+several editable subject trees creates divergence rather than better retrieval.
+
+An intake area and a stable records archive may need different structures.
+Application libraries, photo libraries and source repositories already have
+owners for their internal relationships; they are not piles of loose files.
+When path dependencies dominate, an index can improve discovery with less
+disruption than movement.
+
+Try the difficult cross-cutting items against the organizing idea. If most
+require exceptions, the axis or granularity is wrong. A review queue is useful
+for a specific missing decision; it is not a permanent substitute for a
+taxonomy that fits the collection.
+
 ## Candidate axes
 
 ### Subject or domain

@@ -2,6 +2,70 @@
 
 Use this when the brief names a subject but leaves the play open.
 
+## Turn the premise into something playable
+
+Find actions and tensions in the subject before borrowing a loop. Look at the
+objects people handle, the signals they attend to, what they can change and
+what they must wait for, risk or leave behind. A source might be a performance,
+a tool's behavior, a place's routes, a character's conflicting obligations or
+the transformations of an abstract puzzle. Turn that material into something
+the player does with a consequence. Fidelity means preserving the relationship
+that makes it interesting, not simulating every detail of the activity.
+
+When the direction is open, commit to the relationship a player will feel,
+concretely enough to be wrong. It can be a rule, the arrangement of a place
+or an authored situation: "triggering a firework fixes the beat on which it
+bursts, and it cannot be recalled"; "a tower crane's hook keeps swinging
+after the jib stops, so you brake early and let the swing carry the load
+home"; "at a wake, each story told about the dead changes which stories the
+others can still bring themselves to tell". Let it determine a moment worth
+playing, what must be visible there and what counts as a satisfying result.
+Then set the idea beside a sibling brief: stage lights that change the
+moment you press, a forklift that stops dead, a dinner party where nothing is
+at stake. If only the nouns change, the subject does not yet affect play. Ask
+again of the first playable, where attractive art can conceal unchanged
+decisions. Shared mechanics can be intentional; the test is whether they
+deliver this brief, not whether nobody has used them before.
+
+Let that one relationship carry the unfamiliarity inside controls, feedback
+and a frame the player already knows. Develop the relationship's consequences
+through different situations before adding systems alongside it. An
+experimental game about learning an alien system may need several unfamiliar
+rules working together; focus is not a mechanic quota. In a faithful genre
+exercise, the familiar pleasure is the source, and the contribution can be a
+layout or tuning. A local repair inside an established game needs the repair,
+not a new premise.
+
+Adding to an established game takes its source from that game: a new level,
+enemy or item earns its place by asking a new question of a rule players
+already know, in the controls and feedback they already read. The sibling
+question there is whether the addition would fit any game of the genre
+equally well.
+
+Common first answers to an open game brief in late 2026, likely including
+yours; they shift with the model and the year, and each is right for some
+game:
+
+- **The reskinned arcade loop** supplies collecting and dodging before finding
+  the subject's own verbs. It fits a requested arcade variation; it displaces
+  the premise when the promised activity never reaches the rules.
+- **Score, hearts and power-ups** make optimization, attrition and escalation
+  the structure, potentially replacing interpretation or expression. They fit
+  when performance, survivable mistakes and changing capabilities are the
+  intended play, with each display or reward explaining that play.
+- **Experience points and rarity tiers** can substitute accumulation for
+  changed possibilities. They fit when collecting, building a loadout or
+  feeling advancement is itself wanted; distinctions in a tier should serve
+  that pleasure rather than promise decisions the objects do not offer.
+- **Screen shake on every hit** gives frequent contact the same emphasis as a
+  decisive event and may hide the next cue. Repeated recoil can suit a
+  sustained barrage when readability and comfort hold; otherwise tiers of
+  feedback let different events carry different weight.
+- **Kind, neutral and selfish replies** feeding a relationship meter label an
+  attitude where the player could enact one. They fit when choosing a stance
+  is the play; when expression is, write what this character could say, evade
+  or admit at this moment.
+
 ## Worked creation: a fireworks encore
 
 **Brief:** a small, exuberant game about composing the fireworks encore for a

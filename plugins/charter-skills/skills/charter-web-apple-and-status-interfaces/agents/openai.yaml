@@ -1,0 +1,7 @@
+interface:
+  display_name: Charter · Web, Apple & Status Interfaces
+  short_description: Shape browser and Apple interfaces and make status actionable
+  default_prompt: Use $charter-skills:charter-web-apple-and-status-interfaces to design
+    or repair this interface for the place, input and state in which people use it.
+policy:
+  allow_implicit_invocation: true

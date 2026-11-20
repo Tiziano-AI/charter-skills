@@ -3,7 +3,38 @@
 Design the CLI from the product's objects, state transitions, and repeated operator jobs. Do not
 start by mapping every API endpoint or internal function to a subcommand.
 
+## Choose the surfaces a caller needs
+
+The same product is often a CLI, an MCP server and a plugin at once. Before
+fixing its name, check that its identity has coherent native spellings across
+the repository, distribution package, installable plugin, executable, tool
+namespace and configuration prefixes it actually exposes. Their naming
+grammars need not accept one identical literal; keep the relationship
+recognizable without unrelated aliases or recurring workarounds. Keep domain
+operations, target resolution, authentication and configuration in one core
+and make each surface a thin exposure of it; two surfaces with their own
+resolvers will disagree about which account or file a call touches. Choose
+surfaces by the caller's host:
+
+- A CLI reaches any agent with a shell, composes in pipes and scripts, and
+  costs context only when the agent reads its help.
+- An MCP server reaches hosts that cannot run commands, and lets the host list
+  each tool, show the inputs and ask the user before a call.
+- A plugin or extension is the unit a host installs, enables, configures and
+  removes; it may bundle commands, skills, hooks or an MCP server.
+
+Add a surface when a real caller cannot use the existing one. When agents with
+a shell already use the CLI, a missing workflow usually needs a better command
+or a companion guide, not a second surface.
+
 ## Derive the grammar
+
+Use the same verb for the same operation: a caller who knows `invoice show`
+can predict `subscription show`; `fetch`, `get` and `show` for one kind of
+read send it back to help. Different lifecycle transitions need distinct
+verbs: an invoice may be voided while a subscription is canceled. Use a
+neighbor's or established protocol's term when it fits, and combine internal
+methods that enact a single transition rather than having callers sequence them.
 
 Start with the shortest first success. Add a recovery or neighboring job when it reveals a
 different object or transition. Identify the nouns that persist and the verbs that change or
@@ -22,7 +53,9 @@ makes discovery harder.
 
 Use domain verbs where generic CRUD obscures meaning. `release promote`, `invoice void`, and
 `job retry` express stronger lifecycle constraints than `update` or `execute`. Avoid vague verbs
-such as `sync`, `fix`, `process`, and `run` when they hide several effects.
+such as `sync`, `fix`, `process`, and `run` when they hide several effects. With a
+named transition the tool can reject an illegal move before a provider call and its
+help can say what survives. Generic CRUD fits resources with no stronger lifecycle.
 
 ## Discovery and identity
 

@@ -1,0 +1,7 @@
+interface:
+  display_name: Charter · 3D Art & Visual Production
+  short_description: Make scenes, images and films for the way they will be seen
+  default_prompt: Use $charter-skills:charter-3d-and-visual-production to make or
+    repair the visual work for its intended view, movement and placement.
+policy:
+  allow_implicit_invocation: true

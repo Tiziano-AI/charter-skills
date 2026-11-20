@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Architecture & Provider Design
+  short_description: Choose what primitives and backends can really take over
+  default_prompt: Use $charter-skills:charter-architecture-and-provider-design to
+    decide which primitive or backend can keep this product promise and what custom
+    behavior, selection or refusal must remain.
+policy:
+  allow_implicit_invocation: true

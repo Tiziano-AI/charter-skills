@@ -3,6 +3,25 @@
 Archive movement must be resumable from recorded filesystem effects rather than from memory or the
 original intention.
 
+## Record the actual move
+
+For substantial movement, write the source-to-destination intent before the
+batch and record each effect as it happens, outside the moved tree, so an
+interruption leaves a usable account. Reconcile current sources and
+destinations before each batch; a dry run cannot reserve paths. Within one
+volume a move is a rename. Across volumes it is a copy followed by a delete:
+verify content and required metadata at the destination against recorded source
+preimages, then establish that the source has not changed before removing it.
+If a writer cannot be excluded or the source changed, retain both and reconcile;
+a successful copy does not authorize deleting a newer source.
+
+Concurrent edits, sync or an interrupted cross-volume copy can leave both paths,
+neither path or a changed object. After an interruption, classify those states
+instead of reading a missing source as success or rerunning the old plan
+wholesale. Rollback derives from successful effects and current identities, not
+a reversed wish list; it may be blocked by later edits or occupied old paths,
+and forward repair may preserve more work.
+
 ## Useful states
 
 - **inventoried:** a current source inventory exists; nothing has moved.

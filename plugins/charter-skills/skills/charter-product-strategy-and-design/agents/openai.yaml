@@ -1,0 +1,8 @@
+interface:
+  display_name: Charter · Product Strategy & Design
+  short_description: Choose the offer, design its work or improve the journey
+  default_prompt: 'Use $charter-skills:charter-product-strategy-and-design to resolve
+    the open product question: who would switch, how the product delivers its result
+    or how people reach and keep it.'
+policy:
+  allow_implicit_invocation: true

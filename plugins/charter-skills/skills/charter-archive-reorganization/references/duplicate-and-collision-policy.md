@@ -1,5 +1,27 @@
 # Duplicate, Version, And Collision Policy
 
+## What equality establishes
+
+Full-content hashing finds byte-identical regular files at the time of reading.
+It does not establish that a path is dispensable, that extended metadata is
+equal, or that a recovery copy is independent. Intentional backups, application
+links and delivery replicas can need their locations even when content matches.
+Two names of one hard-linked file are one object: removing a name frees
+nothing, which is why the duplicate report lists them as a hard-link set.
+
+Choose disposition from the collection's preservation and retrieval needs.
+Prefer meaningful canonical context and intact relationships over the shortest
+path or newest timestamp. Similar-looking files with different bytes need
+classification as versions, derivatives, variants or unresolved material; they
+do not become deletion candidates by resemblance. Removing byte-identical
+copies is a separate step for a tool that keeps them recoverable.
+
+An occupied destination is information about the plan. Same bytes call for a
+survivor decision, known variants need real discriminators, and an unexplained
+collision calls for revising the placement or naming rule. Overwrite or
+arbitrary suffixing hides the relationship the reorganization was meant to
+clarify.
+
 ## Classify the relationship first
 
 - **Exact duplicate:** the complete file bytes have the same strong hash.
