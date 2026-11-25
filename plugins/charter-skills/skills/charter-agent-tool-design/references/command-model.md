@@ -29,12 +29,15 @@ or a companion guide, not a second surface.
 
 ## Derive the grammar
 
-Use the same verb for the same operation: a caller who knows `invoice show`
-can predict `subscription show`; `fetch`, `get` and `show` for one kind of
-read send it back to help. Different lifecycle transitions need distinct
-verbs: an invoice may be voided while a subscription is canceled. Use a
-neighbor's or established protocol's term when it fits, and combine internal
-methods that enact a single transition rather than having callers sequence them.
+Take the words from the people who work with those objects, not from the
+implementation, and use the same verb for the same operation: a caller who
+knows `invoice show` can predict `subscription show`; `fetch`, `get` and
+`show` for one kind of read send it back to help. Different lifecycle
+transitions need distinct verbs: an invoice may be voided while a subscription
+is canceled. A term callers already know from an established protocol or a
+neighboring tool is the right word when its meaning fits, even when it is
+plain. Combine internal methods that enact a single transition rather than
+having callers sequence them.
 
 Start with the shortest first success. Add a recovery or neighboring job when it reveals a
 different object or transition. Identify the nouns that persist and the verbs that change or

@@ -5,7 +5,7 @@ description: 'Design CLIs, MCP servers and plugins or extensions that agents cal
   disable or uninstall, so callers act without reading source. Operating an existing
   tool follows its guide.'
 metadata:
-  content_version: charter-agent-tool-design@2026.11.20.0
+  content_version: charter-agent-tool-design@2026.11.25.0
 ---
 # Charter · Agent Tool Design
 
