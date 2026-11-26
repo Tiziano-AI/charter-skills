@@ -4,7 +4,7 @@ description: Assess an unfamiliar or changed repository, or carry a contract cha
   across schemas, writers, readers and stored data. Trace what the product can do
   and where its behavior is decided. A known one-module fix needs no system assessment.
 metadata:
-  content_version: charter-codebase-analysis-and-change@2026.11.20.0
+  content_version: charter-codebase-analysis-and-change@2026.11.26.0
 ---
 # Charter · Codebase Analysis & Change
 

@@ -26,10 +26,19 @@ what its input actually contained. Walk back only as far as the divergence.
   turn. A process-start snapshot and a per-turn read can disagree while both
   source files are current, and a resumed session can keep what it captured
   when it was created.
-- **Truncation.** Listings and results are cut to budgets. A crowded skill
-  catalog shortens descriptions to a prefix, so a clause past the cut never
-  reaches the selector; oversized tool output and compacted history lose their
-  tail or their detail.
+- **Truncation.** Listings, inline guides, and results are cut to budgets. A
+  crowded skill catalog shortens descriptions to a prefix, so a clause past the
+  cut never reaches the selector; a runtime that caps inline ancestor guides
+  (such as `AGENTS.md` at a fixed per-file byte ceiling) silently drops every
+  rule past the cutoff; earlier files can also exhaust a shared multi-file
+  budget, reducing even a short guide to its path alone; oversized tool output
+  and compacted history lose their tail or their detail. When a single guide
+  approaches the smallest active runtime's per-file ceiling, split deep detail
+  into linked owner documents rather than letting the entrypoint clip or
+  paraphrasing away substance — bearing in mind the reading limit below, that
+  linked detail reaches the model only if opened. When a shared budget leaves a
+  short guide as a path only, read its source directly (and trim oversized
+  upstream files) rather than splitting the short guide.
 - **Reading.** Linked depth reaches the model only when the model opens the
   link. Some models rarely follow references from an entrypoint, which leaves a
   rule kept only in a reference undelivered for them.

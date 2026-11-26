@@ -5,7 +5,7 @@ description: Write, adapt or compare prompts for a model call or agent role; cre
   guidance after a model or harness upgrade. Missing source facts need retrieval,
   not stronger wording.
 metadata:
-  content_version: charter-prompt-instruction-and-skill-design@2026.11.20.0
+  content_version: charter-prompt-instruction-and-skill-design@2026.11.26.0
 ---
 # Charter · Prompt, Instruction & Skill Design
 

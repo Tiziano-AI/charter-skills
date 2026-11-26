@@ -23,7 +23,10 @@ Classify the actual conflict:
 - the product decision itself remains open.
 
 Choose the owner from meaning and current constraints, not occurrence count or
-a blanket preference for code over docs.
+a blanket preference for code over docs. Keep **current shipped reality**
+explicitly distinct from **target / ending vision**: unrealized design intent
+that still governs where the product is headed is not stale documentation to
+delete simply because code does not yet implement it.
 
 ## Trace governing intent into the implementation
 
