@@ -14,7 +14,7 @@ Work Discovery's [seven guides](skills/charter-work-discovery/references/catalog
 
 ### [Adaptive Communication](skills/charter-adaptive-communication/SKILL.md)
 
-`charter-adaptive-communication` — Compose established meaning for its receiver, purpose and medium, reducing avoidable interpretation effort while preserving precision, relationships and expressive qualities.
+`charter-adaptive-communication` — Match expression, register, order, and medium to the reader so established meaning lands clearly without filler or lost nuance.
 
 ### [Agent Tool Design](skills/charter-agent-tool-design/SKILL.md)
 
