@@ -5,7 +5,7 @@ description: Verify a current or disputed fact, review the evidence in a field, 
   matter. A factual lookup ends with the answer; a routine implementation choice needs
   no decision study.
 metadata:
-  content_version: charter-research-and-decisions@2026.11.20.0
+  content_version: charter-research-and-decisions@2026.11.27.0
 ---
 # Charter · Research & Decisions
 

@@ -4,7 +4,7 @@ description: 'Clarify a need the person cannot yet put into a request: use a con
   episode, evidence or contrasting examples to discover the intended result and carry
   it through. A clear request needs no interview.'
 metadata:
-  content_version: charter-work-discovery@2026.11.20.0
+  content_version: charter-work-discovery@2026.11.27.0
 ---
 # Charter · Work Discovery
 
@@ -79,7 +79,11 @@ Choose the next move from the uncertainty, rather than a fixed intake form:
   answer: very different results satisfy it. Contrast versions that differ on
   the axis the word leaves open (one paragraph in two voices, name sets built
   on different ideas, two directions for a page), finished to the same degree
-  so polish does not cast the vote. Something they admire and something they
+  so polish does not cast the vote. When isolating taste or judgment on a
+  high-dimensional choice, pair the leading option with its closest genuine
+  runner-up — holding shared traits constant so the deciding margin stands out —
+  and let the person react before hearing which one you favor so hindsight does
+  not bias their call. Something they admire and something they
   would hate to be mistaken for often locate a taste faster than a
   description. When they leave the choice to you, or a brand or convention
   already settles it, decide rather than ask.

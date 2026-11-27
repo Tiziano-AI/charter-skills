@@ -74,7 +74,13 @@ Weighted sums assume that gains on one criterion can compensate for losses on
 another. Expected value assumes meaningful probabilities and comparable
 payoffs. Risk aversion, survival constraints and tail losses can make utility
 or robustness more relevant than the average. These are different models of
-the decision, not increasingly sophisticated versions of one score.
+the decision, not increasingly sophisticated versions of one score. For
+repeated or compounding bets, check typical trajectory survival (sizing and
+multiplicative drawdown) separately from single-case expected value — a bet
+with a positive average can still ruin someone who stakes too much. Where
+recurring decisions invite noisy case-by-case exceptions, recommend a standing
+policy to follow inside each case and revisit only between runs on accumulated
+evidence.
 
 The [quantitative reference](references/quantitative-methods.md) supplies
 dominance, swing weights, expected value, break-even probability, regret and
